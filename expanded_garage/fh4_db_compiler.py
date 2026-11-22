@@ -1,5 +1,6 @@
 """Compile stock FM4 catalogue records into a separate FH4 SQLite snapshot."""
 
+from collections import Counter, defaultdict
 from contextlib import closing, nullcontext
 from dataclasses import dataclass
 from pathlib import Path
@@ -125,6 +126,44 @@ def catalogue_bucket(car, drive):
     if car["FamilyBodyID"] == 11:
         return "Retro Supercars" if car["Year"] < 2006 else "Modern Supercars"
     return None
+
+
+# Tables that every native car (or car body) owns although FM4 has no source rows.
+# Each gets the most common native row pattern, keyed like the native rows.
+COMPANION_TABLES = {
+    "List_UpgradeCarBodyTrackSpacingFront": "CarBodyId",
+    "List_UpgradeCarBodyTrackSpacingRear": "CarBodyId",
+    "CarExceptions": "CarID",
+}
+
+
+def native_pattern(db, table, owner_column, pk):
+    """Most common per-owner row set (owner and key columns removed) over the native rows."""
+    cols = [r[1] for r in db.execute(f"PRAGMA table_info({ident(table)})")]
+    rest = [c for c in cols if c not in (owner_column, pk)]
+    groups = defaultdict(list)
+    for row in db.execute(f"SELECT {ident(owner_column)}, {', '.join(map(ident, rest))} FROM {ident(table)}"):
+        groups[row[0]].append(tuple(row[1:]))
+    if not groups:
+        raise ValueError(f"No native rows in {table}")
+    pattern, _ = Counter(tuple(sorted(v, key=repr)) for v in groups.values()).most_common(1)[0]
+    return rest, pattern
+
+
+def companion_rows(graph, alias, car_id, body_id, car, body):
+    for table, owner_column in COMPANION_TABLES.items():
+        pk, cols = graph.schema(table)
+        owner, link = (body_id, body) if owner_column.casefold() == "carbodyid" else (car_id, car)
+        staged = [k for k in graph.rows if k.table == table and graph.rows[k].values.get(owner_column) == owner]
+        if staged or graph.db.execute(f"SELECT 1 FROM {ident(table)} WHERE {ident(owner_column)}=?", (owner,)).fetchone():
+            continue
+        rest, pattern = native_pattern(graph.db, table, owner_column, pk)
+        for index, values in enumerate(pattern):
+            fields = dict(zip(rest, values))
+            fields[owner_column] = owner
+            key = owner if pk == owner_column else owner + int(fields.get("Level", index) or 0)
+            graph.add(table, key, alias, {k: v for k, v in fields.items() if k != pk},
+                      "Most common native row pattern; FM4 has no source rows for this native table", (link,))
 
 
 def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, car_contract):
@@ -279,6 +318,7 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
             row = item["record"]
             insert("Combo_Colors", car_id * 1000 + row["Sequence"], row, {"Ordinal": car_id},
                    "FM4 stock manufacturer colour; swatches and paint materials in ManufacturerColors.bin", (car,))
+    companion_rows(graph, alias, car_id, body_id, car, body)
     for item in src.raw_records("CarPartPositions", "Ordinal", src.id):
         row = item["record"]
         insert("CarPartPositions", body_id + row["PartId"], row, {"Ordinal": car_id},
