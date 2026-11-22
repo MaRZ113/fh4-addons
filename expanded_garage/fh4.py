@@ -133,7 +133,7 @@ CATEGORY_RULES = (
     (r"^headlight", "PrimaryLights"), (r"^taillight", "SecondaryLights"),
     (r"^glass", "Windows"), (r"^bumperframe|^exhaust|^undercarriage", "Chassis"),
     (r"^bumperf", "BumperF"), (r"^bumperr", "BumperR"), (r"^hood", "Hood"), (r"^trunk", "Trunk"),
-    (r"^skirt", "SideSkirts"), (r"^wing", "RearWing"), (r"^mirror|^door", "Doors"), (r"^body", "Platform"),
+    (r"^skirt", "SideSkirts"), (r"^wing", "Trunk"), (r"^mirror|^door", "Doors"), (r"^body", "Platform"),
     (r"^seat", "Seats"), (r"_min", "Gauges"), (r"pillar", "Pillar"), (r"^interior", "InteriorLOD"),
     (r"^steering", "Dash"),
 )
@@ -150,7 +150,7 @@ def model_category(part):
             if category == "Windows" and part.kind == "cockpit":
                 return "InteriorWindows"
             return category
-    return ""
+    return "Dash" if part.kind == "cockpit" else "Platform"
 
 
 def material_list(materials):

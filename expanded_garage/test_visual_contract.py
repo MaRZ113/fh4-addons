@@ -48,6 +48,12 @@ class WheelModelTest(unittest.TestCase):
         lip = normalised[0].positions
         np.testing.assert_allclose(first[:, 5:7], lip[:, 1:3] * 1.318, atol=2e-3)
         self.assertIn(b"weight[1]", model)
+        ids = {b["id"] for b in morphs}
+        for b in raw.blobs(model):
+            if b["tag"] == "Mesh":
+                _, streams = struct.unpack_from("<ii", model, b["offset"] + 55)
+                morph, = struct.unpack_from("<i", model, b["offset"] + 63 + 16 * streams)
+                self.assertIn(morph, ids, b["name"])
 
     def test_each_lod_is_normalised_by_its_own_lip(self):
         # FM4 LOD0 rims are stretched to the tyre radius and carry no tyre; LOD1+ keep the true rim size.

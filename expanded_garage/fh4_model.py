@@ -321,7 +321,9 @@ def mesh(draw, mat_id, bone, index_start, position_offset, vb_id, transforms, lo
     fields += struct.pack("<iIII", -1, 0, 8, position_offset)
     if not shadow:
         fields += struct.pack("<iIII", vb_id, 1, 36, 0)
-    fields += struct.pack("<3iI", -1, -1, 0, 0)
+    # First field: the MBuf id of the morph targets (same id as the attribute stream), -1 without morphs.
+    # Native wheel meshes and their shadows both point at it.
+    fields += struct.pack("<3iI", vb_id if role else -1, -1, 0, 0)
     fields += struct.pack("<28f", *(x for transform in transforms for x in transform),
                           *scale, 1.0, *center, 0.0)
     return Chunk("Mesh", (1, 9), fields, (name_meta("Shadow" if shadow else draw.name), box_meta(low, high)))
