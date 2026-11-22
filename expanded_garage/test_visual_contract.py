@@ -190,5 +190,30 @@ class LampParameterTest(unittest.TestCase):
         self.assertIsNone(lamp_parameters("head_light", "exterior_glass/gls_clear.materialbin"))
 
 
+
+class AoVolumeTest(unittest.TestCase):
+    def test_box_shadows_the_ground_and_round_trips(self):
+        from . import fh4_ao_volume as ao
+        corners = np.array([[x, y, z] for x in (-0.8, 0.8) for y in (0.2, 1.2) for z in (-2.0, 2.0)])
+        faces = [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)]
+        tris = np.array([corners[[a, b, c]] for q in faces for a, b, c in ((q[0], q[1], q[2]), (q[0], q[2], q[3]))])
+        volume = ao.read(ao.build(tris))
+        self.assertEqual(volume["dims"], (128, 64, 128))
+        np.testing.assert_allclose(volume["centre"], (0.0, 0.7, 0.0), atol=1e-6)
+        (o0, _, coarse), _, (o2, _, fine) = volume["blocks"]
+
+        def voxel(origin, data, resolution, point):
+            index = np.floor((np.array(point) - (np.array(volume["centre"]) - ao.HALF_EXTENT))
+                             / (2 * ao.HALF_EXTENT) * resolution).astype(int) - origin
+            return data[index[2], index[1], index[0]]
+        under = voxel(o2, fine, ao.DIMS, (0.0, 0.05, 0.0))
+        self.assertGreater(int(under[3]), 150)          # strong occlusion under the body
+        self.assertLess(int(under[1]), 127)             # open direction points down
+        self.assertEqual(int(voxel(o2, fine, ao.DIMS, (0.0, 0.7, 0.0))[3]), 254)
+        self.assertEqual(int(voxel(o0, coarse, ao.DIMS // 4, (4.7, 0.7, 4.7))[3]), 0)
+        side = voxel(o2, fine, ao.DIMS, (1.2, 0.7, 0.0))
+        self.assertLess(int(side[0]), 127)              # +x side: open direction +x, stored as -x
+
+
 if __name__ == "__main__":
     unittest.main()

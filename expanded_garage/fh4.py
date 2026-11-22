@@ -19,7 +19,7 @@ import numpy as np
 from . import fh4_archive, fh4_db, fh4_model, fh4_physics
 from .fh4_scene_contract import NativeCarSceneContract
 from .fh4_runtime_rig import NativeRuntimeRigCompiler, verify_skeleton
-from . import fh4_driver_rig, fh4_paint, fh4_wheel_model
+from . import fh4_ao_volume, fh4_driver_rig, fh4_paint, fh4_wheel_model
 from .fh4_granny_animation import verify_gauge_graph
 from .fh4_material_contract import surface_binding
 from .fh4_motion import GAUGES
@@ -31,6 +31,7 @@ from .vehicle_ir import member_path, sha256, write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 TARGET_BUILD = "FH4 Steam 1.478.564.0"
+AO_VOLUME = "aovolumetexture.bin"
 PROXY_LOD = "scene/proxylod.modelbin"
 PART_TYPES = {"exterior": 2, "cockpit": 2, "brake": 4, "wheel": 43}
 # Carbin model record v11 block (18 bytes after the v10 byte): the roster mode per model class over
@@ -584,6 +585,13 @@ def make_models(root, ir, identity, library):
                    if component.casefold() not in nonstock
                    for d in draws if d.lod == max(x.lod for x in draws)]
     payloads[PROXY_LOD] = fh4_model.proxy_model(proxy_draws)
+    # Ground AO / soft shadow under the car (native aovolumetexture.bin, convention-loaded): occluder
+    # proxy = coarsest stock exterior plus a cylinder per tyre. EXPANDED_GARAGE_AO_VOLUME=off skips it.
+    if os.environ.get("EXPANDED_GARAGE_AO_VOLUME") != "off":
+        occluders = [d.positions.astype(np.float64)[d.indices] for d in proxy_draws]
+        occluders += [fh4_ao_volume.tyre(np.asarray(c["origin_m"], float), c["radius_m"], c["width_m"])
+                      for c in corners.values()]
+        payloads[AO_VOLUME] = fh4_ao_volume.build(np.concatenate(occluders))
     if points:
         authored = {"carLocator_" + point.name for point in points.values()}
         extra, driver_rig["locators"] = fh4_driver_rig.transferred_locators(
@@ -813,6 +821,11 @@ def validate_zip(blob, name, car_id, *, trial=None):
                     if not all(h - l > 0.5 for l, h in zip(low, high)):
                         raise ValueError(f"Degenerate ProxyLOD bounds {low} {high}")
             used.add(PROXY_LOD)
+        if AO_VOLUME in names:
+            volume = fh4_ao_volume.read(archive.read(names[AO_VOLUME]))
+            if volume["dims"] != (128, 64, 128) or not len(volume["vertices"]):
+                raise ValueError("Unexpected aovolumetexture.bin shape")
+            used.add(AO_VOLUME)
         if "lights.bin" in names or "lightpresets.bin" in names:
             from .research.extract_light_rig import read_lights
             presets = archive.read(names["lightpresets.bin"])
