@@ -36,13 +36,18 @@ def rim_radius(draws):
     raise ValueError(f"Cannot separate the rim from the tyre (max radius {everything.max():.3f} m)")
 
 
-# FM4 speed-blur meshes (a disc over the spokes and a lip band) are shown only in motion; drawn at rest
-# they cover the rim with a dark translucent disc.
-SPEED_BLUR = ("blur_rim", "blur_lip")
+# FM4 speed-blur meshes map to the native blur meshes the game shows in motion instead of wheel_*:
+# blurRim (specificuse/wheel_blur, translucent) and blurLip (rim material), FOR_FiestaST_14 wheel.
+BLUR_NAMES = {"blur_rim": "blurRim", "blur_lip": "blurLip"}
+
+
+def mesh_name(draw):
+    stem = BLUR_NAMES.get(draw.source_material.casefold(), "wheel")
+    return f"{stem}_LODS0" if draw.lod == 0 else f"{stem}_LOD{draw.lod}"
 
 
 def rim_only(draw, limit):
-    if draw.source_material.casefold() in ("tire", "tyre") + SPEED_BLUR:
+    if draw.source_material.casefold() in ("tire", "tyre"):
         return None
     inside = radii(draw.positions) <= limit
     keep = draw.indices[np.all(inside[draw.indices], axis=1)]
@@ -72,8 +77,7 @@ def normalise(draws):
         positions = (draw.positions * scale + shift).astype(np.float32)
         normals = draw.normals / scale
         normals /= np.linalg.norm(normals, axis=1, keepdims=True)
-        name = "wheel_LODS0" if draw.lod == 0 else f"wheel_LOD{draw.lod}"
-        result.append(replace(draw, name=name, positions=positions, normals=normals.astype(np.float32)))
+        result.append(replace(draw, name=mesh_name(draw), positions=positions, normals=normals.astype(np.float32)))
     spindle = float(-outer / width)
     bones = [Bone("<root>", -1), Bone("spindle", 0, (spindle, 0.0, 0.0)), Bone("root", 0)]
     receipt = {"rim_radius_m": radius, "rim_width_m": width, "spindle_x": spindle, "outer_face_m": outer,

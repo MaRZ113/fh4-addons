@@ -253,7 +253,7 @@ def make_models(root, ir, identity, library):
         kind = "exterior" if role.startswith("exterior") else "brake" if role in ("caliper", "rotor") else role
         for section, draw in load_draws(root, source):
             if ((contract.use_component(role, section) or role=="cockpit" and section in GAUGE_POSES)
-                    and not draw.source_material.casefold().startswith("blur")
+                    and (kind == "wheel" or not draw.source_material.casefold().startswith("blur"))
                     and 0 <= draw.lod <= 5):
                 grouped[kind][section].append(draw)
             else:

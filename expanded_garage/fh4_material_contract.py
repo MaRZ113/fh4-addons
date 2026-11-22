@@ -31,8 +31,12 @@ def surface_binding(label, component_kind="", component=""):
         return bind("exterior_misc/carpaint",MaterialUse.RUNTIME)
     if name in {"tire","tyre"}:
         return bind("genericassetmaterials/tiresidewall_a",MaterialUse.RUNTIME,fidelity="source_tread_texture_missing")
-    if name in {"rim","inner_rim","outer_rim","wheel_black"}:
+    if name in {"rim","inner_rim","outer_rim","wheel_black","blur_lip"}:
+        # blur_lip: native blurLip meshes use the rim material (FOR_FiestaST_14 wheel).
         return bind("wheelmaterials/aluminum_machined_satin",MaterialUse.RUNTIME)
+    if name == "blur_rim":
+        # Native blurRim meshes: specificuse/wheel_blur, translucent (bucket 28), shown by the game at speed.
+        return bind("specificuse/wheel_blur",MaterialUse.RUNTIME,True)
     if name in {"caliper","brake","rotor","hub","metal"}:
         return bind("brakes/metal",MaterialUse.RUNTIME)
     if name in {"tail_light","tail_light_lod0","brake_light","detail_glass_red"}:

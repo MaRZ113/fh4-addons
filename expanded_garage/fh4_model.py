@@ -248,8 +248,21 @@ def pack_streams(draw):
     tangent = steps(p, n, draw.uv0, tri).reshape(-1, 1).view(np.uint8)
     attrs[:, 24:28] = tangent
     attrs[:, 28:32] = tangent
-    attrs[:, 32:36] = 255
+    attrs[:, 32:36] = vertex_color(draw.target_material)
     return packed_positions.tobytes(), attrs.tobytes(), transforms + [UV_IDENTITY] * 3, lo, hi, scale, center
+
+
+@lru_cache(maxsize=1)
+def vertex_colors():
+    record = json.loads(files(__package__).joinpath("fh4-vertex-colors-v1.json").read_text(encoding="utf-8"))
+    return {name: bytes(entry["rgba"]) for name, entry in record["materials"].items()}
+
+
+def vertex_color(material):
+    """COLOR0 for a material: the roster median per channel (research/extract_vertex_colors.py).
+    Glass, lenses, paint and chrome carry about (80-120, 0, 0, 255); white is native only on rotors,
+    wheel materials and a few interior trims."""
+    return np.frombuffer(vertex_colors().get(material.lower(), bytes((255, 255, 255, 255))), dtype=np.uint8)
 
 
 @lru_cache(maxsize=1)
