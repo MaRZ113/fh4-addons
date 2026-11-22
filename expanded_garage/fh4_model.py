@@ -156,12 +156,24 @@ def native_parameters():
     return {member: bytes.fromhex(item["mtpr"]) for member, item in record["parameters"].items()}
 
 
-def material(index, name, library_path):
+@lru_cache(maxsize=1)
+def material_atst():
+    record = json.loads(files(__package__).joinpath("fh4-material-atst-v1.json").read_text(encoding="utf-8"))
+    return {k: bytes.fromhex(v["atst"]) for k, v in record["materials"].items()}
+
+
+def atst(library_path, transparent=False):
+    """MATI `ATST` bytes: [alpha-tested, translucent]. Native glass is 00 01 (gls_window 841 of 841);
+    00 00 made translucent glass draw opaque black. Unknown materials follow the draw's transparency."""
+    return material_atst().get(library_path.lower(), b"\0\1" if transparent else b"\0\0")
+
+
+def material(index, name, library_path, transparent=False):
     path = ("Game:\\Media\\cars\\_library\\materials\\" + library_path.replace("/", "\\")).encode("ascii")
     if len(path) >= 128:
         raise ValueError(f"Material path exceeds the supported one-byte length {library_path}")
     resource = Chunk("MATI", (1, 0), bytes([len(path)]) + path,
-                     (name_meta(name), metadata("ATST", b"\0\0", 2)))
+                     (name_meta(name), metadata("ATST", atst(library_path, transparent), 2)))
     parameters = Chunk("MTPR", (2, 0), native_parameters().get(library_path.lower(), bytes(13)))
     return Chunk("MatI", (1, 0), bundle([resource, parameters]), (name_meta(name), id_meta(index)))
 
@@ -400,7 +412,8 @@ def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False):
     chunks = [skeleton(bones), Chunk("Mrph", (0, 0), struct.pack("<H", len(weights)) + b"".join(map(string, weights)))]
     materials = sorted({material_key(d) for d in draws})
     ids = {entry: i for i, entry in enumerate(materials)}
-    chunks.extend(material(i, name, path) for i, (name, path) in enumerate(materials))
+    translucent = {material_key(d) for d in draws if d.transparent}
+    chunks.extend(material(i, name, path, (name, path) in translucent) for i, (name, path) in enumerate(materials))
     bindings = [vertex_layout(0, False), vertex_layout(1, True)]
     positions, indices = bytearray(), bytearray()
     mask, count = 0, 0

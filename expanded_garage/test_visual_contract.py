@@ -137,6 +137,16 @@ class CarbinGlassValueTest(unittest.TestCase):
         self.assertEqual(breakable_glass([]), -1.0)
 
 
+class MaterialAtstTest(unittest.TestCase):
+    def test_glass_is_translucent_and_paint_is_not(self):
+        from .fh4_model import atst
+        self.assertEqual(atst("exterior_glass/gls_windsheild.materialbin"), b"\0\1")
+        self.assertEqual(atst("exterior_glass/gls_window.materialbin"), b"\0\1")
+        self.assertEqual(atst("specificuse/blackglass.materialbin"), b"\0\0")
+        self.assertEqual(atst("unknown/thing.materialbin", transparent=True), b"\0\1")
+        self.assertEqual(atst("unknown/thing.materialbin"), b"\0\0")
+
+
 class GlassBindingTest(unittest.TestCase):
     def test_panes_use_native_glazing(self):
         self.assertEqual(surface_binding("window", "exterior", "glassF").member, "exterior_glass/gls_windsheild.materialbin")
