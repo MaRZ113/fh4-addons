@@ -21,6 +21,10 @@ class SurfaceBinding:
     trial_compatibility: str = "native_shared_binding"
 
 
+LAMP_SURFACES = {"head_light", "head_light_lod0", "tail_light", "tail_light_lod0", "brake_light",
+                 "reverse_light", "reverse_light_lod0", "turn_light"}
+
+
 def surface_binding(label, component_kind="", component=""):
     name = label.casefold()
     part = component.casefold()
@@ -46,6 +50,10 @@ def surface_binding(label, component_kind="", component=""):
         return bind("specificuse/wheel_blur",MaterialUse.RUNTIME,True)
     if name in {"caliper","brake","rotor","hub","metal"}:
         return bind("brakes/metal",MaterialUse.RUNTIME)
+    if name in LAMP_SURFACES:
+        # FM4 lamp techniques glow through a native lit reflector whose MatI carries the light function
+        # (fh4_model.lamp_parameters: head 71, tail+brake 69, reverse 1, turn 70).
+        return bind("exterior_lights/lights_smooth_ch1",MaterialUse.EFFECT,fidelity="missing_lamp_glow_mask")
     if name in {"tail_light","tail_light_lod0","brake_light","detail_glass_red"}:
         # Red lens: native gls_colored with the donor's red tint parameters.
         return bind("exterior_glass/gls_colored",MaterialUse.EFFECT,True,"native_red_lens_tint")

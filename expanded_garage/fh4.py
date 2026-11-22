@@ -153,6 +153,60 @@ CATEGORY_RULES = (
 )
 
 
+@lru_cache(maxsize=1)
+def light_rig_table():
+    return json.loads(files(__package__).joinpath("fh4-light-rig-v1.json").read_text(encoding="utf-8"))
+
+
+def light_role(model):
+    if model.kind not in ("exterior", "cockpit"):
+        return None
+    stem = Path(model.member).stem.casefold()
+    for name, pattern in light_rig_table()["role_patterns"].items():
+        if re.search(pattern, stem) and (name == "interior") == (model.kind == "cockpit"):
+            return name
+    return None
+
+
+def light_rig(alias, models, payloads):
+    """(Lights.bin, LightPresets.bin) from the donor rig (fh4-light-rig-v1.json): each donor light is
+    placed at its normalised position inside the bounding box of our models of the same role and hangs
+    on the role's housing model. Roles our car lacks are left out. None without any lamp model."""
+    table = light_rig_table()
+    groups = {}
+    for model in models:
+        name = light_role(model)
+        if name:
+            groups.setdefault(name, []).append(model)
+    if not any(name.startswith("head_") for name in groups):
+        return None
+    boxes, attach, paths = {}, {}, []
+    for name, members in groups.items():
+        lows, highs = zip(*(modelbin_box(payloads[m.member]) for m in members))
+        boxes[name] = (np.min(lows, axis=0), np.max(highs, axis=0))
+        # Hang the light on the housing (headlight/taillight/interior) rather than its lens.
+        housing = sorted(members, key=lambda m: Path(m.member).stem.casefold().startswith("glass"))[0]
+        attach[name] = len(paths)
+        paths.append(virtual(alias, housing.member))
+
+    def place(point, box):
+        low, high = box
+        return tuple(float(l + u * (h - l)) for u, l, h in zip(point, low, high))
+
+    lights = [light for light in table["lights"] if light["role"] in groups]
+    out = bytearray(struct.pack("<III", 0xDEADBEEF, 1, len(paths)))
+    for path in paths:
+        out += fh4_model.string(path) + struct.pack("<H", 1)
+    out += struct.pack("<I", len(lights))
+    for light in lights:
+        box = boxes[light["role"]]
+        out += struct.pack("<III", light["id"], light["flags"], attach[light["role"]])
+        out += struct.pack("<4f", *place(light["pos"], box), light["w"]) + struct.pack("<4f", *light["rot"])
+        out += struct.pack("<4f", *place(light["dpos"], box), light["w"]) + struct.pack("<4f", *light["drot"])
+    out += struct.pack("<I", 0)
+    return bytes(out), bytes.fromhex(table["presets"])
+
+
 def window_part(key):
     """Window glass by the Carbin category rules (lamp glass is PrimaryLights/SecondaryLights)."""
     stem = key.casefold()
@@ -520,6 +574,11 @@ def make_models(root, ir, identity, library):
     payloads[f"{aliases}.carbin"] = carbin(identity, bones, skel, models, bounds, contract.groups(models),
                                           {m.member: modelbin_box(payloads[m.member]) for m in models},
                                           {m.member: modelbin_materials(payloads[m.member]) for m in models})
+    # EXPANDED_GARAGE_LIGHT_RIG=off leaves the car without light sources (bisection switch).
+    if os.environ.get("EXPANDED_GARAGE_LIGHT_RIG") != "off":
+        rig_files = light_rig(aliases, models, payloads)
+        if rig_files:
+            payloads["Lights.bin"], payloads["LightPresets.bin"] = rig_files
     # Native scene/ProxyLOD.modelbin (convention-loaded): coarsest LOD of every stock exterior part.
     proxy_draws = [d for component, draws in sorted(grouped["exterior"].items())
                    if component.casefold() not in nonstock
@@ -754,6 +813,19 @@ def validate_zip(blob, name, car_id, *, trial=None):
                     if not all(h - l > 0.5 for l, h in zip(low, high)):
                         raise ValueError(f"Degenerate ProxyLOD bounds {low} {high}")
             used.add(PROXY_LOD)
+        if "lights.bin" in names or "lightpresets.bin" in names:
+            from .research.extract_light_rig import read_lights
+            presets = archive.read(names["lightpresets.bin"])
+            magic, size, version, count = struct.unpack_from("<4sIII", presets)
+            if (magic, version, size) != (b"LDFB", 1, len(presets)):
+                raise ValueError("LightPresets.bin is not an LDFB v1 preset library")
+            attachments, lights = read_lights(archive.read(names["lights.bin"]))
+            models_here = {virtual(aliases, n) for n in names if n.endswith(".modelbin")}
+            if any(path not in models_here for path, _ in attachments):
+                raise ValueError("Lights.bin hangs a light on a model the archive lacks")
+            if any(light["attachment"] >= len(attachments) or light["id"] >= count for light in lights):
+                raise ValueError("Lights.bin references a missing attachment or preset")
+            used.update({"lights.bin", "lightpresets.bin"})
         if "manufacturercolors.bin" in names:
             if not fh4_paint.read_manufacturer_colors(archive.read(names["manufacturercolors.bin"])):
                 raise ValueError("Empty ManufacturerColors.bin")

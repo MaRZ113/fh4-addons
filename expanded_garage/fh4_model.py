@@ -168,13 +168,44 @@ def atst(library_path, transparent=False):
     return material_atst().get(library_path.lower(), b"\0\1" if transparent else b"\0\0")
 
 
+LAMP_MATERIAL = "exterior_lights/lights_smooth_ch1.materialbin"
+# FM4 lamp technique -> (native light function, light colour). Functions from the roster's
+# LightFunction values: 1 reverse, 69 tail+brake, 70 turn, 71 headlamp.
+WARM_WHITE, RED, WHITE, AMBER = (0.94, 0.83, 0.66, 1.0), (1.0, 0.0086, 0.0012, 1.0), (1.0, 1.0, 1.0, 1.0), (1.0, 0.45, 0.0, 1.0)
+LAMP_FUNCTIONS = {"head_light": (71, WARM_WHITE), "head_light_lod0": (71, WARM_WHITE),
+                  "tail_light": (69, RED), "tail_light_lod0": (69, RED), "brake_light": (69, RED),
+                  "reverse_light": (1, WHITE), "reverse_light_lod0": (1, WHITE), "turn_light": (70, AMBER)}
+
+
+@lru_cache(maxsize=1)
+def lamp_donor():
+    return json.loads(files(__package__).joinpath("fh4-lamp-parameters-v1.json").read_text(encoding="utf-8"))
+
+
+def lamp_parameters(name, library_path):
+    """Donor lit-reflector MTPR with the light function and colour of the FM4 lamp technique, or None.
+    The donor's light map is switched off: FM4 lamp UVs address its own atlas, not the donor pattern."""
+    if library_path.lower() != LAMP_MATERIAL or name.casefold() not in LAMP_FUNCTIONS:
+        return None
+    from . import fh4_mtpr
+    donor = lamp_donor()
+    hashes = donor["hashes"]
+    function, color = LAMP_FUNCTIONS[name.casefold()]
+    return fh4_mtpr.patch(bytes.fromhex(donor["mtpr"]), {hashes["function"]: function, hashes["color"]: color,
+                                                         hashes["light_map"]: 0}, tuple(donor["version"]))
+
+
 def material(index, name, library_path, transparent=False):
     path = ("Game:\\Media\\cars\\_library\\materials\\" + library_path.replace("/", "\\")).encode("ascii")
     if len(path) >= 128:
         raise ValueError(f"Material path exceeds the supported one-byte length {library_path}")
     resource = Chunk("MATI", (1, 0), bytes([len(path)]) + path,
                      (name_meta(name), metadata("ATST", atst(library_path, transparent), 2)))
-    parameters = Chunk("MTPR", (2, 0), native_parameters().get(library_path.lower(), bytes(13)))
+    lamp = lamp_parameters(name, library_path)
+    if lamp is not None:
+        parameters = Chunk("MTPR", tuple(lamp_donor()["version"]), lamp)
+    else:
+        parameters = Chunk("MTPR", (2, 0), native_parameters().get(library_path.lower(), bytes(13)))
     return Chunk("MatI", (1, 0), bundle([resource, parameters]), (name_meta(name), id_meta(index)))
 
 

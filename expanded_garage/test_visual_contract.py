@@ -154,12 +154,9 @@ class GlassBindingTest(unittest.TestCase):
         self.assertEqual(surface_binding("window", "exterior", "glassLF").member, "exterior_glass/gls_window.materialbin")
         self.assertEqual(surface_binding("window", "cockpit", "glassLF").member,
                          "interior_glass/gls_window_interior.materialbin")
-        self.assertEqual(surface_binding("tail_light", "exterior", "taillightL").member,
+        self.assertEqual(surface_binding("detail_glass_red", "exterior", "taillightL").member,
                          "exterior_glass/gls_colored.materialbin")
 
-
-if __name__ == "__main__":
-    unittest.main()
 
 
 class SteeringPivotTest(unittest.TestCase):
@@ -176,3 +173,22 @@ class SteeringPivotTest(unittest.TestCase):
         authored = centre + np.array([0.0, -0.05, 0.02])
         pivot = rim_center([draw], authored, (0.0, 0.0, 1.0))
         np.testing.assert_allclose(pivot, centre + np.array([0.0, 0.0, 0.02]), atol=1e-4)
+
+
+class LampParameterTest(unittest.TestCase):
+    def test_lamp_techniques_get_native_light_functions(self):
+        from . import fh4_mtpr
+        from .fh4_model import lamp_parameters, lamp_donor, LAMP_MATERIAL
+        hashes = lamp_donor()["hashes"]
+        version = tuple(lamp_donor()["version"])
+        for name, function in (("head_light", 71), ("tail_light", 69), ("reverse_light", 1)):
+            self.assertEqual(surface_binding(name, "exterior", "headlightL").member, LAMP_MATERIAL)
+            found = fh4_mtpr.values(lamp_parameters(name, LAMP_MATERIAL), version)
+            self.assertEqual(found[hashes["function"]], function)
+            self.assertEqual(found[hashes["light_map"]], 0)
+        self.assertIsNone(lamp_parameters("chrome", LAMP_MATERIAL))
+        self.assertIsNone(lamp_parameters("head_light", "exterior_glass/gls_clear.materialbin"))
+
+
+if __name__ == "__main__":
+    unittest.main()
