@@ -293,3 +293,13 @@ parts), `010100…00` for interior models (65%), `000000000000010000000100000001
 `010100000000010000000100000001000000` for _library wheels. The writer emitted zeros for every model.
 `MODEL_FLAGS` in fh4.py now writes the class mode. Variant tx 8fb9d41f: model flags, native sentinel skeleton box,
 source paint MatI, carbin wheels.
+
+Result tx 8fb9d41f (model flags + sentinel box): owner reports 4 flybys before the crash (0x467A51F); before, the
+crash came at the first or second cut. The eye no longer goes to 1e30, so the part models now enter the bounds.
+Each Suzuki cut still passes through one frame in the 100/999 state that Acura cuts never show (Acura shows it only
+as a lasting Autovista state with a finite matrix): eye ~0 with pitch -90.8 (+0x19C) at step 61, previous eye with a
+NaN rotation at step 1303 (pitch -89.9). +0x15C is the vec4 w from the slot-37 setter call at 0x39C2C57, filled by
+0x3651AA0 on the world object (+0x8280), i.e. a ground height query (388.85 under the car, 100 when it fails).
+
+Draw masks: native carbins never use 2 (197 sampled cars); cockpit-only models (bit 0 clear) use 38 most often
+(169 models, 35 cars). Variant tx 7841804a: cockpit draw 38, otherwise as 8fb9d41f.

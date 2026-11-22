@@ -92,7 +92,9 @@ def carbin(identity, bones, skel, models, bounds, upgrade_groups=None):
 
     def encode_model(part):
         path = virtual(alias, part.member)
-        draw = 2 if part.kind == "cockpit" else 5
+        # Draw mask: 5 is the native mode for exterior parts; cockpit-only models (bit 0 clear) use 38 in
+        # native carbins (169 models on 35 of 197 sampled cars). 2 occurs in no native carbin.
+        draw = 38 if part.kind == "cockpit" else 5
         bone = bones[part.bone].name
         return (struct.pack("<H", 16) + fh4_model.string(path)
                 + struct.pack("<16fH", *fh4_model.transform(part.translation,part.rotation).flat, part.lod)
