@@ -234,3 +234,11 @@ Native Locators.xml files use one GUID per locator name across the roster (785 c
 so no Suzuki locator had its native identity. `research/extract_locator_guids.py` writes
 `fh4-locator-guids-v1.json` (57 names where one GUID covers at least 90% of carrying cars, 20 cars minimum);
 `locator_xml` now uses it and keeps the generated GUID for other names.
+
+Result: the GUID change alone did not fix it. Crash 0x467A51F at 14:35:24, about 15 s into the showroom; the
+capture shows the same one-step NaN eye position at the first cut to the 100/999 shot (step 797), then a finite
+shot, then the crash. The watcher now also flags a NaN eye (+0x110) and dumps the focused CarPresentation
+(0x1000 bytes) and its scene (0x400 bytes), flushing when either gains a non-finite field. Working hypothesis:
+the shots pose the car (`CarPositioning CarSteerAngle`) and frame it in `BoundingBoxSpace`, so a car-side value that
+turns non-finite under steering or posing would reach the camera; the chase cameras after the cockpit view are
+mostly `BoundingBoxSpace` too.

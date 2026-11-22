@@ -28,6 +28,8 @@ from .watch_megatexture_producer import CAMERA_RTTI_VTABLE, TRACK_RTTI_VTABLE, f
 
 CAMERA_SIZE = 0x480
 CHILD_SIZE = 0x200
+FOCUS_SIZE = 0x1000
+SCENE_SIZE = 0x400
 RING = 240
 
 
@@ -87,7 +89,12 @@ def focus_identity(target, data, base):
     if 0 < size <= 63:
         name = state[8:8 + size] if capacity < 16 else target.read(read_pointer(target, scene + 0x90), size)
     pose, velocity = target.read(focused + 0xA0, 64), target.read(focused + 0x280, 16)
+    whole, scene_bytes = target.read(focused, FOCUS_SIZE), target.read(scene, SCENE_SIZE)
     return {"car_id": ordinal, "media_name": name.decode("ascii", "replace"),
+            "object": hex(focused), "scene": hex(scene),
+            "object_nonfinite": [hex(o) for o in sorted(nonfinite_offsets(whole))],
+            "scene_nonfinite": [hex(o) for o in sorted(nonfinite_offsets(scene_bytes))],
+            "object_bytes": whole.hex(), "scene_bytes": scene_bytes.hex(),
             "pose_translation": list(struct.unpack_from("<3f", pose, 48)) if len(pose) == 64 else None,
             "pose_bytes": pose.hex(), "velocity": list(struct.unpack("<4f", velocity)) if len(velocity) == 16 else None}
 
@@ -134,12 +141,26 @@ def observe(host, pid, base, out, seconds, delay):
                 raise ValueError("The verified MegaTexture object was not found")
             emit({"event": "verified_manager", "manager": hex(root)})
             step, flushed, was_bad, shot, cuts = 0, 0, False, None, 0
+            focus_seen, focus_flushes = None, 0
             while running() and time.monotonic() < end and not out.with_suffix(".stop").exists():
                 current = sample(target, root, base)
                 if current is not None:
                     step += 1
                     ring.append((step, current))
-                    bad = bool(nonfinite_offsets(current[1][0x20:0x60]))
+                    # Camera matrix (+0x20..+0x5F) or eye position (+0x110).
+                    bad = bool(nonfinite_offsets(current[1][0x20:0x60]) or nonfinite_offsets(current[1][0x110:0x11C]))
+                    focus = current[3]
+                    if focus:
+                        marks = (focus["object"], frozenset(focus["object_nonfinite"]), frozenset(focus["scene_nonfinite"]))
+                        if focus_seen and focus_seen[0] == marks[0] and focus_flushes < 10 and (
+                                marks[1] - focus_seen[1] or marks[2] - focus_seen[2]):
+                            focus_flushes += 1
+                            items = list(ring)[-30:]
+                            for i, (n, snap) in enumerate(items):
+                                emit({"event": "sample", **describe(n, items[i - 1][1] if i else None, snap, base)})
+                            emit({"event": "focus_nonfinite", "step": step,
+                                  "object_new": sorted(marks[1] - focus_seen[1]), "scene_new": sorted(marks[2] - focus_seen[2])})
+                        focus_seen = marks
                     # A presentation shot cut: FOV (+0x1B4) jumps by more than 1 degree or +0x160 changes.
                     fov, = struct.unpack_from("<f", current[1], 0x1B4)
                     key = (current[1][0x160:0x164], round(fov) if math.isfinite(fov) else None)
