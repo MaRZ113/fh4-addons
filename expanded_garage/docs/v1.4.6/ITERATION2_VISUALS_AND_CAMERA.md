@@ -242,3 +242,17 @@ shot, then the crash. The watcher now also flags a NaN eye (+0x110) and dumps th
 the shots pose the car (`CarPositioning CarSteerAngle`) and frame it in `BoundingBoxSpace`, so a car-side value that
 turns non-finite under steering or posing would reach the camera; the chase cameras after the cockpit view are
 mostly `BoundingBoxSpace` too.
+
+Run 14:38 (tx 3c7e5ff9): crash at a new offset, 0x46827F4, about 10 s into the showroom. No camera NaN was
+sampled; the focused CarPresentation (4 KiB) and its scene carry no new non-finite field (the w lanes at +0x3EC and
++0x40C hold NaN on every sample, so they are a sentinel). The car-side NaN source is not in those objects.
+
+Ruled out by comparison with ACU_RSXTypeS_02: CarPartPositions (ten rows, finite, same layout) and CameraOverrides.
+The exe's camera part names (`headlightL ... wheelRM, driverHeadPos`) sit next to light-glass model names; native
+archives carry `Lights.bin` and `LightPresets.bin` (784 of 784), which the Suzuki archive lacks.
+Format of `Lights.bin`: u32 0xDEADBEEF, u32 version 1, u32 model count, per model u32 length + virtual path + u16 1,
+then u32 light count and 76-byte records (u32 function, u16 group, u16 sub-index, u16 model index, u16 0,
+two position+quaternion transforms). Function codes are not decoded yet.
+
+Next: `research/dump_runtime_text.py` saves both decrypted executable sections from a running game for offline
+disassembly of the presentation camera update.
