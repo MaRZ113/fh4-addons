@@ -239,17 +239,38 @@ def pack_streams(draw):
     attrs = np.zeros((len(p), 36), dtype=np.uint8)
     attrs[:, 0:4] = np.rint(np.clip(n[:, 1:], -1, 1) * 32767).astype("<i2").view(np.uint8)
     transforms = []
-    for i, uv in enumerate((draw.uv0, draw.uv1)):
+    channels = [draw.uv0, draw.uv1]
+    if draw.transparent:
+        channels = [draw.uv0, *glass_channels(p, draw.uv1)]
+    for i, uv in enumerate(channels):
         uv_min, uv_max = uv.min(axis=0), uv.max(axis=0)
         span = np.where(uv_max - uv_min < 1e-8, 1, uv_max - uv_min)
         encoding = np.rint(np.clip((uv - uv_min) / span, 0, 1) * 65535)
-        attrs[:, 4 + 4*i:8 + 4*i] = encoding.astype("<u2").view(np.uint8)
+        attrs[:, 4 + 4*i:8 + 4*i] = np.ascontiguousarray(encoding.astype("<u2")).view(np.uint8)
         transforms.append((uv_min[0], span[0], uv_min[1], span[1]))
     tangent = steps(p, n, draw.uv0, tri).reshape(-1, 1).view(np.uint8)
     attrs[:, 24:28] = tangent
     attrs[:, 28:32] = tangent
     attrs[:, 32:36] = vertex_color(draw.target_material)
-    return packed_positions.tobytes(), attrs.tobytes(), transforms + [UV_IDENTITY] * 3, lo, hi, scale, center
+    transforms += [UV_IDENTITY] * (5 - len(transforms))
+    return packed_positions.tobytes(), attrs.tobytes(), transforms, lo, hi, scale, center
+
+
+GLASS_DETAIL_DENSITY = 1.5
+
+
+def glass_channels(positions, uv1):
+    """TEXCOORD1-3 for translucent panes and lenses. Native glass fills them (ACU_RSXTypeS_02 windscreen:
+    TEXCOORD1 a metric-scale unwrap 2.0 x 2.7 units across the pane, TEXCOORD2 the pane in 0..1,
+    TEXCOORD3 a small atlas window); the car_windsheild and car_window shaders sample their shatter,
+    wiper and dirt masks through them. FM4 glass carries no second UV, so project the pane on its two
+    widest axes."""
+    span = positions.max(axis=0) - positions.min(axis=0)
+    axes = np.argsort(span)[::-1][:2]
+    planar = positions[:, axes] - positions[:, axes].min(axis=0)
+    unit = planar / np.where(span[axes] < 1e-6, 1, span[axes])
+    detail = uv1 if np.ptp(uv1, axis=0).max() > 1e-6 else planar * GLASS_DETAIL_DENSITY
+    return [detail, 0.03 + unit * 0.94, 0.3 + unit * 0.2]
 
 
 @lru_cache(maxsize=1)
@@ -322,6 +343,47 @@ def material_key(draw):
 # with 0 the normalised rim drew at its raw 0.14 m radius.
 WHEEL_MESH, WHEEL_BLUR = 2, 1
 
+# Native stock wheel morph targets (MBuf per attribute stream, half4 entries, ACU_RSXTypeS_02 wheel):
+#   width: X of the barrel beyond the face (x >= 0.1) moves by -0.9 at full weight;
+#   radius: Y and Z grow by 1.318 at full weight; normal deltas follow the stretch (YZ x 2.318).
+# wheel_* meshes store [width pos, radius pos, width normal, radius normal]; blur meshes store
+# [radius pos, radius normal]. The game drives the weights from the rim size in the GameDB.
+WHEEL_RADIUS_MORPH = 1.318
+WHEEL_WIDTH_MORPH = -0.9
+WHEEL_FACE_DEPTH = 0.1
+
+
+def wheel_morph(draw, role):
+    p = draw.positions.astype(np.float64)
+    n = draw.normals.astype(np.float64)
+    n = n / np.linalg.norm(n, axis=1, keepdims=True)
+    count = len(p)
+    radius_pos = np.zeros((count, 4))
+    radius_pos[:, 1:3] = p[:, 1:3] * WHEEL_RADIUS_MORPH
+    stretched = n / np.array([1.0, 1.0 + WHEEL_RADIUS_MORPH, 1.0 + WHEEL_RADIUS_MORPH])
+    stretched /= np.linalg.norm(stretched, axis=1, keepdims=True)
+    radius_normal = np.zeros((count, 4))
+    radius_normal[:, :3] = stretched - n
+    if role == WHEEL_BLUR:
+        entries = [radius_pos, radius_normal]
+    else:
+        width_pos = np.zeros((count, 4))
+        width_pos[:, 0] = WHEEL_WIDTH_MORPH * np.clip((p[:, 0] - WHEEL_FACE_DEPTH) / (1 - WHEEL_FACE_DEPTH), 0, 1)
+        width_pos[:, 3] = 1.0
+        width_normal = np.zeros((count, 4))
+        width_normal[:, 3] = 1.0
+        entries = [width_pos, radius_pos, width_normal, radius_normal]
+    data = np.concatenate(entries, axis=1).astype("<f2")
+    return len(entries), data.tobytes()
+
+
+def morph_buffer(index, count, entries, data):
+    stride = 8 * entries
+    if len(data) != count * stride:
+        raise ValueError("Invalid morph stream length")
+    payload = struct.pack("<iiHBBi", count, len(data), stride, entries, 0, 10) + data
+    return Chunk("MBuf", (1, 0), payload, (id_meta(index),))
+
 
 def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False):
     """`fill_near` also draws the finest available LOD on the nearer LODs the source lacks.
@@ -332,7 +394,8 @@ def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False):
     near = 0
     for level in range(finest if fill_near else 0):
         near |= lod_mask(level)
-    chunks = [skeleton(bones), Chunk("Mrph", (0, 0), struct.pack("<H", 1) + string("weight[0]"))]
+    weights = ("weight[0]", "weight[1]") if wheel else ("weight[0]",)
+    chunks = [skeleton(bones), Chunk("Mrph", (0, 0), struct.pack("<H", len(weights)) + b"".join(map(string, weights)))]
     materials = sorted({material_key(d) for d in draws})
     ids = {entry: i for i, entry in enumerate(materials)}
     chunks.extend(material(i, name, path) for i, (name, path) in enumerate(materials))
@@ -355,6 +418,8 @@ def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False):
         positions.extend(pos)
         indices.extend(draw.indices.astype("<u4", copy=False).tobytes())
         bindings.append(buffer("VerB", vb_id, attr, 36, 37))
+        if wheel:
+            bindings.append(morph_buffer(vb_id, len(draw.positions), *wheel_morph(draw, role)))
         mask |= lod_mask(draw.lod) | (near if draw.lod == finest else 0)
         minima.append(low)
         maxima.append(high)

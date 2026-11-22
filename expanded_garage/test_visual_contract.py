@@ -40,6 +40,14 @@ class WheelModelTest(unittest.TestCase):
         roles = {struct.unpack_from("<5hHBBH5BH", model, b["offset"])[11]
                  for b in raw.blobs(model) if b["tag"] == "Mesh"}
         self.assertEqual(roles, {2})
+        morphs = [b for b in raw.blobs(model) if b["tag"] == "MBuf"]
+        self.assertEqual(len(morphs), len(normalised))
+        count, size, stride, entries, _, fmt = struct.unpack_from("<iiHBBi", model, morphs[0]["offset"])
+        self.assertEqual((stride, entries, fmt, size), (32, 4, 10, count * 32))
+        first = np.frombuffer(model, "<f2", count * 16, morphs[0]["offset"] + 16).reshape(count, 16)
+        lip = normalised[0].positions
+        np.testing.assert_allclose(first[:, 5:7], lip[:, 1:3] * 1.318, atol=2e-3)
+        self.assertIn(b"weight[1]", model)
 
     def test_each_lod_is_normalised_by_its_own_lip(self):
         # FM4 LOD0 rims are stretched to the tyre radius and carry no tyre; LOD1+ keep the true rim size.

@@ -126,6 +126,33 @@ def breakable_glass(materials):
     return 0.5 if glass else -1.0
 
 
+# Carbin model record category: native records name the scene folder of the part (Windows 430,
+# PrimaryLights 654, SecondaryLights 602, InteriorWindows 417, Wheels, Brakes, BumperF ... over 99 cars).
+CATEGORY_RULES = (
+    (r"^glass[lr]hl", "PrimaryLights"), (r"^glass[lr]tl", "SecondaryLights"),
+    (r"^headlight", "PrimaryLights"), (r"^taillight", "SecondaryLights"),
+    (r"^glass", "Windows"), (r"^bumperframe|^exhaust|^undercarriage", "Chassis"),
+    (r"^bumperf", "BumperF"), (r"^bumperr", "BumperR"), (r"^hood", "Hood"), (r"^trunk", "Trunk"),
+    (r"^skirt", "SideSkirts"), (r"^wing", "RearWing"), (r"^mirror|^door", "Doors"), (r"^body", "Platform"),
+    (r"^seat", "Seats"), (r"_min", "Gauges"), (r"pillar", "Pillar"), (r"^interior", "InteriorLOD"),
+    (r"^steering", "Dash"),
+)
+
+
+def model_category(part):
+    if part.kind == "wheel":
+        return "Wheels"
+    if part.kind == "brake":
+        return "Brakes"
+    stem = Path(part.member).stem.casefold()
+    for pattern, category in CATEGORY_RULES:
+        if re.search(pattern, stem):
+            if category == "Windows" and part.kind == "cockpit":
+                return "InteriorWindows"
+            return category
+    return ""
+
+
 def material_list(materials):
     """Carbin model record list of MatI names with their colour-slot flags.
 
@@ -166,7 +193,7 @@ def carbin(identity, bones, skel, models, bounds, upgrade_groups=None, model_box
                 + fh4_model.string(bone) + struct.pack("<hBI", part.bone, 0, draw)
                 + bytes(4) + material_list(materials) + bytes(1)
                 + struct.pack("<f", breakable_glass(materials)) + bytes(4 + 1) + MODEL_FLAGS[part.kind]
-                + fh4_model.string("") + guid(path) + bytes(20 + 4 + 4))
+                + fh4_model.string(model_category(part)) + guid(path) + bytes(20 + 4 + 4))
 
     for part_type, parts in sorted(groups.items()):
         result.extend(struct.pack("<BHII", part_type, 2, part_type, len(parts)))

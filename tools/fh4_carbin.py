@@ -100,7 +100,7 @@ class Reader:
         if version >= 11:
             self.take(18)
         if version >= 12:
-            self.string()
+            self.model_values[-1]["category"] = self.string() if version >= 8 else self.string()
         if version >= 13:
             self.take(16)
         if version >= 14:
