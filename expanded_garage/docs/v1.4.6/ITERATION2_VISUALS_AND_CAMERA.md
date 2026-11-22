@@ -311,3 +311,10 @@ rank these two variants; the draw mask stays native because 2 is not a native va
 Carbin fixed-group boxes: native brake (type 4) and wheel (type 43) groups carry the union of their models' local
 boxes; the writer gave every group the car bounds. `LOCAL_GROUPS` now writes the local union read back from the
 generated Modelbins. Variant tx in installed-group-boxes.json: as 7841804a plus local group boxes.
+
+Result tx f8b81695 (local group boxes): crash at the first flyby again.
+
+`research/watch_shot_director.py`: finds the loaded Cam objects by their first key position (float32 text values
+from the decoded Camera.zip XML), the slots that point at them, and logs every slot change with the presentation
+camera; a NaN or 100/999 frame flushes the active Cam bytes. Run: scan with a stable car in the garage (it beeps
+when ready), then switch to the car under test.
