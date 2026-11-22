@@ -256,3 +256,17 @@ two position+quaternion transforms). Function codes are not decoded yet.
 
 Next: `research/dump_runtime_text.py` saves both decrypted executable sections from a running game for offline
 disassembly of the presentation camera update.
+
+Run 14:43 (tx 3c7e5ff9): crash 0x467A51F; camera NaN sampled at the third cut. The decrypted first `.text`
+(79,393,280 bytes, `capture/text/text-00001000.bin`) was saved during this run.
+
+Static reading of the dump (image base 0x140000000):
+- CPresentationCamera vtable 0x5B72CE8 has 71 slots. Slot 50 (0x39070E0) copies a 4x4 matrix to +0xE0..+0x11F
+  (+0x110 is the eye position row). Slot 37 (0x3907D30) writes a vec4 to +0x150 and two floats to +0x160/+0x164;
+  the 100/999 pair lives there (Acura also shows +0x15C = 100 in some shots, so the pair is a shot state, not a fault).
+- `RotAnimPartToTarget` is an enum of 12 parts (0x55A47A0: headlightL 0 ... driverHeadPos 11), parsed at 0x3286A57.
+  A second table at 0x55A4860 maps model names to those parts: headlightL/glassLHL/lexanLHL -> 0,
+  headlightR/glassRHL/lexanRHL -> 1, taillightL/glassLTL/lexanLTL -> 2, taillightR/glassRTL/lexanRTL -> 3,
+  steering -> 4, wheelLF..wheelRM -> 5..10. No RIP-relative reference to it was found yet.
+- Native carbins carry per-model AO swatch paths and material names (`Steering_plastic_2|steeringwheel_a`);
+  the generated carbin leaves those fields empty.
