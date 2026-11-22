@@ -284,7 +284,7 @@ def render_bucket(material, transparent):
 
 
 def mesh(draw, mat_id, bone, index_start, position_offset, vb_id, transforms, low, high, scale, center, shadow,
-         lod_fields=None):
+         lod_fields=None, role=0):
     if shadow:
         material_id, layout, bucket = -1, 1, 9
     else:
@@ -293,7 +293,7 @@ def mesh(draw, mat_id, bone, index_start, position_offset, vb_id, transforms, lo
     # Native meshes record their LOD index next to the mask (0b11 -> 0, 0b100 -> 1, ...).
     mask, low_lod = lod_fields if lod_fields else (lod_mask(draw.lod), draw.lod)
     fields = struct.pack("<5hHBBH5BH", -1, material_id, -1, -1, bone, mask,
-                         low_lod, 255, bucket, 0, 0, 0, 0, 1, 4)
+                         low_lod, 255, bucket, 0, 0, role, 0, 1, 4)
     fields += struct.pack("<6ifIii", 0, 0, index_start, 0, num_indices, num_indices // 3,
                           len(draw.positions) / (num_indices // 3), len(draw.positions), layout,
                           1 if shadow else 2)
@@ -317,8 +317,15 @@ def material_key(draw):
     return (draw.source_material, draw.target_material)
 
 
-def assemble(draws, bones, bone=1, shadows=True, fill_near=False):
-    """`fill_near` also draws the finest available LOD on the nearer LODs the source lacks."""
+# Mesh header byte 11 on native stock wheels (sampled over 79 cars): 2 on wheel_* meshes and their
+# shadows (4198), 1 on blurRim/blurLip (964). The game sizes only those meshes to the rim in the GameDB;
+# with 0 the normalised rim drew at its raw 0.14 m radius.
+WHEEL_MESH, WHEEL_BLUR = 2, 1
+
+
+def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False):
+    """`fill_near` also draws the finest available LOD on the nearer LODs the source lacks.
+    `wheel` marks the meshes of a native normalised stock wheel."""
     if not draws or not 0 <= bone < len(bones):
         raise ValueError("Modelbin needs a draw and a valid rigid bone")
     finest = min(d.lod for d in draws)
@@ -339,10 +346,11 @@ def assemble(draws, bones, bone=1, shadows=True, fill_near=False):
         vb_id = i + 1
         params = (draw, mat_id, bone, len(indices) // 4, len(positions), vb_id, transforms, low, high, scale, center)
         fields = (lod_mask(draw.lod) | near, 0) if near and draw.lod == finest else None
-        chunks.append(mesh(*params, shadow=False, lod_fields=fields))
+        role = (WHEEL_BLUR if draw.name.casefold().startswith("blur") else WHEEL_MESH) if wheel else 0
+        chunks.append(mesh(*params, shadow=False, lod_fields=fields, role=role))
         count += 1
         if shadows and not draw.transparent:
-            chunks.append(mesh(*params, shadow=True, lod_fields=fields))
+            chunks.append(mesh(*params, shadow=True, lod_fields=fields, role=role))
             count += 1
         positions.extend(pos)
         indices.extend(draw.indices.astype("<u4", copy=False).tobytes())

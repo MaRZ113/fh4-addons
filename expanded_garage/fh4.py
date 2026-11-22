@@ -113,6 +113,19 @@ def modelbin_materials(data):
             for block in geometry.maps(data)[0] if block["tag"] == "MatI"]
 
 
+GLASS_FOLDERS = ("exterior_glass/", "interior_glass/", "exterior_litglass/", "exterior_lights/")
+
+
+def breakable_glass(materials):
+    """Carbin model record float after the material lists. Native records carry 0.5 on models with
+    breakable glass (windows 575 of 577, lamps 1735 of 1773, cabin glass 549 of 561 over 131 cars) and
+    -1 elsewhere; it is never 0. A record written with 0 drew every pane and lens shattered (opaque black
+    with the dmg_glassshatter mask) and the lamps dark."""
+    glass = any(member.casefold().startswith(GLASS_FOLDERS) or "/gls_" in member.casefold()
+                for _, member in materials)
+    return 0.5 if glass else -1.0
+
+
 def material_list(materials):
     """Carbin model record list of MatI names with their colour-slot flags.
 
@@ -143,6 +156,7 @@ def carbin(identity, bones, skel, models, bounds, upgrade_groups=None, model_box
 
     def encode_model(part):
         path = virtual(alias, part.member)
+        materials = (model_materials or {}).get(part.member, ())
         # Draw mask: 5 is the native mode for exterior parts; cockpit-only models (bit 0 clear) use 38 in
         # native carbins (169 models on 35 of 197 sampled cars). 2 occurs in no native carbin.
         draw = part.draw or (38 if part.kind == "cockpit" else 5)
@@ -150,8 +164,8 @@ def carbin(identity, bones, skel, models, bounds, upgrade_groups=None, model_box
         return (struct.pack("<H", 16) + fh4_model.string(path)
                 + struct.pack("<16fH", *fh4_model.transform(part.translation,part.rotation).flat, part.lod)
                 + fh4_model.string(bone) + struct.pack("<hBI", part.bone, 0, draw)
-                + bytes(4) + material_list((model_materials or {}).get(part.member, ()))
-                + bytes(1 + 4 + 4 + 1) + MODEL_FLAGS[part.kind]
+                + bytes(4) + material_list(materials) + bytes(1)
+                + struct.pack("<f", breakable_glass(materials)) + bytes(4 + 1) + MODEL_FLAGS[part.kind]
                 + fh4_model.string("") + guid(path) + bytes(20 + 4 + 4))
 
     for part_type, parts in sorted(groups.items()):
@@ -347,7 +361,7 @@ def make_models(root, ir, identity, library):
                 # Native stock wheel: one normalised model at the convention path.
                 if path in payloads:
                     raise ValueError(f"Duplicate output model name {path}")
-                payloads[path], wheel_mask[0] = fh4_model.assemble(draws, rig, 0, shadows=True)
+                payloads[path], wheel_mask[0] = fh4_model.assemble(draws, rig, 0, shadows=True, wheel=True)
                 return
             local = re.sub(r"[^a-z0-9_]+", "_", key.lower()).strip("_")
             path = f"scene/{kind}/{local}.modelbin"

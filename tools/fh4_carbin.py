@@ -29,6 +29,7 @@ class Reader:
         self.ao_references = []
         self.drop_references = []
         self.material_flags = []
+        self.model_values = []
         self.strings = []
 
     def take(self, length):
@@ -83,7 +84,7 @@ class Reader:
             self.take(4)
             self.drop_references.append({"offset": self.pos, "id": self.number("i"), "model": path})
         if version >= 8:
-            self.take(4)
+            self.model_values.append({"model": path, "draw": draw, "value": self.number("f")})
         if version >= 9:
             for _ in range(self.count()):
                 ao_version = self.number("H")

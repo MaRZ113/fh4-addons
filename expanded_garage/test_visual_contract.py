@@ -34,8 +34,12 @@ class WheelModelTest(unittest.TestCase):
         self.assertEqual([b.name for b in bones], ["<root>", "spindle", "root"])
         self.assertAlmostEqual(receipt["spindle_x"], 0.5, places=5)
         self.assertEqual({d.name for d in normalised}, {"wheel_LODS0", "wheel_LOD1"})
-        model, _ = assemble(normalised, bones, 0)
+        model, _ = assemble(normalised, bones, 0, wheel=True)
         self.assertTrue(model.startswith(b"burG"))
+        import fh4_modelbin_geometry as raw
+        roles = {struct.unpack_from("<5hHBBH5BH", model, b["offset"])[11]
+                 for b in raw.blobs(model) if b["tag"] == "Mesh"}
+        self.assertEqual(roles, {2})
 
     def test_each_lod_is_normalised_by_its_own_lip(self):
         # FM4 LOD0 rims are stretched to the tyre radius and carry no tyre; LOD1+ keep the true rim size.
@@ -86,6 +90,16 @@ class CarbinMaterialListTest(unittest.TestCase):
             offset += 8 + size
         self.assertEqual(offset, len(data))
         self.assertEqual(entries, [("Chrome", 0), ("carpaint", 1), ("window", 128)])
+
+
+class CarbinGlassValueTest(unittest.TestCase):
+    def test_glass_models_are_breakable_and_others_are_not(self):
+        from .fh4 import breakable_glass
+        self.assertEqual(breakable_glass([("window", "exterior_glass/gls_windsheild.materialbin")]), 0.5)
+        self.assertEqual(breakable_glass([("lens", "exterior_glass/gls_clear.materialbin"),
+                                          ("chrome", "exterior_metal/chrome.materialbin")]), 0.5)
+        self.assertEqual(breakable_glass([("body", "exterior_misc/carpaint.materialbin")]), -1.0)
+        self.assertEqual(breakable_glass([]), -1.0)
 
 
 class GlassBindingTest(unittest.TestCase):
