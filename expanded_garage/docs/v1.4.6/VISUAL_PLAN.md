@@ -175,3 +175,23 @@ LOD0/1); наружные стёкла `exterior/windows/glass*` есть на �
   атрибутов). Теперь ссылка пишется.
 - Категории carbin: `RearWing` у нативных не встречается (спойлеры — `Trunk`), пустой строки тоже нет
   ни в одной нативной записи; по умолчанию теперь `Platform` (кузов) и `Dash` (салон).
+
+## visual-9: причина краша с морфами колёс (2026-11-22)
+
+Бисекция: сборка без морфов (`EXPANDED_GARAGE_WHEEL_MORPH=off`) грузится. Сверка с
+`ForzaTechStudio-Main/ForzaTools.Bundles` (`MeshBlob.cs`, `MorphBufferBlob.cs`) и нативным
+`ACU_RSXTypeS_02_WheelLF.modelbin`:
+
+- поля меша: байт 9 `BucketOrder`, 10 `SkinningElementsCount`, 11 `MorphTargetCount` (наш «role»),
+  12 `IsMorphDamage`, 13 `Is32BitIndices`; поле «bucket» — это `BucketFlags`
+  (0x01 opaque, 0x04 transparent, 0x08 shadow, 0x10 not-shadow, 0x20 alpha-to-coverage: 17, 28, 60, 9);
+- id блоков `MBuf` плотные (0..n-1) и равны id парного `VerB`; у нас были 1..27 при 27 буферах;
+- счётчик буферов `Modl` включает IndB + VerB + MBuf (нативное колесо 1 + 6 + 5 = 12); у нас 29 вместо 56.
+
+Исправлено оба пункта (VerB колёс нумеруются с 0). Ещё отличия, оставленные на потом: общий box
+квантования с `scale.w = 0`, у blur-мешей attribute stream 12 байт, LOD max (n, n) вместо (n, 255).
+
+FM4 (через `ForzaHorizon1-ReImagined/tools/fm4_carbin.py`): колёсный carbin (root 3) несёт морфы по 16
+байт на вершину = две half4-цели (пары половинок в слове переставлены, xyzw). На LOD0 (обод без шины)
+цель 0 — радиус ×1.022 (0.324 м), цель 1 — ×0.612 (0.194 м); на LOD1+ обе цели совпадают с позицией.
+Заголовок root 3 (0x44 байта) хранит 0.324 / 0.2365 / 0.324 / 0.317 — пределы радиуса обода и шины.

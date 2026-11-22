@@ -49,6 +49,13 @@ class WheelModelTest(unittest.TestCase):
         np.testing.assert_allclose(first[:, 5:7], lip[:, 1:3] * 1.318, atol=2e-3)
         self.assertIn(b"weight[1]", model)
         ids = {b["id"] for b in morphs}
+        # Native: MBuf ids are dense from 0 and each pairs with the attribute VerB of the same id.
+        self.assertEqual(ids, set(range(len(morphs))))
+        self.assertLessEqual(ids, {b["id"] for b in raw.blobs(model) if b["tag"] == "VerB"})
+        # The Modl buffer count covers IndB, every VerB and every MBuf.
+        modl = next(b for b in raw.blobs(model) if b["tag"] == "Modl")
+        buffers = sum(b["tag"] in ("IndB", "VerB", "MBuf") for b in raw.blobs(model))
+        self.assertEqual(struct.unpack_from("<H", model, modl["offset"] + 2)[0], buffers)
         for b in raw.blobs(model):
             if b["tag"] == "Mesh":
                 _, streams = struct.unpack_from("<ii", model, b["offset"] + 55)

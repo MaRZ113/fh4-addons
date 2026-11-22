@@ -408,7 +408,9 @@ def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False):
     for i, draw in enumerate(draws):
         pos, attr, transforms, low, high, scale, center = pack_streams(draw)
         mat_id = ids[material_key(draw)]
-        vb_id = i + 1
+        # Native MBuf ids are dense (0..n-1) and equal to the id of the attribute VerB they pair
+        # with; the loader indexes them by id, so morphing models number their VerBs from 0.
+        vb_id = i if wheel else i + 1
         params = (draw, mat_id, bone, len(indices) // 4, len(positions), vb_id, transforms, low, high, scale, center)
         fields = (lod_mask(draw.lod) | near, 0) if near and draw.lod == finest else None
         role = (WHEEL_BLUR if draw.name.casefold().startswith("blur") else WHEEL_MESH) if wheel else 0
@@ -427,7 +429,9 @@ def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False):
         maxima.append(high)
     chunks += [buffer("IndB", 0, bytes(indices), 4, 42), buffer("VerB", -1, bytes(positions), 8, 13)]
     chunks += bindings
-    chunks.append(stats(count, len(draws)+2, 2, len(materials), mask,
+    # The Modl buffer count covers every IndB, VerB and MBuf (native wheel: 1 + 6 + 5 = 12).
+    morph_buffers = len(draws) if wheel else 0
+    chunks.append(stats(count, len(draws) + 2 + morph_buffers, 2, len(materials), mask,
                         np.min(minima, axis=0), np.max(maxima, axis=0)))
     return bundle(chunks), mask
 
