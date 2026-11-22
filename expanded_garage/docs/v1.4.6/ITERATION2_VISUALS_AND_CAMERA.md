@@ -281,3 +281,15 @@ builds since d0ff43de used a zero box (`EXPANDED_GARAGE_SKELETON_BOX=zero`). A z
 at the origin, which a box-normalised camera frame would divide by. The Fatal Error 0x333A9AC of d0ff43de came
 with two changes at once (sentinel box and merged carpaint MatI). Variant tx f368e7cc: native sentinel box,
 source paint MatI, carbin wheels, everything else as 3c7e5ff9.
+
+Result tx f368e7cc (sentinel skeleton box): crash 0x46827F4 five seconds into the showroom, camera eye at
+(1.4e30, 2.6e26, 2.5e23). With the zero box the eye turned NaN, with the sentinel box it goes to "infinity": the
+presentation frames the car by a bounds union that receives nothing but the skeleton box. Native union = sentinel
+plus the part models, so the Suzuki models do not enter it.
+
+Carbin model record v11 block (18 bytes after the v10 byte): native modes over 785 carbins are
+`010101000000010000000100000001000000` for exterior parts (48% of fixed type-2 draw-5 models, 74% of upgrade
+parts), `010100…00` for interior models (65%), `000000000000010000000100000001000000` for _library brakes and
+`010100000000010000000100000001000000` for _library wheels. The writer emitted zeros for every model.
+`MODEL_FLAGS` in fh4.py now writes the class mode. Variant tx 8fb9d41f: model flags, native sentinel skeleton box,
+source paint MatI, carbin wheels.

@@ -30,6 +30,16 @@ ROOT = Path(__file__).resolve().parents[1]
 TARGET_BUILD = "FH4 Steam 1.478.564.0"
 PROXY_LOD = "scene/proxylod.modelbin"
 PART_TYPES = {"exterior": 2, "cockpit": 2, "brake": 4, "wheel": 43}
+# Carbin model record v11 block (18 bytes after the v10 byte): the roster mode per model class over
+# 785 native carbins (exterior part type 2 draw 5: 48%, upgrade exterior parts 74%; interior 65%;
+# _library brakes 38%; _library wheels 50%). An all-zero block (no native class uses it for exterior)
+# left every Suzuki model out of the car bounds that box-space presentation cameras frame.
+MODEL_FLAGS = {
+    "exterior": bytes.fromhex("010101000000010000000100000001000000"),
+    "cockpit": bytes.fromhex("010100000000000000000000000000000000"),
+    "brake": bytes.fromhex("000000000000010000000100000001000000"),
+    "wheel": bytes.fromhex("010100000000010000000100000001000000"),
+}
 KNOWN_LIMITS = {
     "geometry": "Rigid source meshes with typed stock/variant IDs. Visibility and LOD presentation need runtime qualification.",
     "materials": "Uses generic FH4 library materials. Per-car XDS-to-swatch textures and shader parameters are pending.",
@@ -87,7 +97,7 @@ def carbin(identity, bones, skel, models, bounds, upgrade_groups=None):
         return (struct.pack("<H", 16) + fh4_model.string(path)
                 + struct.pack("<16fH", *fh4_model.transform(part.translation,part.rotation).flat, part.lod)
                 + fh4_model.string(bone) + struct.pack("<hBI", part.bone, 0, draw)
-                + bytes(4 + 4 + 1 + 4 + 4 + 1 + 18)
+                + bytes(4 + 4 + 1 + 4 + 4 + 1) + MODEL_FLAGS[part.kind]
                 + fh4_model.string("") + guid(path) + bytes(20 + 4 + 4))
 
     for part_type, parts in sorted(groups.items()):
