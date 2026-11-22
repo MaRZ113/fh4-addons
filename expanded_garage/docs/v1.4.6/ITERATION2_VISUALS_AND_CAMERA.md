@@ -333,3 +333,8 @@ headlightR, bumperR. A space that fails to resolve leaves an identity transform:
 Native Locators.xml writes bone names raw: `BoneName="<root>"` in 3,189 of 3,189 sampled attachments, no XML
 entity anywhere. ElementTree wrote `BoneName="&lt;root&gt;"`, which the game reads literally, so every Suzuki
 locator named a bone that does not exist. `locator_xml` now emits the native raw text; the validator parses it.
+
+Result tx e57f4a43: owner reports no crash in the garage. Capture: 40 shot cuts, no camera NaN, no 100/999 frame,
+no Application error since the fix. The raw `<root>` attachment resolves the garage flyby crash
+(0x467A51F / 0x46827F4). The model flags, sentinel skeleton box, native locator GUIDs, cockpit draw mask and
+local group boxes stay: each matches the native files.
