@@ -1,6 +1,9 @@
 """Prepare source-owned hardpoints and native locator records."""
 
 from dataclasses import dataclass
+from functools import lru_cache
+from importlib.resources import files
+import json
 from math import isfinite
 import struct
 import uuid
@@ -40,6 +43,23 @@ def hardpoints(root, ir):
     return result
 
 
+@lru_cache(maxsize=1)
+def canonical_locator_guids():
+    """Native GUID per locator name (research/extract_locator_guids.py, 785 cars).
+
+    The GUID, not the name, identifies a locator: one GUID covers 90% or more of the
+    native cars carrying each of these names, and presentation shots that target a part
+    (HomeSpaceCams.xml RotAnimPartToTarget="headlightL") need the native identity.
+    """
+    record = json.loads(files(__package__).joinpath("fh4-locator-guids-v1.json").read_text(encoding="utf-8"))
+    return {name: entry["guid"] for name, entry in record["locators"].items()}
+
+
+def locator_guid(alias, name):
+    return canonical_locator_guids().get(name) or str(
+        uuid.uuid5(uuid.NAMESPACE_URL, f"urn:fh4-expanded-garage:locator:{alias.casefold()}:{name}"))
+
+
 def locator_xml(alias, points, extra=()):
     """Authored hardpoints first, then transferred donor locators (name, matrix, upgrade)."""
     root = ET.Element("CarLocators", Version="2")
@@ -53,7 +73,7 @@ def locator_xml(alias, points, extra=()):
     entries += [(item["name"], item["matrix"], item["upgrade"]) for item in extra]
     for name, rest, upgrade in entries:
         locator = ET.SubElement(root, "Locator", Version="3")
-        guid = str(uuid.uuid5(uuid.NAMESPACE_URL, f"urn:fh4-expanded-garage:locator:{alias.casefold()}:{name}"))
+        guid = locator_guid(alias, name)
         for tag, value in (("GUID", guid), ("SrcGUID", guid), ("Name", name)):
             ET.SubElement(locator, tag, value=value)
         ET.SubElement(locator, "SceneTransform", {f"value._{i//4+1}{i%4+1}": f"{v:.9g}"

@@ -217,3 +217,20 @@
 
 Наблюдатель теперь пишет позу и скорость машины в фокусе (`CarPresentation+0xA0`, `+0x280`).
 Установлено как транзакция `4aa4d5f996c943ad9d51f430f495ebf3`.
+
+## Locator identity (tx 3c7e5ff99ee84f2d8e968172ddcc1281)
+
+Envelope build (tx 4aa4d5f9): showroom flyby still crashes at 0x467A51F. The owner sees the camera leave the
+showroom (grey frame) for a moment at a cut, return, and the game crashes on a following cut. The capture shows
+the cut to the 100/999 shot turning the camera matrix NaN in one step, with the focused car pose finite.
+
+`Camera.zip` (decrypted with ForzaCryptoTool, method 22) holds the shot lists. `HomeSpaceCams.xml` and
+`ColorSelectCams.xml` aim three shots at car parts (`RotAnimType="TargetPart"`, `RotAnimPartToTarget="headlightL"`,
+`"taillightR"`); `CarRelativeCams.xml` and `carrevealcams.xml` target wheels. A part the camera cannot resolve gives
+a zero aim vector, which normalises to NaN.
+
+Native Locators.xml files use one GUID per locator name across the roster (785 cars: `carLocator_headlightL` is
+`533329f7-...` on 398 of 400 sampled, `root` `55f9a81d-...`). The builder generated a GUID per car for every locator,
+so no Suzuki locator had its native identity. `research/extract_locator_guids.py` writes
+`fh4-locator-guids-v1.json` (57 names where one GUID covers at least 90% of carrying cars, 20 cars minimum);
+`locator_xml` now uses it and keeps the generated GUID for other names.
