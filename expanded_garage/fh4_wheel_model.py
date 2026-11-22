@@ -7,13 +7,18 @@ the rim size.
 Measured on 13", 17", 18" and 22" native wheels the geometry is identical in
 shape: rim only (the tyre is generated), lip radius 0.14, outer face at X=0
 and inner barrel edge at X=1, with a `spindle` bone at the hub mounting plane.
+
+X is metric over the face: spokes, nuts and the lip front lie within 0.1 m of the outer face
+(ACU_RSXTypeS_02: spokes to 0.036 m, spindle at 0.092 m; FOR_FiestaST_14: spindle 0.074 m). Only
+the barrel's inner edge sits at X=1, and the width morph pulls it back towards X=0.1. Stretching the
+whole source width onto 0..1 deepened the dish about fivefold.
 """
 
 from dataclasses import replace
 
 import numpy as np
 
-from .fh4_model import Bone
+from .fh4_model import WHEEL_FACE_DEPTH, Bone
 
 RIM_RADIUS = 0.14
 TYRE_MARGIN = 1.02
@@ -84,20 +89,29 @@ def normalise(draws):
     width = inner - outer
     if width <= 1e-3:
         raise ValueError("Degenerate rim width")
-    shift = np.array([-outer / width, 0.0, 0.0])
+    # Face zone (within WHEEL_FACE_DEPTH of the outer face) keeps metres; the barrel beyond it is
+    # stretched linearly so the inner edge lands on X=1 (barrel_scale > 1 when the rim is narrower than 1 m).
+    barrel_scale = (1 - WHEEL_FACE_DEPTH) / max(width - WHEEL_FACE_DEPTH, 1e-6)
     result = []
     for draw in kept:
-        scale = np.array([1 / width, RIM_RADIUS / radius[draw.lod], RIM_RADIUS / radius[draw.lod]])
-        positions = (draw.positions * scale + shift).astype(np.float32)
+        depth = draw.positions[:, 0].astype(np.float64) - outer
+        barrel = depth > WHEEL_FACE_DEPTH
+        x = np.where(barrel, WHEEL_FACE_DEPTH + (depth - WHEEL_FACE_DEPTH) * barrel_scale, depth)
+        radial = RIM_RADIUS / radius[draw.lod]
+        positions = np.column_stack([x, draw.positions[:, 1:3] * radial]).astype(np.float32)
+        scale = np.column_stack([np.where(barrel, barrel_scale, 1.0), np.full((len(x), 2), radial)])
         normals = draw.normals / scale
         normals /= np.linalg.norm(normals, axis=1, keepdims=True)
         result.append(replace(draw, name=mesh_name(draw), positions=positions, normals=normals.astype(np.float32)))
-    spindle = float(-outer / width)
+    spindle = float(-outer)
+    if spindle > WHEEL_FACE_DEPTH:
+        spindle = WHEEL_FACE_DEPTH + (spindle - WHEEL_FACE_DEPTH) * barrel_scale
     bones = [Bone("<root>", -1), Bone("spindle", 0, (spindle, 0.0, 0.0)), Bone("root", 0)]
     receipt = {"rim_radius_m": min(radius.values()), "lod_rim_radius_m": {str(k): v for k, v in sorted(radius.items())},
                "rim_width_m": width, "spindle_x": spindle, "outer_face_m": outer,
                "removed_tyre_triangles": int(sum(len(d.indices) for d in draws) - sum(len(d.indices) for d in kept)),
-               "frame": "native normalised wheel: rim lip radius 0.14 on every LOD, outer face X=0, inner edge X=1"}
+               "barrel_scale": barrel_scale,
+               "frame": "native normalised wheel: rim lip radius 0.14 on every LOD, outer face X=0 (metric to 0.1 m), inner edge X=1"}
     return result, bones, receipt
 
 

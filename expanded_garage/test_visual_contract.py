@@ -32,7 +32,10 @@ class WheelModelTest(unittest.TestCase):
         self.assertAlmostEqual(float(points[:, 0].max()), 1.0, places=5)
         self.assertLessEqual(float(np.hypot(points[:, 1], points[:, 2]).max()), 0.14 + 1e-5)
         self.assertEqual([b.name for b in bones], ["<root>", "spindle", "root"])
-        self.assertAlmostEqual(receipt["spindle_x"], 0.5, places=5)
+        # The face keeps metres (hub plane 0.1 m behind the outer face); only the barrel stretches to X=1.
+        self.assertAlmostEqual(receipt["spindle_x"], 0.1, places=5)
+        face = np.concatenate([d.positions[:, 0] for d in normalised if d.lod == 1])
+        self.assertAlmostEqual(float(np.sort(np.unique(face.round(4)))[0]), 0.0, places=4)
         self.assertEqual({d.name for d in normalised}, {"wheel_LODS0", "wheel_LOD1"})
         model, _ = assemble(normalised, bones, 0, wheel=True)
         self.assertTrue(model.startswith(b"burG"))
@@ -61,6 +64,17 @@ class WheelModelTest(unittest.TestCase):
                 _, streams = struct.unpack_from("<ii", model, b["offset"] + 55)
                 morph, = struct.unpack_from("<i", model, b["offset"] + 63 + 16 * streams)
                 self.assertIn(morph, ids, b["name"])
+
+    def test_face_depth_stays_metric(self):
+        # A dish 0.04 m deep must stay 0.04 m deep; the barrel behind 0.1 m stretches to X=1.
+        draws = [ring(0.236, -0.10, -0.10, "outer_rim", 1), ring(0.05, -0.06, -0.06, "rim", 1),
+                 ring(0.236, 0.10, 0.10, "inner_rim", 1), ring(0.317, -0.10, 0.10, "tire", 1)]
+        normalised, _, receipt = fh4_wheel_model.normalise(draws)
+        x = {d.source_material: float(d.positions[:, 0].mean()) for d in normalised}
+        self.assertAlmostEqual(x["outer_rim"], 0.0, places=4)
+        self.assertAlmostEqual(x["rim"], 0.04, places=4)
+        self.assertAlmostEqual(x["inner_rim"], 1.0, places=4)
+        self.assertAlmostEqual(receipt["barrel_scale"], 9.0, places=4)
 
     def test_each_lod_is_normalised_by_its_own_lip(self):
         # FM4 LOD0 rims are stretched to the tyre radius and carry no tyre; LOD1+ keep the true rim size.
