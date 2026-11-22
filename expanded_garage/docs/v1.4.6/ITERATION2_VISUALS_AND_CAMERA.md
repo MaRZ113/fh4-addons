@@ -303,3 +303,7 @@ NaN rotation at step 1303 (pitch -89.9). +0x15C is the vec4 w from the slot-37 s
 
 Draw masks: native carbins never use 2 (197 sampled cars); cockpit-only models (bit 0 clear) use 38 most often
 (169 models, 35 cars). Variant tx 7841804a: cockpit draw 38, otherwise as 8fb9d41f.
+
+Result tx 7841804a (cockpit draw 38): NaN at the first cut (step 615, 4.5 s after the manager was found), crash
+0x467A51F seven seconds later. Run-to-run variance is high (4 flybys on 8fb9d41f, 1 here), so single runs cannot
+rank these two variants; the draw mask stays native because 2 is not a native value.
