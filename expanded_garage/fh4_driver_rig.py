@@ -38,6 +38,16 @@ def _world(bones):
     return world
 
 
+def steering_spindle(bones):
+    names = {bone.name: i for i, bone in enumerate(bones)}
+    return _world(bones)[names[STEERING]][3, :3]
+
+
+# Locators that frame the driver's head: placed from the car's steering spindle with the donor's offsets,
+# like anchor_butt, so the cockpit camera sits where the avatar's head is.
+DRIVER_FRAMED = ("carLocator_seatCamLF", "carLocator_seatCamRF")
+
+
 def add_driver_bones(bones, driver_side, rig=None):
     """Append the donor driver anchors to `bones` in place; existing indices stay stable."""
     rig = rig or load_rig()
@@ -143,21 +153,28 @@ def fit_axes(points, locators):
     return coefficients, residual
 
 
-def transferred_locators(points, authored_names, driver_side, rig=None):
+def transferred_locators(points, authored_names, driver_side, rig=None, spindle=None):
     rig = rig or load_rig()
     locators = donor_locators(rig, driver_side)
     coefficients, residual = fit_axes(points, locators)
+    donor_spindle = np.array(rig["steering_spindle_m"]) * ((-1.0 if driver_side != rig["driver_side"] else 1.0), 1, 1)
     result = []
+    framed = []
     for loc in locators:
         if loc["name"] in authored_names:
             continue
         matrix = list(loc["matrix"])
-        for axis, (a, b) in enumerate(coefficients):
-            matrix[12 + axis] = a * matrix[12 + axis] + b
+        if spindle is not None and loc["name"] in DRIVER_FRAMED:
+            matrix[12:15] = (np.asarray(spindle) + np.array(matrix[12:15]) - donor_spindle).tolist()
+            framed.append(loc["name"])
+        else:
+            for axis, (a, b) in enumerate(coefficients):
+                matrix[12 + axis] = a * matrix[12 + axis] + b
         result.append({"name": safe_name(loc["name"]), "matrix": matrix, "upgrade": loc["upgrade"]})
     receipt = {"donor": rig["donor"], "mirrored": driver_side != rig["driver_side"],
                "fit": {"XYZ"[i]: {"scale": a, "offset_m": b} for i, (a, b) in enumerate(coefficients)},
                "max_hardpoint_residual_m": residual, "locators": [r["name"] for r in result],
+               "driver_framed": framed,
                "bones": "donor door and accessory bones are absent; every transferred locator attaches to <root>"}
     return result, receipt
 

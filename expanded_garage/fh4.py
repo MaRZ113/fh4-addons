@@ -64,6 +64,7 @@ class Model:
     translation: tuple
     component: str = ""
     rotation: tuple = (0.,0.,0.,1.)
+    draw: int = 0
 
 
 def guid(name):
@@ -115,7 +116,7 @@ def carbin(identity, bones, skel, models, bounds, upgrade_groups=None, model_box
         path = virtual(alias, part.member)
         # Draw mask: 5 is the native mode for exterior parts; cockpit-only models (bit 0 clear) use 38 in
         # native carbins (169 models on 35 of 197 sampled cars). 2 occurs in no native carbin.
-        draw = 38 if part.kind == "cockpit" else 5
+        draw = part.draw or (38 if part.kind == "cockpit" else 5)
         bone = bones[part.bone].name
         return (struct.pack("<H", 16) + fh4_model.string(path)
                 + struct.pack("<16fH", *fh4_model.transform(part.translation,part.rotation).flat, part.lod)
@@ -271,6 +272,25 @@ def make_models(root, ir, identity, library):
     with ZipFile(library) as archive:
         available = {name.lower(): name for name in archive.namelist()}
 
+        wheel_mask = [0]
+        exterior_finest = {k.casefold(): min(d.lod for d in v) for k, v in grouped["exterior"].items()}
+        cockpit_keys = {k.casefold() for k in grouped["cockpit"]}
+
+        def view_split(kind, key):
+            """Native split of near and far geometry between the exterior and cockpit views.
+
+            FM4 leaves LOD0 of interior, seats, mirrors, side and front glass and hoods to the cockpit set.
+            Native carbins draw such parts with one model in both views (draw 39, LOD0/1: 3,697 models), and
+            give exterior glass every LOD while the inner glass stays cockpit-only (glass*int, draw 38).
+            """
+            name = key.casefold()
+            glass = name.startswith("glass")
+            if kind == "exterior" and glass and exterior_finest.get(name, 0) > 0 and name in cockpit_keys:
+                return "fill"
+            if kind == "cockpit" and not glass and exterior_finest.get(name, 99) > 0:
+                return "both_views"
+            return None
+
         def emit(kind, key, draws, bone=0, translation=(0.0, 0.0, 0.0), attachment=None, component=None,
                  path=None, rig=None):
             rotation = (0.,0.,0.,1.)
@@ -294,10 +314,10 @@ def make_models(root, ir, identity, library):
                     item = archive.getinfo(available[material])
                     references[material] = {"member": item.filename, "crc32": f"{item.CRC:08x}"}
             if rig is not None:
-                # Convention-loaded model outside the Carbin (native stock wheel).
+                # Native stock wheel: one normalised model at the convention path.
                 if path in payloads:
                     raise ValueError(f"Duplicate output model name {path}")
-                payloads[path], _ = fh4_model.assemble(draws, rig, 0, shadows=True)
+                payloads[path], wheel_mask[0] = fh4_model.assemble(draws, rig, 0, shadows=True)
                 return
             local = re.sub(r"[^a-z0-9_]+", "_", key.lower()).strip("_")
             path = f"scene/{kind}/{local}.modelbin"
@@ -307,8 +327,11 @@ def make_models(root, ir, identity, library):
             local_rig = kind in ("wheel", "brake") or attachment is not None
             component_rig = bones[:2] if local_rig else bones
             rigid_bone = 0 if local_rig else 1
-            payloads[path], mask = fh4_model.assemble(draws, component_rig, rigid_bone, shadows=kind != "cockpit")
-            models.append(Model(path, kind, mask, bone, translation, component or key.casefold(),rotation))
+            near = view_split(kind, key)
+            payloads[path], mask = fh4_model.assemble(draws, component_rig, rigid_bone, shadows=kind != "cockpit",
+                                                      fill_near=near == "fill")
+            models.append(Model(path, kind, mask, bone, translation, component or key.casefold(), rotation,
+                                draw=39 if near == "both_views" else 0))
 
         for kind in ("exterior", "cockpit"):
             for key, draws in sorted(grouped[kind].items()):
@@ -338,6 +361,21 @@ def make_models(root, ir, identity, library):
             normalised, wheel_bones, wheel_model = fh4_wheel_model.normalise(wheel)
             wheel_model["member"] = fh4_wheel_model.wheel_path(identity["media_name"])
             emit("wheel", "wheelLF", normalised, path=wheel_model["member"], rig=wheel_bones)
+            # Native carbins reference that one model four times in part group 43 (785 of 785 sampled):
+            # bone spindleXX, origin at the outer rim face, right side turned 180 degrees about Y.
+            # Across 32 sampled cars the entry X sits within a few cm of ModelFrontTrackOuter / 2.
+            outer = -wheel_model["outer_face_m"]
+            entries = []
+            for corner, binding in sorted(corners.items()):
+                right = corner.startswith("R")
+                hub = np.asarray(binding["origin_m"], dtype=float)
+                point = (hub[0] + (outer if right else -outer), hub[1], hub[2])
+                rotation = (0.0, 1.0, 0.0, 0.0) if right else (0.0, 0.0, 0.0, 1.0)
+                models.append(Model(wheel_model["member"], "wheel", wheel_mask[0], binding["spindle"],
+                                    tuple(map(float, point)), f"wheel{corner}".casefold(), rotation))
+                entries.append({"corner": corner, "bone": bones[binding["spindle"]].name,
+                                "origin_m": [float(v) for v in point]})
+            wheel_model["carbin_entries"] = entries
         for key, draws in sorted(grouped["brake"].items()):
             corner = key[-2:].upper()
             if corner in corners:
@@ -358,7 +396,8 @@ def make_models(root, ir, identity, library):
     payloads[PROXY_LOD] = fh4_model.proxy_model(proxy_draws)
     if points:
         authored = {"carLocator_" + point.name for point in points.values()}
-        extra, driver_rig["locators"] = fh4_driver_rig.transferred_locators(points, authored, driver_side)
+        extra, driver_rig["locators"] = fh4_driver_rig.transferred_locators(
+            points, authored, driver_side, spindle=fh4_driver_rig.steering_spindle(bones))
         payloads["Locators.xml"] = systems.locator_xml(aliases, points, extra)
         locator_names = authored | {item["name"] for item in extra}
         avpins, driver_rig["autovista"] = fh4_driver_rig.autovista(points, locator_names, driver_side)
@@ -499,6 +538,8 @@ def validate_zip(blob, name, car_id, *, trial=None):
             if not path.startswith(prefix):
                 raise ValueError(f"Nonlocal Carbin binding {path}")
             key = path[len(prefix):].replace("\\", "/")
+            if key in used and key == fh4_wheel_model.wheel_path(aliases):
+                continue   # the native stock wheel is referenced once per corner
             if key in used:
                 raise ValueError(f"Duplicate Carbin model {key}")
             used.add(key)
@@ -560,6 +601,8 @@ def validate_zip(blob, name, car_id, *, trial=None):
                 local = fh4_model.transform(record["local_m"],record.get("local_rotation",(0.,0.,0.,1.)))
                 world.append(local @ world[record["parent"]] if record["parent"]>=0 else local)
             for path, (bone, label) in bindings.items():
+                if path == virtual(aliases, fh4_wheel_model.wheel_path(aliases)):
+                    continue   # native wheel entries sit at the outer rim face, not at the spindle
                 if label.startswith(("hub","spindle","boneSteeringWheel","boneFuel","boneTach","boneSpeed")) and not (
                         np.allclose(placements[path],world[bone],rtol=0,atol=2e-6)):
                     raise ValueError(f"Component placement disagrees with its Granny bind point: {path}")

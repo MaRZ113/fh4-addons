@@ -1,8 +1,9 @@
 """Native FH4 stock wheel model: one normalised LF rim found by naming convention.
 
 Every native car ships scene/_library/Scene/Wheels/<MediaName>_WheelLF.modelbin.
-The Carbin does not reference it; the runtime loads it through the stock
-List_Wheels row, mirrors it for the right side and scales it to the rim size.
+The Carbin references it four times in part group 43 (one entry per corner on the
+spindle bone, the right side turned 180 degrees about Y); the runtime scales it to
+the rim size.
 Measured on 13", 17", 18" and 22" native wheels the geometry is identical in
 shape: rim only (the tyre is generated), lip radius 0.14, outer face at X=0
 and inner barrel edge at X=1, with a `spindle` bone at the hub mounting plane.
@@ -70,7 +71,7 @@ def normalise(draws):
         result.append(replace(draw, name=name, positions=positions, normals=normals.astype(np.float32)))
     spindle = float(-outer / width)
     bones = [Bone("<root>", -1), Bone("spindle", 0, (spindle, 0.0, 0.0)), Bone("root", 0)]
-    receipt = {"rim_radius_m": radius, "rim_width_m": width, "spindle_x": spindle,
+    receipt = {"rim_radius_m": radius, "rim_width_m": width, "spindle_x": spindle, "outer_face_m": outer,
                "removed_tyre_triangles": int(sum(len(d.indices) for d in draws) - sum(len(d.indices) for d in kept)),
                "frame": "native normalised wheel: rim lip radius 0.14, outer face X=0, inner edge X=1"}
     return result, bones, receipt

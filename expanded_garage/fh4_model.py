@@ -285,9 +285,14 @@ def material_key(draw):
     return (draw.source_material, draw.target_material)
 
 
-def assemble(draws, bones, bone=1, shadows=True):
+def assemble(draws, bones, bone=1, shadows=True, fill_near=False):
+    """`fill_near` also draws the finest available LOD on the nearer LODs the source lacks."""
     if not draws or not 0 <= bone < len(bones):
         raise ValueError("Modelbin needs a draw and a valid rigid bone")
+    finest = min(d.lod for d in draws)
+    near = 0
+    for level in range(finest if fill_near else 0):
+        near |= lod_mask(level)
     chunks = [skeleton(bones), Chunk("Mrph", (0, 0), struct.pack("<H", 1) + string("weight[0]"))]
     materials = sorted({material_key(d) for d in draws})
     ids = {entry: i for i, entry in enumerate(materials)}
@@ -301,15 +306,16 @@ def assemble(draws, bones, bone=1, shadows=True):
         mat_id = ids[material_key(draw)]
         vb_id = i + 1
         params = (draw, mat_id, bone, len(indices) // 4, len(positions), vb_id, transforms, low, high, scale, center)
-        chunks.append(mesh(*params, shadow=False))
+        fields = (lod_mask(draw.lod) | near, 0) if near and draw.lod == finest else None
+        chunks.append(mesh(*params, shadow=False, lod_fields=fields))
         count += 1
         if shadows and not draw.transparent:
-            chunks.append(mesh(*params, shadow=True))
+            chunks.append(mesh(*params, shadow=True, lod_fields=fields))
             count += 1
         positions.extend(pos)
         indices.extend(draw.indices.astype("<u4", copy=False).tobytes())
         bindings.append(buffer("VerB", vb_id, attr, 36, 37))
-        mask |= lod_mask(draw.lod)
+        mask |= lod_mask(draw.lod) | (near if draw.lod == finest else 0)
         minima.append(low)
         maxima.append(high)
     chunks += [buffer("IndB", 0, bytes(indices), 4, 42), buffer("VerB", -1, bytes(positions), 8, 13)]
