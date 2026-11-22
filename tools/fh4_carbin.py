@@ -28,6 +28,7 @@ class Reader:
         self.model_versions = Counter()
         self.ao_references = []
         self.drop_references = []
+        self.material_flags = []
         self.strings = []
 
     def take(self, length):
@@ -73,9 +74,11 @@ class Reader:
                 self.string()
                 self.take(self.count())
         if version >= 3:
+            # Per-MatI colour-slot flags (carpaint 1, livery 2, window glass 128, ...).
             for _ in range(self.count()):
-                self.string()
-                self.take(4)
+                name = self.string()
+                self.material_flags.append({"model": path, "material": name,
+                                            "flags": struct.unpack("<I", self.take(4))[0]})
         if version >= 6 and self.number("B"):
             self.take(4)
             self.drop_references.append({"offset": self.pos, "id": self.number("i"), "model": path})

@@ -37,6 +37,22 @@ class WheelModelTest(unittest.TestCase):
         model, _ = assemble(normalised, bones, 0)
         self.assertTrue(model.startswith(b"burG"))
 
+    def test_each_lod_is_normalised_by_its_own_lip(self):
+        # FM4 LOD0 rims are stretched to the tyre radius and carry no tyre; LOD1+ keep the true rim size.
+        draws = [ring(0.317, -0.10, 0.10, "outer_rim", 0), ring(0.037, -0.08, -0.07, "wheel_emblem", 0),
+                 ring(0.236, -0.10, 0.10, "inner_rim", 1), ring(0.028, -0.08, -0.07, "wheel_emblem", 1),
+                 ring(0.317, -0.10, 0.10, "tire", 1)]
+        normalised, _, receipt = fh4_wheel_model.normalise(draws)
+        emblem = {d.lod: float(np.hypot(d.positions[:, 1], d.positions[:, 2]).max())
+                  for d in normalised if d.source_material == "wheel_emblem"}
+        lip = {d.lod: float(np.hypot(d.positions[:, 1], d.positions[:, 2]).max())
+               for d in normalised if d.source_material != "wheel_emblem"}
+        self.assertAlmostEqual(lip[0], 0.14, places=5)
+        self.assertAlmostEqual(lip[1], 0.14, places=5)
+        self.assertAlmostEqual(emblem[0], emblem[1], delta=0.001)
+        self.assertAlmostEqual(receipt["lod_rim_radius_m"]["0"], 0.317, places=5)
+        self.assertAlmostEqual(receipt["lod_rim_radius_m"]["1"], 0.236, places=5)
+
     def test_skeleton_box_is_the_native_empty_sentinel(self):
         data = rig_model([fh4_wheel_model.Bone("<root>", -1)])
         self.assertIn(struct.pack("<6f", *(FLT_MAX,) * 3, *(-FLT_MAX,) * 3), data)
@@ -52,6 +68,24 @@ class PaintTest(unittest.TestCase):
         self.assertEqual([m for _, m in parsed], [r["material"] for r in receipt])
         self.assertAlmostEqual(parsed[0][0][0], 0xA8 / 255, places=6)
         self.assertEqual(fh4_paint.finish(receipt[1]["material"]), "metallic")
+
+
+class CarbinMaterialListTest(unittest.TestCase):
+    def test_colour_slot_flags_follow_the_roster(self):
+        from .fh4 import material_list
+        data = material_list([("window", "exterior_glass/gls_window.materialbin"),
+                              ("carpaint", "exterior_misc/carpaint.materialbin"),
+                              ("Chrome", "exterior_metal/chrome.materialbin")])
+        count, = struct.unpack_from("<I", data)
+        entries, offset = [], 4
+        for _ in range(count):
+            size, = struct.unpack_from("<I", data, offset)
+            name = data[offset + 4:offset + 4 + size].decode()
+            flags, = struct.unpack_from("<I", data, offset + 4 + size)
+            entries.append((name, flags))
+            offset += 8 + size
+        self.assertEqual(offset, len(data))
+        self.assertEqual(entries, [("Chrome", 0), ("carpaint", 1), ("window", 128)])
 
 
 class GlassBindingTest(unittest.TestCase):

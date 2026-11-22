@@ -27,17 +27,32 @@ def radii(positions):
     return np.hypot(positions[:, 1], positions[:, 2])
 
 
-def rim_radius(draws):
-    """Lip radius from the LODs where the source separates the tyre; else the 98th percentile cut."""
-    separated = [d for d in draws if d.lod >= 1 and d.source_material.casefold() not in ("tire", "tyre")]
-    if separated and any(d.source_material.casefold() in ("tire", "tyre") for d in draws):
-        return float(max(radii(d.positions).max() for d in separated))
-    everything = np.concatenate([radii(d.positions) for d in draws])
-    raise ValueError(f"Cannot separate the rim from the tyre (max radius {everything.max():.3f} m)")
+def is_tyre(draw):
+    return draw.source_material.casefold() in ("tire", "tyre")
+
+
+def rim_radii(draws):
+    """Lip radius per LOD: the outermost non-tyre vertex of that LOD.
+
+    FM4 wheels are not one scale across LODs. LOD1-5 carry the rim at its true size with the tyre around
+    it (a 17" sample: lip 0.236 m, tyre to 0.317 m); LOD0 has no tyre and its rim is stretched radially to
+    the tyre's outer radius (lip and wheel_black at 0.317 m, emblem 0.037 m against 0.028 m on LOD1).
+    One radius for every LOD therefore cut the LOD0 lip and barrel away and shrank its spokes.
+    """
+    if not any(is_tyre(d) for d in draws):
+        everything = np.concatenate([radii(d.positions) for d in draws])
+        raise ValueError(f"Cannot separate the rim from the tyre (max radius {everything.max():.3f} m)")
+    result = {}
+    for draw in draws:
+        if not is_tyre(draw):
+            result[draw.lod] = max(result.get(draw.lod, 0.0), float(radii(draw.positions).max()))
+    if not result or min(result.values()) <= 1e-3:
+        raise ValueError("No rim geometry left after removing the tyre")
+    return result
 
 
 # FM4 speed-blur meshes map to the native blur meshes the game shows in motion instead of wheel_*:
-# blurRim (specificuse/wheel_blur, translucent) and blurLip (rim material), FOR_FiestaST_14 wheel.
+# blurRim (specificuse/wheel_blur) and blurLip (specificuse/wheel_blurlip), both translucent.
 BLUR_NAMES = {"blur_rim": "blurRim", "blur_lip": "blurLip"}
 
 
@@ -47,7 +62,7 @@ def mesh_name(draw):
 
 
 def rim_only(draw, limit):
-    if draw.source_material.casefold() in ("tire", "tyre"):
+    if is_tyre(draw):
         return None
     inside = radii(draw.positions) <= limit
     keep = draw.indices[np.all(inside[draw.indices], axis=1)]
@@ -60,9 +75,8 @@ def rim_only(draw, limit):
 
 def normalise(draws):
     """Return (normalised LF draws, bones, receipt). Input draws are LF in the hub frame (outward = -X)."""
-    radius = rim_radius(draws)
-    limit = radius * TYRE_MARGIN
-    kept = [d for d in (rim_only(d, limit) for d in draws) if d is not None]
+    radius = rim_radii(draws)
+    kept = [d for d in (rim_only(d, radius[d.lod] * TYRE_MARGIN) for d in draws if d.lod in radius) if d is not None]
     if not kept:
         raise ValueError("No rim geometry left after removing the tyre")
     xs = np.concatenate([d.positions[:, 0] for d in kept])
@@ -70,19 +84,20 @@ def normalise(draws):
     width = inner - outer
     if width <= 1e-3:
         raise ValueError("Degenerate rim width")
-    scale = np.array([1 / width, RIM_RADIUS / radius, RIM_RADIUS / radius])
     shift = np.array([-outer / width, 0.0, 0.0])
     result = []
     for draw in kept:
+        scale = np.array([1 / width, RIM_RADIUS / radius[draw.lod], RIM_RADIUS / radius[draw.lod]])
         positions = (draw.positions * scale + shift).astype(np.float32)
         normals = draw.normals / scale
         normals /= np.linalg.norm(normals, axis=1, keepdims=True)
         result.append(replace(draw, name=mesh_name(draw), positions=positions, normals=normals.astype(np.float32)))
     spindle = float(-outer / width)
     bones = [Bone("<root>", -1), Bone("spindle", 0, (spindle, 0.0, 0.0)), Bone("root", 0)]
-    receipt = {"rim_radius_m": radius, "rim_width_m": width, "spindle_x": spindle, "outer_face_m": outer,
+    receipt = {"rim_radius_m": min(radius.values()), "lod_rim_radius_m": {str(k): v for k, v in sorted(radius.items())},
+               "rim_width_m": width, "spindle_x": spindle, "outer_face_m": outer,
                "removed_tyre_triangles": int(sum(len(d.indices) for d in draws) - sum(len(d.indices) for d in kept)),
-               "frame": "native normalised wheel: rim lip radius 0.14, outer face X=0, inner edge X=1"}
+               "frame": "native normalised wheel: rim lip radius 0.14 on every LOD, outer face X=0, inner edge X=1"}
     return result, bones, receipt
 
 

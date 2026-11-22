@@ -2,8 +2,11 @@
 
 from collections import defaultdict
 from dataclasses import dataclass, replace
+from functools import lru_cache
+from importlib.resources import files
 from io import BytesIO
 from pathlib import Path
+import json
 import os
 import re
 import struct
@@ -96,7 +99,33 @@ def modelbin_box(data):
 LOCAL_GROUPS = (4, 43)
 
 
-def carbin(identity, bones, skel, models, bounds, upgrade_groups=None, model_boxes=None):
+@lru_cache(maxsize=1)
+def material_flags():
+    """Roster mode of the Carbin per-MatI flag for each library material (research/extract_material_flags.py)."""
+    record = json.loads(files(__package__).joinpath("fh4-material-flags-v1.json").read_text(encoding="utf-8"))
+    return {name: entry["flags"] for name, entry in record["materials"].items()}
+
+
+def modelbin_materials(data):
+    """[(MatI name, library member)] of a generated Modelbin."""
+    _, geometry = previous_readers()
+    return [(block["name"], verify_material(data, block, geometry))
+            for block in geometry.maps(data)[0] if block["tag"] == "MatI"]
+
+
+def material_list(materials):
+    """Carbin model record list of MatI names with their colour-slot flags.
+
+    Native records name every MatI of the model (sorted) with a u32 bit field that ties it to a car
+    colour slot: carpaint 1, livery 2, secondary paint 256, window glass 128, everything else 0.
+    """
+    flags = material_flags()
+    names = sorted({name: flags.get(member.casefold(), 0) for name, member in materials}.items())
+    return struct.pack("<I", len(names)) + b"".join(fh4_model.string(name) + struct.pack("<I", flag)
+                                                    for name, flag in names)
+
+
+def carbin(identity, bones, skel, models, bounds, upgrade_groups=None, model_boxes=None, model_materials=None):
     alias = identity["media_name"].casefold()
     upgrade_groups = upgrade_groups or {}
     conditional_members = {model.member for entries in upgrade_groups.values() for _, owned in entries for model in owned}
@@ -121,7 +150,8 @@ def carbin(identity, bones, skel, models, bounds, upgrade_groups=None, model_box
         return (struct.pack("<H", 16) + fh4_model.string(path)
                 + struct.pack("<16fH", *fh4_model.transform(part.translation,part.rotation).flat, part.lod)
                 + fh4_model.string(bone) + struct.pack("<hBI", part.bone, 0, draw)
-                + bytes(4 + 4 + 1 + 4 + 4 + 1) + MODEL_FLAGS[part.kind]
+                + bytes(4) + material_list((model_materials or {}).get(part.member, ()))
+                + bytes(1 + 4 + 4 + 1) + MODEL_FLAGS[part.kind]
                 + fh4_model.string("") + guid(path) + bytes(20 + 4 + 4))
 
     for part_type, parts in sorted(groups.items()):
@@ -388,7 +418,8 @@ def make_models(root, ir, identity, library):
     bounds = (np.min([p.min(axis=0) for p in surface_geometry], axis=0),
               np.max([p.max(axis=0) for p in surface_geometry], axis=0))
     payloads[f"{aliases}.carbin"] = carbin(identity, bones, skel, models, bounds, contract.groups(models),
-                                          {m.member: modelbin_box(payloads[m.member]) for m in models})
+                                          {m.member: modelbin_box(payloads[m.member]) for m in models},
+                                          {m.member: modelbin_materials(payloads[m.member]) for m in models})
     # Native scene/ProxyLOD.modelbin (convention-loaded): coarsest LOD of every stock exterior part.
     proxy_draws = [d for component, draws in sorted(grouped["exterior"].items())
                    if component.casefold() not in nonstock

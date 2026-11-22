@@ -31,8 +31,15 @@ def surface_binding(label, component_kind="", component=""):
         return bind("exterior_misc/carpaint",MaterialUse.RUNTIME)
     if name in {"tire","tyre"}:
         return bind("genericassetmaterials/tiresidewall_a",MaterialUse.RUNTIME,fidelity="source_tread_texture_missing")
-    if name in {"rim","inner_rim","outer_rim","wheel_black","blur_lip"}:
-        # blur_lip: native blurLip meshes use the rim material (FOR_FiestaST_14 wheel).
+    # Native stock wheels (sampled LF wheel MatIs): inner_rim paint_matteblack (27 of 40), black backfacinggeo
+    # (22 of 31), blur_lip specificuse/wheel_blur or wheel_blurlip (48 of 49), both translucent (bucket 28).
+    if name == "inner_rim":
+        return bind("wheelmaterials/paint_matteblack",MaterialUse.RUNTIME)
+    if name == "wheel_black":
+        return bind("specificuse/backfacinggeo",MaterialUse.RUNTIME)
+    if name == "blur_lip":
+        return bind("specificuse/wheel_blurlip",MaterialUse.RUNTIME,True)
+    if name in {"rim","outer_rim"}:
         return bind("wheelmaterials/aluminum_machined_satin",MaterialUse.RUNTIME)
     if name == "blur_rim":
         # Native blurRim meshes: specificuse/wheel_blur, translucent (bucket 28), shown by the game at speed.

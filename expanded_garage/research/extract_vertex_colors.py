@@ -52,26 +52,27 @@ def main():
             data = archive.read(name)
             try:
                 items = list(raw.blobs(data))
-                layouts = [i for i in items if i["tag"] == "VLay"]
+                layouts = {i["id"]: i for i in items if i["tag"] == "VLay"}
                 buffers = {i["id"]: i for i in items if i["tag"] == "VerB"}
                 chunks = geometry.maps(data)[0]
             except Exception:
                 continue
-            materials = []
+            # Meshes name their material by the MatI id, which need not follow file order.
+            materials = {}
             for block in chunks:
                 if block["tag"] == "MatI":
                     try:
-                        materials.append(verify_material(data, block, geometry))
+                        materials[block["id"]] = verify_material(data, block, geometry)
                     except Exception:
-                        materials.append(None)
+                        materials[block["id"]] = None
             for block in chunks:
                 if block["tag"] != "Mesh":
                     continue
                 material = struct.unpack_from("<h", data, block["offset"] + 2)[0]
-                if not 0 <= material < len(materials) or not materials[material]:
+                if not materials.get(material):
                     continue
                 layout, slots = struct.unpack_from("<ii", data, block["offset"] + 55)
-                if slots < 2 or not 0 <= layout < len(layouts):
+                if slots < 2 or layout not in layouts:
                     continue
                 try:
                     offset = layout_color_offset(raw, data, layouts[layout])

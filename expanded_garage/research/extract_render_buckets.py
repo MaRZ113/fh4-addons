@@ -42,17 +42,18 @@ def main():
                 chunks = geometry.maps(data)[0]
             except Exception:
                 continue
-            materials = []
+            # Meshes name their material by the MatI id, which need not follow file order.
+            materials = {}
             for block in chunks:
                 if block["tag"] == "MatI":
                     try:
-                        materials.append(verify_material(data, block, geometry))
+                        materials[block["id"]] = verify_material(data, block, geometry)
                     except Exception:
-                        materials.append(None)
+                        materials[block["id"]] = None
             for block in chunks:
                 if block["tag"] == "Mesh":
                     fields = struct.unpack_from("<5hHBBH5BH", data, block["offset"])
-                    if 0 <= fields[1] < len(materials) and materials[fields[1]]:
+                    if materials.get(fields[1]):
                         counts[materials[fields[1]]][fields[8]] += 1
     table = {}
     for material, buckets in sorted(counts.items()):

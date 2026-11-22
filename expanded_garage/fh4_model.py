@@ -268,13 +268,19 @@ def vertex_color(material):
 @lru_cache(maxsize=1)
 def render_buckets():
     record = json.loads(files(__package__).joinpath("fh4-render-buckets-v1.json").read_text(encoding="utf-8"))
-    return {name: entry["translucent"] for name, entry in record["materials"].items()}
+    return {name: entry for name, entry in record["materials"].items()}
 
 
-def translucent_bucket(material):
-    """Render bucket for a translucent draw: the roster's non-opaque mode for the material
-    (research/extract_render_buckets.py; window glass 28, lamp lenses 60). Native meshes never use 4."""
-    return render_buckets().get(material.lower(), 28)
+def render_bucket(material, transparent):
+    """Render bucket of a mesh. The roster binds it to the material (research/extract_render_buckets.py):
+    window glass 28, lamp lenses and bulbs 60, wheel blur 28, opaque 17, with 56 as the alpha-tested
+    variant some trims also use. Native meshes never use 4."""
+    entry = render_buckets().get(material.lower())
+    if entry is None:
+        return 28 if transparent else 17
+    if transparent:
+        return entry["translucent"]
+    return 17 if "17" in entry["counts"] else max((n, int(b)) for b, n in entry["counts"].items())[1]
 
 
 def mesh(draw, mat_id, bone, index_start, position_offset, vb_id, transforms, low, high, scale, center, shadow,
@@ -282,7 +288,7 @@ def mesh(draw, mat_id, bone, index_start, position_offset, vb_id, transforms, lo
     if shadow:
         material_id, layout, bucket = -1, 1, 9
     else:
-        material_id, layout, bucket = mat_id, 0, translucent_bucket(draw.target_material) if draw.transparent else 17
+        material_id, layout, bucket = mat_id, 0, render_bucket(draw.target_material, draw.transparent)
     num_indices = draw.indices.size
     # Native meshes record their LOD index next to the mask (0b11 -> 0, 0b100 -> 1, ...).
     mask, low_lod = lod_fields if lod_fields else (lod_mask(draw.lod), draw.lod)
