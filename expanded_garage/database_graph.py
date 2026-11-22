@@ -8,6 +8,7 @@ from pathlib import Path
 from contextlib import closing
 
 from .fh4_db import snapshot
+from .fh4_native_defaults import NativeDefaults
 from .vehicle_ir import sha256
 
 
@@ -29,10 +30,15 @@ class Row:
     values: dict
     rule: str
     dependencies: tuple = field(default_factory=tuple)
+    native_defaults: dict = field(default_factory=dict)
 
     def receipt(self):
-        return {"key": vars(self.key), "owner": self.owner, "rule": self.rule,
-                "values": self.values, "dependencies": [vars(key) for key in self.dependencies]}
+        receipt = {"key": vars(self.key), "owner": self.owner, "rule": self.rule,
+                   "values": self.values, "dependencies": [vars(key) for key in self.dependencies]}
+        if self.native_defaults:
+            receipt["native_defaults"] = {c: {"rule": r, "value": v}
+                                          for c, (r, v) in sorted(self.native_defaults.items())}
+        return receipt
 
 
 class DatabaseGraph:
@@ -41,6 +47,7 @@ class DatabaseGraph:
         self.rows = {}
         self.spec = {}
         self.unresolved = []
+        self.defaults = NativeDefaults(db)
 
     def schema(self, table):
         if table not in self.spec:
@@ -74,8 +81,10 @@ class DatabaseGraph:
         if unknown:
             raise ValueError(f"Unknown native fields in {table}: {sorted(unknown)}")
         values = {column: fields[column] for column in columns if column in fields and column != pk}
+        values, filled = self.defaults.complete(table, pk, values)
+        values = {column: values[column] for column in columns if column in values}
         values[pk] = value
-        self.rows[key] = Row(key, owner, values, rule, tuple(dict.fromkeys(links)))
+        self.rows[key] = Row(key, owner, values, rule, tuple(dict.fromkeys(links)), filled)
         return key
 
     def ordered(self):
@@ -133,6 +142,9 @@ class DatabaseGraph:
                                      (key.value,)).fetchone()
                     if got is None or any(got[c] != v for c, v in row.values.items()):
                         raise ValueError(f"Catalogue readback differs for {key}")
+                    nulls = self.defaults.violations(key.table, got)
+                    if nulls:
+                        raise ValueError(f"NULL in native-required columns of {key}: {nulls}")
             if sha256(source) != baseline:
                 raise ValueError("Database baseline changed while staging")
             scratch.rename(output)

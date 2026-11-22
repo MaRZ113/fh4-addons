@@ -15,6 +15,7 @@ import numpy as np
 from . import fh4_archive, fh4_db, fh4_model, fh4_physics
 from .fh4_scene_contract import NativeCarSceneContract
 from .fh4_runtime_rig import NativeRuntimeRigCompiler, verify_skeleton
+from . import fh4_driver_rig
 from .fh4_granny_animation import verify_gauge_graph
 from .fh4_material_contract import surface_binding
 from .fh4_motion import GAUGES
@@ -32,7 +33,7 @@ KNOWN_LIMITS = {
     "materials": "Uses generic FH4 library materials. Per-car XDS-to-swatch textures and shader parameters are pending.",
     "wetness_dirt_ao": "UV2–4 and COLOR0 have diagnostic defaults. Native dirt, water, AO and splatter inputs need pass-specific calibration.",
     "wheel_blur": "Source blur draws and textures stay in the IR. Native blur materials, ordering and speed transitions need a writer.",
-    "structure": "Own Modelbin and Granny rest rigs plus authored locators. Runtime GSF, hinges, controls, native cameras, IK and Forzavista are pending.",
+    "structure": "Own Modelbin and Granny rest rigs, authored locators, and donor-placed driver IK anchors and scene locators. Runtime GSF, hinges, controls and Forzavista are pending.",
     "lighting": "Geometry-derived positions are emitted as research data. Lights, presets, emitters and FX controllers need event routing.",
     "physics_damage": "The v27 stock two-cloud form is generated from the FM4 envelope. Road contacts, variant shapes and damage remain open.",
     "audio": "Source banks and tuning are indexed. The FH4 engine synth and event formats need translation.",
@@ -170,6 +171,16 @@ def guess_lights(exterior):
     return result
 
 
+def driver_side_from(grouped):
+    steering = [d for k, ds in grouped["cockpit"].items() if k.casefold() == "steering_wheel" for d in ds]
+    if not steering:
+        raise ValueError("Driver side needs the source steering wheel geometry")
+    x = float(np.median(np.concatenate([d.positions[:, 0] for d in steering])))
+    if abs(x) <= 0.05:
+        raise ValueError("Centred steering wheel: driver side is ambiguous")
+    return "L" if x < 0 else "R"
+
+
 def make_models(root, ir, identity, library):
     rows = ir["sections"]["physics"]["data"]["tables"]
     points = systems.hardpoints(root, ir)
@@ -194,6 +205,8 @@ def make_models(root, ir, identity, library):
         raise ValueError("No source exterior geometry available")
     aliases = identity["media_name"].lower()
     attachments, animation_payloads, motion = native_rig.bind_motion(aliases,ir,bones,points,grouped)
+    driver_side = driver_side_from(grouped)
+    driver_rig = fh4_driver_rig.add_driver_bones(bones, driver_side)
     skel = f"scene/{aliases}_skeleton.modelbin"
     payloads = {skel: fh4_model.rig_model(bones), **animation_payloads}
     models, references = [], {}
@@ -265,7 +278,10 @@ def make_models(root, ir, identity, library):
               np.max([p.max(axis=0) for p in surface_geometry], axis=0))
     payloads[f"{aliases}.carbin"] = carbin(identity, bones, skel, models, bounds, contract.groups(models))
     if points:
-        payloads["Locators.xml"] = systems.locator_xml(aliases, points)
+        authored = {"carLocator_" + point.name for point in points.values()}
+        extra, driver_rig["locators"] = fh4_driver_rig.transferred_locators(points, authored, driver_side)
+        payloads["Locators.xml"] = systems.locator_xml(aliases, points, extra)
+    payloads["IKAnchorBones.xml"] = fh4_driver_rig.ik_anchor_xml()
     steering = next((d for k, ds in grouped["cockpit"].items() if k.casefold() == "steering_wheel"
                      for d in ds), None)
     seat = {}
@@ -296,6 +312,7 @@ def make_models(root, ir, identity, library):
     return payloads, {
         "modelbins": len(models) + 1, "models_by_role": {k: sum(m.kind == k for m in models) for k in PART_TYPES},
         "bone_names": [bone.name for bone in bones], "scene_contract": contract.receipt(),
+        "driver_rig": driver_rig,
         "material_library": {"sha256": library_hash, "references": references},
         "materials_with_diagnostic_fallback": fallback,"material_contract":material_contract,
         "retained_in_ir_only": sorted(filtered),
@@ -437,6 +454,9 @@ def validate_zip(blob, name, car_id, *, trial=None):
         if "locators.xml" in names:
             systems.validate_locator_xml(archive.read(names["locators.xml"]), scene_bones)
             used.add("locators.xml")
+        if "ikanchorbones.xml" in names:
+            fh4_driver_rig.validate_ik_anchor_xml(archive.read(names["ikanchorbones.xml"]), scene_bones)
+            used.add("ikanchorbones.xml")
         gr2 = scene["skeleton"][len(prefix):].replace("\\", "/").removesuffix(".modelbin") + ".gr2"
         if gr2 in names:
             rig = verify_skeleton(archive.read(names[gr2]), aliases)

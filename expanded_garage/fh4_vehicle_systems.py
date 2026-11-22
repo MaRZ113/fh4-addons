@@ -40,23 +40,28 @@ def hardpoints(root, ir):
     return result
 
 
-def locator_xml(alias, points):
+def locator_xml(alias, points, extra=()):
+    """Authored hardpoints first, then transferred donor locators (name, matrix, upgrade)."""
     root = ET.Element("CarLocators", Version="2")
+    entries = []
     for part, point in sorted(points.items()):
-        name = "carLocator_" + point.name
-        locator = ET.SubElement(root, "Locator", Version="3")
-        guid = str(uuid.uuid5(uuid.NAMESPACE_URL, f"urn:fh4-expanded-garage:locator:{alias.casefold()}:{name}"))
-        for tag, value in (("GUID", guid), ("SrcGUID", guid), ("Name", name)):
-            ET.SubElement(locator, tag, value=value)
         rest = list(IDENTITY)
         if part in (2, 3):
             rest[0] = rest[10] = -1.0
         rest[12:15] = point.meters
+        entries.append(("carLocator_" + point.name, rest, None))
+    entries += [(item["name"], item["matrix"], item["upgrade"]) for item in extra]
+    for name, rest, upgrade in entries:
+        locator = ET.SubElement(root, "Locator", Version="3")
+        guid = str(uuid.uuid5(uuid.NAMESPACE_URL, f"urn:fh4-expanded-garage:locator:{alias.casefold()}:{name}"))
+        for tag, value in (("GUID", guid), ("SrcGUID", guid), ("Name", name)):
+            ET.SubElement(locator, tag, value=value)
         ET.SubElement(locator, "SceneTransform", {f"value._{i//4+1}{i%4+1}": f"{v:.9g}"
                                                  for i, v in enumerate(rest)})
         ET.SubElement(locator, "AttachToBone", BoneName="<root>", Snap="0")
-        ET.SubElement(locator, "UpgradeInfo", IsUpgradable="1", PartType="CarBody",
-                      UpgradeLevel="4294967295", PartId="-1", ParentUpgradeId="-1")
+        upgrade = upgrade or {"IsUpgradable": "1", "PartType": "CarBody", "UpgradeLevel": "4294967295",
+                              "PartId": "-1", "ParentUpgradeId": "-1"}
+        ET.SubElement(locator, "UpgradeInfo", upgrade)
     ET.indent(root, space="  ")
     return ET.tostring(root, encoding="utf-8")
 
