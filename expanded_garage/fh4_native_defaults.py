@@ -31,10 +31,21 @@ STRATEGY = {
 }
 
 
+MIN_CONSTANT_ROWS = 20
+
+
+def exempt(column):
+    """Identity, foreign-key and price columns keep their compiled values."""
+    name = column.casefold()
+    return (name.endswith("id") or name in ("ordinal", "level", "isstock") or "price" in name
+            or "cost" in name or name.startswith("v") and name[1:].isdigit())
+
+
 class NativeDefaults:
     def __init__(self, db):
         self.db = db
         self._stats = {}
+        self._envelope = {}
 
     def stats(self, table):
         """Return {column: (never_null, mode, median)} over the baseline rows."""
@@ -52,6 +63,9 @@ class NativeDefaults:
                 if isinstance(mid, float):
                     mid = round(mid, 6)
                 result[column] = (never_null, mode, mid)
+                if numeric and len(numeric) == len(defined) and not isinstance(numeric[0], bool):
+                    self._envelope.setdefault(table, {})[column] = (min(numeric), max(numeric), len(set(numeric)),
+                                                                    len(numeric))
             self._stats[table] = result
         return self._stats[table]
 
@@ -77,6 +91,19 @@ class NativeDefaults:
                 native = self.value(table, column)
                 filled[column] = ("native_" + STRATEGY.get((table, column), "mode"), native)
                 out[column] = native
+        # Native envelope: a column that is constant over every native row takes that constant;
+        # other numeric values are clamped into the native [min, max]. Keys, IDs and prices are exempt.
+        for column, (low, high, distinct, count) in self._envelope.get(table, {}).items():
+            value = out.get(column)
+            if column == pk or exempt(column) or not isinstance(value, (int, float)) or isinstance(value, bool):
+                continue
+            if distinct == 1 and count >= MIN_CONSTANT_ROWS and value != low:
+                filled[column] = ("native_constant", low)
+                out[column] = low
+            elif distinct > 1 and not low <= value <= high:
+                clamped = min(max(value, low), high)
+                filled[column] = (f"native_range_clamp_from_{value}", clamped)
+                out[column] = clamped
         return out, filled
 
     def violations(self, table, row):

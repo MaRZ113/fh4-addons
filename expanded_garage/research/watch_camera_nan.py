@@ -86,7 +86,10 @@ def focus_identity(target, data, base):
     name = b""
     if 0 < size <= 63:
         name = state[8:8 + size] if capacity < 16 else target.read(read_pointer(target, scene + 0x90), size)
-    return {"car_id": ordinal, "media_name": name.decode("ascii", "replace")}
+    pose, velocity = target.read(focused + 0xA0, 64), target.read(focused + 0x280, 16)
+    return {"car_id": ordinal, "media_name": name.decode("ascii", "replace"),
+            "pose_translation": list(struct.unpack_from("<3f", pose, 48)) if len(pose) == 64 else None,
+            "pose_bytes": pose.hex(), "velocity": list(struct.unpack("<4f", velocity)) if len(velocity) == 16 else None}
 
 
 def describe(step, previous, current, base):
