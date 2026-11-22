@@ -109,3 +109,34 @@ def values(data, version=(2, 0)):
         elif kind in (COLOR, VECTOR):
             result[key] = struct.unpack_from("<4f", record, at)
     return result
+
+
+def texture_path_hash(path):
+    """Texture parameters store the CRC-32 of the lower-case path after it."""
+    return zlib.crc32(path.lower().encode("ascii")) & 0xFFFFFFFF
+
+
+def set_textures(data, paths, version=(2, 0)):
+    """Return `data` with the texture parameters keyed by name hash pointed at new paths."""
+    records, trailer = parse(data, version)
+    out, seen = [], set()
+    for key, kind, at, record in records:
+        if key in paths:
+            if kind != TEXTURE:
+                raise ValueError(f"MTPR parameter {key:#x} is not a texture")
+            major = record[0]
+            encoded = paths[key].encode("ascii")
+            length, size = len(encoded), b""
+            while True:
+                byte = length & 0x7F
+                length >>= 7
+                size += bytes([byte | (0x80 if length else 0)])
+                if not length:
+                    break
+            value = size + encoded + (struct.pack("<I", texture_path_hash(paths[key])) if major >= 2 else b"")
+            record = record[:at] + value
+            seen.add(key)
+        out.append((key, kind, at, record))
+    if seen != set(paths):
+        raise ValueError(f"MTPR lacks texture parameters {sorted(set(paths) - seen)}")
+    return build(out, trailer, version)

@@ -195,14 +195,16 @@ def lamp_parameters(name, library_path):
                                                          hashes["light_map"]: 0}, tuple(donor["version"]))
 
 
-def material(index, name, library_path, transparent=False):
+def material(index, name, library_path, transparent=False, override=None):
     path = ("Game:\\Media\\cars\\_library\\materials\\" + library_path.replace("/", "\\")).encode("ascii")
     if len(path) >= 128:
         raise ValueError(f"Material path exceeds the supported one-byte length {library_path}")
     resource = Chunk("MATI", (1, 0), bytes([len(path)]) + path,
                      (name_meta(name), metadata("ATST", atst(library_path, transparent), 2)))
     lamp = lamp_parameters(name, library_path)
-    if lamp is not None:
+    if override is not None:
+        parameters = Chunk("MTPR", tuple(override[0]), override[1])
+    elif lamp is not None:
         parameters = Chunk("MTPR", tuple(lamp_donor()["version"]), lamp)
     else:
         parameters = Chunk("MTPR", (2, 0), native_parameters().get(library_path.lower(), bytes(13)))
@@ -430,7 +432,7 @@ def morph_buffer(index, count, entries, data):
     return Chunk("MBuf", (1, 0), payload, (id_meta(index),))
 
 
-def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False):
+def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False, parameters=None):
     """`fill_near` also draws the finest available LOD on the nearer LODs the source lacks.
     `wheel` marks the meshes of a native normalised stock wheel."""
     if not draws or not 0 <= bone < len(bones):
@@ -444,7 +446,10 @@ def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False):
     materials = sorted({material_key(d) for d in draws})
     ids = {entry: i for i, entry in enumerate(materials)}
     translucent = {material_key(d) for d in draws if d.transparent}
-    chunks.extend(material(i, name, path, (name, path) in translucent) for i, (name, path) in enumerate(materials))
+    # `parameters`: {(source name, library member): (MTPR version, bytes)} for car-owned texture slots.
+    overrides = parameters or {}
+    chunks.extend(material(i, name, path, (name, path) in translucent, overrides.get((name, path)))
+                  for i, (name, path) in enumerate(materials))
     bindings = [vertex_layout(0, False), vertex_layout(1, True)]
     positions, indices = bytearray(), bytearray()
     mask, count = 0, 0

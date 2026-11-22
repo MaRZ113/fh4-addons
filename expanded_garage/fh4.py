@@ -415,6 +415,54 @@ def driver_side_from(grouped):
     return "L" if x < 0 else "R"
 
 
+GAUGE_MATERIAL = "interior_misc/int_gauges.materialbin"
+GAUGE_FOLDER = "textures/gauges/swatches/"
+
+
+@lru_cache(maxsize=1)
+def gauge_donor():
+    return json.loads(files(__package__).joinpath("fh4-gauge-parameters-v1.json").read_text(encoding="utf-8"))
+
+
+def raw_member(root, ir, suffix):
+    for member in ir.get("raw_members", ()):
+        if member["name"].casefold().endswith(suffix):
+            return (root / "blobs" / member["provenance"]["asset"]).read_bytes()
+    return None
+
+
+def gauge_texture_parameters(root, ir, alias):
+    """({(gauge_emissive, int_gauges): (version, MTPR)}, {member: swatchbin}) for the car's own dial art.
+
+    FM4 dial faces (`gauge_emissive`) sample the cockpit atlas interior_LOD0.xds with atlas UVs (the IR draws
+    already carry the FM4 UV transform). Its alpha is FM4's label cut-out mask, 0 over the dials, so the
+    diffuse is written opaque (int_gauges alpha-tests). The night illumination keeps the bright marks only.
+    EXPANDED_GARAGE_GAUGE_TEXTURES=off falls back to the untextured dial (bisection switch)."""
+    if os.environ.get("EXPANDED_GARAGE_GAUGE_TEXTURES") == "off":
+        return {}, {}
+    atlas = raw_member(root, ir, "/interior_lod0.xds")
+    from .fh4_presentation import swatch, xds_codec
+    codec = xds_codec(None)
+    if atlas is None or codec is None:
+        return {}, {}
+    width, height, rgba = codec[0](atlas)
+    pixels = np.frombuffer(bytes(rgba), np.uint8).reshape(height, width, 4).copy()
+    pixels[..., 3] = 255
+    luminance = pixels[..., :3].astype(np.float32).mean(axis=2)
+    lit = pixels.copy()
+    lit[..., :3] = np.where((luminance > 150)[..., None], pixels[..., :3], 0)
+    donor = gauge_donor()
+    folder = "\\".join(("Game:", "Media", "cars", alias.casefold(), *GAUGE_FOLDER.strip("/").split("/"), ""))
+    textures, members = {}, {}
+    for role, image in (("diff", pixels), ("lite", lit)):
+        name = f"{alias.casefold()}_gauges_{role}_{uuid.uuid5(uuid.NAMESPACE_URL, f'urn:fh4-expanded-garage:{alias}:gauges:{role}')}"
+        members[GAUGE_FOLDER + name + ".swatchbin"] = swatch(name, width, height, image.tobytes())
+        textures[donor["diffuse" if role == "diff" else "illumination"]] = folder + name + ".swatchbin"
+    from . import fh4_mtpr
+    mtpr = fh4_mtpr.set_textures(bytes.fromhex(donor["mtpr"]), textures, tuple(donor["version"]))
+    return {("gauge_emissive", GAUGE_MATERIAL): (tuple(donor["version"]), mtpr)}, members
+
+
 def make_models(root, ir, identity, library):
     rows = ir["sections"]["physics"]["data"]["tables"]
     points = systems.hardpoints(root, ir)
@@ -423,6 +471,7 @@ def make_models(root, ir, identity, library):
     native_rig = NativeRuntimeRigCompiler()
     contract = NativeCarSceneContract(ir, identity["body_id"])
     geometry = ir["sections"]["geometry"]["data"]
+    car_parameters, texture_payloads = gauge_texture_parameters(root, ir, identity["media_name"])
     grouped = {category: defaultdict(list) for category in ("exterior", "cockpit", "wheel", "brake")}
     filtered = set()
     for source in geometry["models"]:
@@ -508,7 +557,7 @@ def make_models(root, ir, identity, library):
             rigid_bone = 0 if local_rig else 1
             near = view_split(kind, key)
             payloads[path], mask = fh4_model.assemble(draws, component_rig, rigid_bone, shadows=kind != "cockpit",
-                                                      fill_near=near == "fill")
+                                                      fill_near=near == "fill", parameters=car_parameters)
             models.append(Model(path, kind, mask, bone, translation, component or key.casefold(), rotation,
                                 draw=39 if near == "both_views" else 0))
 
@@ -575,6 +624,7 @@ def make_models(root, ir, identity, library):
     payloads[f"{aliases}.carbin"] = carbin(identity, bones, skel, models, bounds, contract.groups(models),
                                           {m.member: modelbin_box(payloads[m.member]) for m in models},
                                           {m.member: modelbin_materials(payloads[m.member]) for m in models})
+    payloads.update(texture_payloads)
     # EXPANDED_GARAGE_LIGHT_RIG=off leaves the car without light sources (bisection switch).
     if os.environ.get("EXPANDED_GARAGE_LIGHT_RIG") != "off":
         rig_files = light_rig(aliases, models, payloads)
@@ -833,6 +883,11 @@ def validate_zip(blob, name, car_id, *, trial=None):
             if len(archive.read(names[ground])) != 248 + 349525:
                 raise ValueError("Unexpected ground_AO.swatchbin size")
             used.add(ground)
+        for name in names:
+            if name.startswith(GAUGE_FOLDER) and name.endswith(".swatchbin"):
+                if len(archive.read(names[name])) <= 140:
+                    raise ValueError(f"Empty gauge texture {name}")
+                used.add(name)
         if "lights.bin" in names or "lightpresets.bin" in names:
             from .research.extract_light_rig import read_lights
             presets = archive.read(names["lightpresets.bin"])

@@ -17,4 +17,4 @@ py-modules = ["fh4_carbin", "fh4_modelbin_geometry", "fh4_asset_probe", "fm4_bum
 package-dir = {"" = "tools", expanded_garage = "expanded_garage"}
 
 [tool.setuptools.package-data]
-expanded_garage = ["vehicle-ir-v1.schema.json", "fh4-shift-profiles-v1.json", "fh4-driver-rig-v1.json", "fh4-autovista-v1.json", "fh4-material-parameters-v1.json", "fh4-paint-palette-v1.json", "fh4-locator-guids-v1.json", "fh4-render-buckets-v1.json", "fh4-vertex-colors-v1.json", "fh4-material-flags-v1.json", "fh4-material-atst-v1.json", "fh4-lamp-parameters-v1.json", "fh4-light-rig-v1.json", "fh4-ground-ao-v1.json", "LICENSE-FORZATECH-STUDIO.txt"]
+expanded_garage = ["vehicle-ir-v1.schema.json", "fh4-shift-profiles-v1.json", "fh4-driver-rig-v1.json", "fh4-autovista-v1.json", "fh4-material-parameters-v1.json", "fh4-paint-palette-v1.json", "fh4-locator-guids-v1.json", "fh4-render-buckets-v1.json", "fh4-vertex-colors-v1.json", "fh4-material-flags-v1.json", "fh4-material-atst-v1.json", "fh4-lamp-parameters-v1.json", "fh4-light-rig-v1.json", "fh4-ground-ao-v1.json", "fh4-gauge-parameters-v1.json", "LICENSE-FORZATECH-STUDIO.txt"]

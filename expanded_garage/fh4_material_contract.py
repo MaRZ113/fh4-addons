@@ -85,7 +85,10 @@ def surface_binding(label, component_kind="", component=""):
         return bind("interior_plastic/plastic")
     if name == "gauge_needle":
         return bind("interior_misc/gauge_needle",MaterialUse.EFFECT,fidelity="missing_source_needle_texture")
-    if name in {"gauge_emissive","digital_gauge"}:
+    if name == "gauge_emissive":
+        # Dial faces: native int_gauges with the car's own dial texture (fh4.gauge_texture_parameters).
+        return bind("interior_misc/int_gauges",MaterialUse.EFFECT,fidelity="source_dial_texture")
+    if name == "digital_gauge":
         return bind("interior_misc/int_symbols_emissive",MaterialUse.EFFECT,fidelity="missing_instrument_emissive_texture")
     if "chrome" in name or name.startswith("mirror") or "reflector" in name:
         return bind("exterior_metal/chrome")

@@ -259,14 +259,20 @@ def gauge_graph(gauges):
     connect(root, inputs=[edge("Pose Output", forward=0), edge("AudioEvent", 3, forward=1)],
             outputs=[edge("Pose Output", forward=0), edge("AudioEvent", 3, forward=1)])
     blend = node("blend_graph", "Pose", AnyTransitionDuration=0.25)
-    parameter_ids = ("fuel", "speed", "tach")
+    # Native order of the gauges parameter node (ACU_RSXTypeS_02): tach, speed, fuel.
+    parameter_ids = ("tach", "speed", "fuel")
     by_parameter = {g["input"]:g for g in gauges}
     parameters = connect(node("parameters", "gauges", Parameters=[
         record("Parameter", MinRandomValue=1., MaxValue=by_parameter.get(p, {}).get("input_max", 1.))
         for p in parameter_ids]), outputs=[edge(p, 1, forward=0) for p in parameter_ids])
     rest = connect(node("rest_pose", "Rest Pose"), outputs=[edge("Pose", forward=0)])
     combined = node("subtree_sample", "Subtree Sample")
-    connect(blend, inputs=[edge("Pose", target=combined, index=0, forward=0)],
+    # Nodes read parameters only through their container's input edges: the blend graph takes each
+    # parameter from the sibling parameters node, and the remaps inside reference the blend graph's
+    # input edge (native ACU_RSXTypeS_02 gauges graph). A remap pointing straight at the parameters node
+    # in another container never received a value, so the needles stood still.
+    connect(blend, inputs=[edge("Pose", target=combined, index=0, forward=0)]
+            + [edge(p, 1, parameters, k) for k, p in enumerate(parameter_ids)],
             outputs=[edge("Pose", forward=0)])
     inputs = [edge("BasePose", target=rest, index=0)]
     actors = [combined, rest]
@@ -282,7 +288,7 @@ def gauge_graph(gauges):
         connect(control, outputs=[edge("Animation", forward=0)])
         remap = node("linear_remap", name + "_Remap", RemapPoints=[
             record("RemapPoint", x=x, y=y) for x,y in gauge["packed_remap"]])
-        connect(remap, inputs=[edge("Input", 1, parameters, parameter_ids.index(gauge["input"]))],
+        connect(remap, inputs=[edge("Input", 1, blend, 1 + parameter_ids.index(gauge["input"]))],
                 outputs=[edge("Output", 1, forward=0)])
         selection = node("timeselect", name + "_TimeSelect", TimeIsUnitRelative=1)
         connect(selection, inputs=[edge("Time", 1, remap, 0), edge("Pose", 0, control, 0)],
@@ -451,7 +457,9 @@ def verify_gauge_graph(blob, assets, rig, bound_names):
             if neighbor := edge.get("OtherNode"):
                 other = reader.fields(*reader.fields(*neighbor)["nodeToken"])
                 j = edge["OtherNodeEdge"]
-                if not 0<=j<len(other["OutputEdges"]) or reader.fields(*other["OutputEdges"][j])["EdgeType"]!=edge["EdgeType"]:
+                # A reference to the enclosing container reads that container's input edge (native rule).
+                pool = other["InputEdges"] if neighbor == parent else other["OutputEdges"]
+                if not 0<=j<len(pool) or reader.fields(*pool[j])["EdgeType"]!=edge["EdgeType"]:
                     raise ValueError("GSF input edge does not resolve a compatible output")
                 if node_type=="subtree_sample" and neighbor[0]=="timeselect":
                     live_edges.add(edge["EdgeName"])
