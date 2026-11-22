@@ -23,7 +23,7 @@ STOCK = ROOT / "game/ForzaHorizon4/media"
 BASELINE = ROOT / ".scratch/phase7_1/camera-owner-test/baseline.sqlite"
 MANIFEST = ROOT / ".scratch/phase3/fixed-layout/zipmanifest.plain.xml"
 MATERIALS = STOCK / "cars/_library/Materials.zip"
-FIXTURES = (("SUZ_SX4_11",12000,3,"L"),("HON_IntegraR_00",12002,2,"R"),("RUF_CTR2_95",12001,2,"L"))
+FIXTURES = (("SUZ_SX4_11",12000,2,"L"),("HON_IntegraR_00",12002,2,"R"),("RUF_CTR2_95",12001,2,"L"))
 
 
 class ScopeTests(unittest.TestCase):

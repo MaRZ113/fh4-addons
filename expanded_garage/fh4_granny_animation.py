@@ -1,12 +1,17 @@
 """Write FH4 Granny clips and parameter-driven GSF accessory graphs."""
 
+import base64
 from dataclasses import dataclass
+from functools import lru_cache
+import json
 import math
+from pathlib import Path
 import struct
+import zlib
 
 from .fh4_runtime_rig import (
     ARRAY, ART, FLOAT, INT, PTR_ARRAY, REF, ROOT, SKELETON_TAG, STRING, TRANSFORM, TYPE, VARIANT,
-    SectionBuilder, granny_container, read_raw_sections,
+    HEADER_SIZE, SectionBuilder, granny_container, read_raw_sections,
 )
 
 
@@ -175,136 +180,42 @@ def animation_clip(name, bone, pivot, keys):
         SKELETON_TAG)
 
 
-GSF_SCHEMA = {
-    "Character": ((INT, "NumUniqueTokenized"), (VARIANT, "StateMachine"),
-                  (PTR_ARRAY, "AnimationSlots", 0, "Slot"), (PTR_ARRAY, "AnimationSets", 0, "Set"),
-                  (STRING, "ModelNameHint"), (INT, "ModelIndexHint"),
-                  *f(VARIANT, "EditorData ExtendedData")),
-    "Slot": ((STRING, "Name"), (INT, "SlotIndex")),
-    "Set": ((STRING, "Name"), (PTR_ARRAY, "SourceFileReferences", 0, "Source"),
-            (ARRAY, "AnimationSpecs", 0, "Spec")),
-    "Source": ((STRING, "SourceFilename"), (INT, "ExpectedAnimCount"), (U32, "AnimCRC"), (EMPTY_REF, "SourceInfo")),
-    "Spec": ((REF, "SourceReference", 0, "Source"), (INT, "AnimationIndex"), (STRING, "ExpectedName")),
-    "Node": ((STRING, "Name"), (INT, "NameIsDefault"), *f(FLOAT, "EditingPosX EditingPosY"),
-             (ARRAY, "InputEdges", 0, "Edge"), (ARRAY, "OutputEdges", 0, "Edge"),
-             (ARRAY, "Transitions", 0, "Variant"), (VARIANT, "ParentToken"),
-             (STRING, "UserKeyValues"), (VARIANT, "AnyTransition")),
-    "Edge": ((STRING, "EdgeName"), *f(INT, "EdgeType IsInternal ForwardEdge"),
-             (VARIANT, "OtherNode"), (INT, "OtherNodeEdge")),
-    "Variant": ((VARIANT, "Variant"),),
-    "Container": ((ARRAY, "ChildTokens", 0, "Variant"), *f(INT, "EditingPosX EditingPosY"), (ARRAY, "Comments")),
-    "state_machineExtra": (*f(INT, "StartState UseLastActive"), (ARRAY, "OutputMaps", 0, "OutputMap"),
-                           (ARRAY, "Conditionals", 0, "Variant"),
-                           *f(INT, "AllowAnyTransition AllowTransitionExit AlwaysUseAnimEvents"),
-                           (FLOAT, "AnyTransitionDuration"), (VARIANT, "DynamicTransition"), (ARRAY, "MorphMeshNames")),
-    "OutputMap": ((ARRAY, "Entries", 0, "Integer"),),
-    "Integer": ((INT, "Int32"),),
-    "blend_graphExtra": (*f(INT, "DummyMember AllowAnyTransition AllowTransitionExit"), (FLOAT, "AnyTransitionDuration")),
-    "rest_poseExtra": ((INT, "Dummy"),),
-    "subtree_sampleExtra": ((INT, "DummyMember"),),
-    "timeselectExtra": ((INT, "TimeIsUnitRelative"),),
-    "linear_equationExtra": f(FLOAT, "AValue BValue"),
-    "linear_remapExtra": ((ARRAY, "RemapPoints", 0, "RemapPoint"),),
-    "RemapPoint": f(U16, "x y"),
-    "anim_sourceExtra": ((REF, "AnimationSlot", 0, "Slot"), (INT, "ClampedLooping"), (FLOAT, "Speed"),
-                         *f(ARRAY, "EventEdges ScalarEdges MorphEdges"),
-                         *f(INT, "AllowAnyTransition AllowTransitionExit"), (FLOAT, "AnyTransitionDuration")),
-    "parametersExtra": ((ARRAY, "Parameters", 0, "Parameter"), (INT, "ClampToInts")),
-    "Parameter": (*f(FLOAT, "MinValue MinRandomValue MaxValue DefaultValue MaxSpeed Accel"), *f(INT, "Random Type ClampToInts")),
-}
-CONTAINER_ROLES = {"state_machine", "blend_graph"}
-for role in ("state_machine", "blend_graph", "rest_pose", "subtree_sample", "timeselect", "linear_equation",
-             "linear_remap", "anim_source", "parameters"):
-    GSF_SCHEMA[role] = ((U32, "ContextUID_" + role), (REF, "nodeToken", 0, "Node"),
-                        *(((REF, "containerToken", 0, "Container"),) if role in CONTAINER_ROLES else ()),
-                        (REF, role + "Token", 0, role + "Extra"))
+GAUGE_GRAPH = Path(__file__).with_name("fh4-gauge-graph-v1.json")
 
 
-# Invariant per-role animation-list CRCs in Golf, Civic and Porsche GSF sets. Individual clip bytes differ.
-ROLE_CRCS = {"fuel": 1977315228, "speedometer": 3604870771, "tachometer": 3804047908}
+@lru_cache(maxsize=None)
+def gauge_template():
+    """Native gauges-only GSF (see research/extract_gauge_graph.py) and the offsets of its numbers."""
+    record = json.loads(GAUGE_GRAPH.read_text(encoding="utf-8"))
+    return base64.b64decode(record["gsf"]), record
 
 
 def gauge_graph(gauges):
-    """Connect native gauge parameters, remaps and clip slots to separate bone subtrees."""
-    next_uid = 3
+    """Native analog-gauge graph with the car's input ranges.
 
-    def node(kind, name, **extra):
-        nonlocal next_uid
-        values = {"ContextUID_" + kind: next_uid,
-                  "nodeToken": record("Node", Name=name),
-                  kind + "Token": record(kind + "Extra", **extra)}
-        next_uid += 1
-        if kind in CONTAINER_ROLES:
-            values["containerToken"] = record("Container")
-        return record(kind, **values)
+    Native graphs drive gauges only inside LODSelect (InRace_Focus / Autovista states chosen from the
+    GameInputs AnimationLOD parameter); a minimal graph with the gauges under the root never moved its
+    needles. The template's Linear Eqn. nodes give clip time = input / max, and the dial's own
+    calibration is baked into each clip, so only AValue and the parameter MaxValue change."""
+    data, record = gauge_template()
+    out = bytearray(data)
+    ranges = {g["input"]: g["input_max"] for g in gauges}
+    if set(ranges) != set(record["parameters"]):
+        raise ValueError(f"Gauge graph template animates {sorted(record['parameters'])}, not {sorted(ranges)}")
+    for name, offsets in record["parameters"].items():
+        maximum = float(ranges[name])
+        if not (math.isfinite(maximum) and maximum > 0):
+            raise ValueError(f"Invalid {name} gauge range")
+        struct.pack_into("<f", out, offsets["max_value"], maximum)
+        for offset in offsets["a_value"]:
+            struct.pack_into("<f", out, offset, 1.0 / maximum)
+    struct.pack_into("<I", out, 40, zlib.crc32(out[HEADER_SIZE:]))
+    return bytes(out)
 
-    def edge(name, kind=0, target=None, index=-1, *, forward=-1):
-        args = {"EdgeName": name, "EdgeType": kind, "ForwardEdge": forward, "OtherNodeEdge": index}
-        if target is not None:
-            args["OtherNode"] = target
-        return record("Edge", **args)
 
-    def connect(item, *, inputs=(), outputs=()):
-        item.values["nodeToken"].values.update(InputEdges=inputs, OutputEdges=outputs)
-        return item
-
-    def children(parent, children):
-        parent.values["containerToken"].values["ChildTokens"] = [record("Variant", Variant=c) for c in children]
-        for child in children:
-            child.values["nodeToken"].values["ParentToken"] = parent
-
-    root = node("state_machine", "CharacterRoot", StartState=0, AnyTransitionDuration=0.25,
-                OutputMaps=[record("OutputMap", Entries=[record("Integer", Int32=-1)]),
-                            record("OutputMap", Entries=[record("Integer", Int32=-1)])])
-    connect(root, inputs=[edge("Pose Output", forward=0), edge("AudioEvent", 3, forward=1)],
-            outputs=[edge("Pose Output", forward=0), edge("AudioEvent", 3, forward=1)])
-    blend = node("blend_graph", "Pose", AnyTransitionDuration=0.25)
-    # Native order of the gauges parameter node (ACU_RSXTypeS_02): tach, speed, fuel.
-    parameter_ids = ("tach", "speed", "fuel")
-    by_parameter = {g["input"]:g for g in gauges}
-    parameters = connect(node("parameters", "gauges", Parameters=[
-        record("Parameter", MinRandomValue=1., MaxValue=by_parameter.get(p, {}).get("input_max", 1.))
-        for p in parameter_ids]), outputs=[edge(p, 1, forward=0) for p in parameter_ids])
-    rest = connect(node("rest_pose", "Rest Pose"), outputs=[edge("Pose", forward=0)])
-    combined = node("subtree_sample", "Subtree Sample")
-    # Nodes read parameters only through their container's input edges: the blend graph takes each
-    # parameter from the sibling parameters node, and the remaps inside reference the blend graph's
-    # input edge (native ACU_RSXTypeS_02 gauges graph). A remap pointing straight at the parameters node
-    # in another container never received a value, so the needles stood still.
-    connect(blend, inputs=[edge("Pose", target=combined, index=0, forward=0)]
-            + [edge(p, 1, parameters, k) for k, p in enumerate(parameter_ids)],
-            outputs=[edge("Pose", forward=0)])
-    inputs = [edge("BasePose", target=rest, index=0)]
-    actors = [combined, rest]
-    slots, sources, specs = [], [], []
-    for i, gauge in enumerate(gauges):
-        name, bone = gauge["clip"], gauge["bone"]
-        slot = record("Slot", Name=name, SlotIndex=i)
-        slots.append(slot)
-        source = record("Source", SourceFilename=".\\" + name + ".gr2", ExpectedAnimCount=1, AnimCRC=ROLE_CRCS[name])
-        sources.append(source)
-        specs.append(record("Spec", SourceReference=source, AnimationIndex=0, ExpectedName=name))
-        control = node("anim_source", name, AnimationSlot=slot, ClampedLooping=1, Speed=1., AnyTransitionDuration=.25)
-        connect(control, outputs=[edge("Animation", forward=0)])
-        remap = node("linear_remap", name + "_Remap", RemapPoints=[
-            record("RemapPoint", x=x, y=y) for x,y in gauge["packed_remap"]])
-        connect(remap, inputs=[edge("Input", 1, blend, 1 + parameter_ids.index(gauge["input"]))],
-                outputs=[edge("Output", 1, forward=0)])
-        selection = node("timeselect", name + "_TimeSelect", TimeIsUnitRelative=1)
-        connect(selection, inputs=[edge("Time", 1, remap, 0), edge("Pose", 0, control, 0)],
-                outputs=[edge("Pose", forward=0)])
-        actors.extend((selection, remap, control))
-        inputs.append(edge(bone, target=selection, index=0))
-    connect(combined, inputs=inputs, outputs=[edge("Result", forward=0)])
-    children(blend, actors)
-    children(root, [blend, parameters])
-    # Output maps index the children of the root state machine.
-    for mapping in root.values["state_machineToken"].values["OutputMaps"]:
-        mapping.values["Entries"].append(record("Integer", Int32=-1))
-    return ObjectCompiler(GSF_SCHEMA).finish(
-        record("Character", NumUniqueTokenized=next_uid, StateMachine=root, AnimationSlots=slots,
-               AnimationSets=[record("Set", Name="Base", SourceFileReferences=sources, AnimationSpecs=specs)]),
-        GSF_TAG)
+def template_slots():
+    """Animated clip names of the gauge graph template, in slot order."""
+    return list(gauge_template()[1]["slots"])
 
 
 class RawObjects:
@@ -406,7 +317,8 @@ def verify_clip(blob, clip_name):
             any(a>=b for a,b in zip(knots,knots[1:]))):
         raise ValueError("Invalid Granny orientation curve dimensions")
     rotations = [controls[i:i+4] for i in range(0,len(controls),4)]
-    if (rotations[0] != [0,0,0,1] or rotations[-1] == rotations[0] or
+    # The dial calibration is baked into the clip: zero input may already sit off the rest pose.
+    if (rotations[-1] == rotations[0] or
             any(not math.isclose(sum(a*a for a in q),1.,abs_tol=1e-5) for q in rotations)):
         raise ValueError("Granny motion has invalid rotation controls")
     pivot = reader.fields(*reader.fields(*track["PositionCurve"])["CurveData"])["Controls"]
@@ -416,62 +328,27 @@ def verify_clip(blob, clip_name):
 
 
 def verify_gauge_graph(blob, assets, rig, bound_names):
-    reader = RawObjects(blob,GSF_TAG,GSF_SCHEMA)
-    char = reader.fields("Character",0)
-    if not char["AnimationSlots"] or len(char["AnimationSets"])!=1:
-        raise ValueError("GSF does not contain a non-empty native animation set")
-    clip_set = reader.fields(*char["AnimationSets"][0])
-    slots = [reader.fields(*ref) for ref in char["AnimationSlots"]]
-    specs = [reader.fields(*ref) for ref in clip_set["AnimationSpecs"]]
-    refs = clip_set["SourceFileReferences"]
-    if clip_set["Name"]!="Base" or not len(slots)==len(specs)==len(refs):
-        raise ValueError("Unbalanced GSF slots, clips and sources")
-    target = {}
-    for i,(slot,spec) in enumerate(zip(slots,specs,strict=True)):
-        name = slot["Name"]
-        if (name not in ROLE_CRCS or slot["SlotIndex"] != i or spec["ExpectedName"] != name
-                or spec["SourceReference"] != refs[i] or spec["AnimationIndex"]!=0):
-            raise ValueError("GSF slot to animation mapping is inconsistent")
-        source = reader.fields(*refs[i])
-        if (source["SourceFilename"],source["ExpectedAnimCount"],source["AnimCRC"]) != (
-                ".\\"+name+".gr2",1,ROLE_CRCS[name]):
-            raise ValueError("GSF source file reference disagrees with its native role")
+    """The template graph with only its gauge numbers changed, and a clip per slot on a bound bone."""
+    data, record = gauge_template()
+    if len(blob) != len(data) or zlib.crc32(blob[HEADER_SIZE:]) != struct.unpack_from("<I", blob, 40)[0]:
+        raise ValueError("GSF is not the native gauge graph template")
+    variable = {40, 41, 42, 43}
+    for name, offsets in record["parameters"].items():
+        maximum, = struct.unpack_from("<f", blob, offsets["max_value"])
+        if not (math.isfinite(maximum) and maximum > 0):
+            raise ValueError(f"Invalid {name} gauge range")
+        for offset in offsets["a_value"]:
+            if not math.isclose(struct.unpack_from("<f", blob, offset)[0], 1.0 / maximum, rel_tol=1e-6):
+                raise ValueError(f"GSF {name} equation disagrees with its range")
+            variable.update(range(offset, offset + 4))
+        variable.update(range(offsets["max_value"], offsets["max_value"] + 4))
+    if any(x != y for i, (x, y) in enumerate(zip(blob, data)) if i not in variable):
+        raise ValueError("GSF differs from the native gauge graph template outside its gauge numbers")
+    used = set()
+    for name in record["slots"]:
         path = f"animations/{name}.gr2"
-        bone,pivot = verify_clip(assets(path),name)
+        bone, pivot = verify_clip(assets(path), name)
         if bone not in bound_names or bone not in rig or tuple(rig[bone]["local_m"]) != pivot:
             raise ValueError("GSF clip does not target its CarScene bone and bind")
-        target[name] = (bone,path)
-    seen, clip_nodes, live_edges = set(), set(), set()
-    def walk(token,parent=None):
-        node_type,_ = token
-        row = reader.fields(*token)
-        uid = row["ContextUID_"+node_type]
-        if uid in seen:
-            raise ValueError("Reused GSF context identifier")
-        seen.add(uid)
-        node = reader.fields(*row["nodeToken"])
-        if node.get("ParentToken") != parent:
-            raise ValueError("GSF node parent does not match its container")
-        for ref in node["InputEdges"]:
-            edge = reader.fields(*ref)
-            if neighbor := edge.get("OtherNode"):
-                other = reader.fields(*reader.fields(*neighbor)["nodeToken"])
-                j = edge["OtherNodeEdge"]
-                # A reference to the enclosing container reads that container's input edge (native rule).
-                pool = other["InputEdges"] if neighbor == parent else other["OutputEdges"]
-                if not 0<=j<len(pool) or reader.fields(*pool[j])["EdgeType"]!=edge["EdgeType"]:
-                    raise ValueError("GSF input edge does not resolve a compatible output")
-                if node_type=="subtree_sample" and neighbor[0]=="timeselect":
-                    live_edges.add(edge["EdgeName"])
-        if node_type=="anim_source":
-            source = reader.fields(*row["anim_sourceToken"])
-            clip_nodes.add(reader.fields(*source["AnimationSlot"])["Name"])
-        if container:=row.get("containerToken"):
-            for child in reader.fields(*container)["ChildTokens"]:
-                walk(reader.fields(*child)["Variant"],token)
-    if char["StateMachine"][0]!="state_machine":
-        raise ValueError("GSF has no root state machine")
-    walk(char["StateMachine"])
-    if max(seen)+1 != char["NumUniqueTokenized"] or clip_nodes != target.keys() or live_edges != {t[0] for t in target.values()}:
-        raise ValueError("GSF graph does not connect all authored runtime clips")
-    return {path for _,path in target.values()}
+        used.add(path)
+    return used
