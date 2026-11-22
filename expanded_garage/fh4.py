@@ -28,6 +28,7 @@ from .vehicle_ir import member_path, sha256, write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 TARGET_BUILD = "FH4 Steam 1.478.564.0"
+PROXY_LOD = "scene/proxylod.modelbin"
 PART_TYPES = {"exterior": 2, "cockpit": 2, "brake": 4, "wheel": 43}
 KNOWN_LIMITS = {
     "geometry": "Rigid source meshes with typed stock/variant IDs. Visibility and LOD presentation need runtime qualification.",
@@ -310,6 +311,11 @@ def make_models(root, ir, identity, library):
     bounds = (np.min([p.min(axis=0) for p in surface_geometry], axis=0),
               np.max([p.max(axis=0) for p in surface_geometry], axis=0))
     payloads[f"{aliases}.carbin"] = carbin(identity, bones, skel, models, bounds, contract.groups(models))
+    # Native scene/ProxyLOD.modelbin (convention-loaded): coarsest LOD of every stock exterior part.
+    proxy_draws = [d for component, draws in sorted(grouped["exterior"].items())
+                   if component.casefold() not in nonstock
+                   for d in draws if d.lod == max(x.lod for x in draws)]
+    payloads[PROXY_LOD] = fh4_model.proxy_model(proxy_draws)
     if points:
         authored = {"carLocator_" + point.name for point in points.values()}
         extra, driver_rig["locators"] = fh4_driver_rig.transferred_locators(points, authored, driver_side)
@@ -513,6 +519,17 @@ def validate_zip(blob, name, car_id, *, trial=None):
                 clips = verify_gauge_graph(archive.read(names[gsf]),lambda p: archive.read(names[p]),
                                            {b["name"]:b for b in rig},{label for _,label in bindings.values()})
                 used.update(clips | {gsf})
+        if PROXY_LOD in names:
+            data = archive.read(names[PROXY_LOD])
+            kinds = [b["tag"] for b in geometry.blobs(data)]
+            if kinds.count("Mesh") != 2 or kinds.count("MatI") != 1:
+                raise ValueError("Unexpected ProxyLOD structure")
+            for b in geometry.blobs(data):
+                if b["tag"] == "Modl":
+                    low, high = dict(fh4_model_box(data, b))["box"]
+                    if not all(h - l > 0.5 for l, h in zip(low, high)):
+                        raise ValueError(f"Degenerate ProxyLOD bounds {low} {high}")
+            used.add(PROXY_LOD)
         if "manufacturercolors.bin" in names:
             if not fh4_paint.read_manufacturer_colors(archive.read(names["manufacturercolors.bin"])):
                 raise ValueError("Empty ManufacturerColors.bin")

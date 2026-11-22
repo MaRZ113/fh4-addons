@@ -252,14 +252,16 @@ def pack_streams(draw):
     return packed_positions.tobytes(), attrs.tobytes(), transforms + [UV_IDENTITY] * 3, lo, hi, scale, center
 
 
-def mesh(draw, mat_id, bone, index_start, position_offset, vb_id, transforms, low, high, scale, center, shadow):
+def mesh(draw, mat_id, bone, index_start, position_offset, vb_id, transforms, low, high, scale, center, shadow,
+         lod_fields=None):
     if shadow:
         material_id, layout, bucket = -1, 1, 9
     else:
         material_id, layout, bucket = mat_id, 0, 4 if draw.transparent else 17
     num_indices = draw.indices.size
-    fields = struct.pack("<5hHBBH5BH", -1, material_id, -1, -1, bone, lod_mask(draw.lod),
-                         0, 255, bucket, 0, 0, 0, 0, 1, 4)
+    mask, low_lod = lod_fields if lod_fields else (lod_mask(draw.lod), 0)
+    fields = struct.pack("<5hHBBH5BH", -1, material_id, -1, -1, bone, mask,
+                         low_lod, 255, bucket, 0, 0, 0, 0, 1, 4)
     fields += struct.pack("<6ifIii", 0, 0, index_start, 0, num_indices, num_indices // 3,
                           len(draw.positions) / (num_indices // 3), len(draw.positions), layout,
                           1 if shadow else 2)
@@ -315,3 +317,36 @@ def assemble(draws, bones, bone=1, shadows=True):
     chunks.append(stats(count, len(draws)+2, 2, len(materials), mask,
                         np.min(minima, axis=0), np.max(maxima, axis=0)))
     return bundle(chunks), mask
+
+
+def proxy_model(draws):
+    """Native scene/ProxyLOD.modelbin: one merged exterior mesh on every LOD with an empty `shader` MatI.
+
+    Measured on FOR_FiestaST_14 and present in 399 of 400 native archives: a single
+    <root> bone, a zero-length MatI named `shader` (no library path, no MTPR), one
+    render mesh plus its shadow with LOD mask 0xFFFF and minimum LOD 30, and a box
+    equal to the whole car.
+    """
+    if not draws:
+        raise ValueError("ProxyLOD needs exterior geometry")
+    offsets = np.cumsum([0] + [len(d.positions) for d in draws[:-1]])
+    merged = Draw("", 0, "shader", "", False,
+                  np.concatenate([d.positions for d in draws]).astype(np.float32),
+                  np.concatenate([d.normals for d in draws]).astype(np.float32),
+                  np.zeros((sum(len(d.positions) for d in draws), 2), dtype=np.float32),
+                  np.zeros((sum(len(d.positions) for d in draws), 2), dtype=np.float32),
+                  np.concatenate([d.indices + o for d, o in zip(draws, offsets)]).astype(np.uint32), {})
+    bones = [Bone("<root>", -1)]
+    pos, attr, transforms, low, high, scale, center = pack_streams(merged)
+    shader = Chunk("MatI", (1, 0), b"", (name_meta("shader"), id_meta(0)))
+    params = (merged, 0, 0, 0, 0, 1, transforms, low, high, scale, center)
+    chunks = [skeleton(bones), shader,
+              mesh(*params, shadow=False, lod_fields=(0xFFFF, 30)),
+              mesh(*params, shadow=True, lod_fields=(0xFFFF, 30)),
+              buffer("IndB", 0, merged.indices.astype("<u4").tobytes(), 4, 42),
+              buffer("VerB", -1, pos, 8, 13), vertex_layout(0, False), vertex_layout(1, True),
+              buffer("VerB", 1, attr, 36, 37),
+              # Native ProxyLOD Modl: counts, then zero LOD-range flags and mask 0xFFFF.
+              Chunk("Modl", (1, 2), struct.pack("<4H?bbxHBB", 2, 3, 2, 1, False, 0, 0, 0xFFFF, 1, 0),
+                    (box_meta(low, high),))]
+    return bundle(chunks)
