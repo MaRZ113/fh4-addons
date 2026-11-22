@@ -166,3 +166,61 @@ def safe_name(name):
     if not re.fullmatch(r"[A-Za-z0-9_]+", name):
         raise ValueError(f"Unexpected locator name {name!r}")
     return name
+
+
+AUTOVISTA_FILE = "fh4-autovista-v1.json"
+
+
+def autovista(points, locator_names, driver_side):
+    """<media>.avpins from the native donor: root-frame positions mapped onto the car.
+
+    Every native archive (299 of 300 sampled) carries an Autovista points-of-interest
+    file with seat views, camera distances and apex angles. Without it the garage
+    presentation falls back to a 100/999 shot whose camera turns non-finite.
+    Positions under Locator="root" are in car space and use the hardpoint fit;
+    positions under other locators are local offsets and stay unchanged.
+    """
+    record = json.loads(files(__package__).joinpath(AUTOVISTA_FILE).read_text(encoding="utf-8"))
+    if driver_side != record["driver_side"]:
+        # Seat states and views are side-specific (InLeftFrontSeat, LeftFrontSeatView); no mirror yet.
+        return None, {"donor": record["donor"], "generated": False,
+                      "reason": "donor has the opposite driver side; Autovista mirroring is not implemented"}
+    donor = [{"name": name, "matrix": [0.0] * 12 + list(xyz) + [1.0]} for name, xyz in record["fit_points"].items()]
+    coefficients, residual = fit_axes(points, donor)
+    root = ET.fromstring(record["avpins"])
+    referenced, moved = set(), 0
+
+    def walk(node, frame):
+        nonlocal moved
+        frame = node.get("Locator", frame)
+        if node.get("Locator", "").strip():
+            referenced.add(node.get("Locator"))
+        if node.tag == "Pos" and frame == "root":
+            for axis, (a, b) in zip("XYZ", coefficients):
+                node.set(axis, f"{a * float(node.get(axis)) + b:.6f}")
+            moved += 1
+        for child in node:
+            walk(child, frame)
+
+    walk(root, "root")
+    unknown = sorted(r for r in referenced if r != "root" and r not in locator_names)
+    if unknown:
+        raise ValueError(f"Autovista references locators the car lacks: {unknown}")
+    data = b"\xef\xbb\xbf" + ET.tostring(root, encoding="utf-8")
+    return data, {"donor": record["donor"], "donor_sha256": record["donor_sha256"],
+                  "template": root.get("Template"), "moved_root_positions": moved,
+                  "max_hardpoint_residual_m": residual, "referenced_locators": sorted(referenced)}
+
+
+def validate_autovista(data, locator_names):
+    root = ET.fromstring(data.decode("utf-8-sig"))
+    if root.tag != "PointsOfInterest" or not root.get("Template"):
+        raise ValueError("Unexpected Autovista envelope")
+    refs = {n.get("Locator") for n in root.iter() if (n.get("Locator") or "").strip()}
+    unknown = sorted(r for r in refs if r != "root" and r not in locator_names)
+    if unknown:
+        raise ValueError(f"Autovista references unknown locators {unknown}")
+    for pos in root.iter("Pos"):
+        if any(not np.isfinite(float(pos.get(a))) for a in "XYZ"):
+            raise ValueError("Non-finite Autovista position")
+    return root.get("Template")

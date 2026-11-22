@@ -320,6 +320,10 @@ def make_models(root, ir, identity, library):
         authored = {"carLocator_" + point.name for point in points.values()}
         extra, driver_rig["locators"] = fh4_driver_rig.transferred_locators(points, authored, driver_side)
         payloads["Locators.xml"] = systems.locator_xml(aliases, points, extra)
+        locator_names = authored | {item["name"] for item in extra}
+        avpins, driver_rig["autovista"] = fh4_driver_rig.autovista(points, locator_names, driver_side)
+        if avpins is not None:
+            payloads[f"{aliases}.avpins"] = avpins
     payloads["IKAnchorBones.xml"] = fh4_driver_rig.ik_anchor_xml()
     steering = next((d for k, ds in grouped["cockpit"].items() if k.casefold() == "steering_wheel"
                      for d in ds), None)
@@ -493,6 +497,12 @@ def validate_zip(blob, name, car_id, *, trial=None):
         if "locators.xml" in names:
             systems.validate_locator_xml(archive.read(names["locators.xml"]), scene_bones)
             used.add("locators.xml")
+        if f"{aliases}.avpins" in names:
+            if "locators.xml" not in names:
+                raise ValueError("Autovista file without Locators.xml")
+            located = set(systems.validate_locator_xml(archive.read(names["locators.xml"]), scene_bones))
+            fh4_driver_rig.validate_autovista(archive.read(names[f"{aliases}.avpins"]), located)
+            used.add(f"{aliases}.avpins")
         if "ikanchorbones.xml" in names:
             fh4_driver_rig.validate_ik_anchor_xml(archive.read(names["ikanchorbones.xml"]), scene_bones)
             used.add("ikanchorbones.xml")
