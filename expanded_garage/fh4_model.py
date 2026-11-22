@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from importlib.resources import files
 import json
+import os
 import struct
 
 import numpy as np
@@ -126,6 +127,9 @@ FLT_MAX = float(np.finfo(np.float32).max)
 
 def rig_model(bones):
     # Native skeleton Modelbins carry the empty box sentinel (min=+FLT_MAX, max=-FLT_MAX).
+    # EXPANDED_GARAGE_SKELETON_BOX=zero restores the pre-v1.4.6 zero box (bisection switch).
+    if os.environ.get("EXPANDED_GARAGE_SKELETON_BOX") == "zero":
+        return bundle([skeleton(bones), stats(0, 0, 0, 0, 0, (0.0,) * 3, (0.0,) * 3)])
     return bundle([skeleton(bones), stats(0, 0, 0, 0, 0, (FLT_MAX,) * 3, (-FLT_MAX,) * 3)])
 
 
@@ -273,7 +277,8 @@ PAINT = "exterior_misc/carpaint.materialbin"
 
 def material_key(draw):
     """Native models bind every painted surface to one MatI named `carpaint`."""
-    if draw.target_material.lower() == PAINT:
+    # EXPANDED_GARAGE_PAINT_MATI=source keeps one MatI per source name (bisection switch).
+    if draw.target_material.lower() == PAINT and os.environ.get("EXPANDED_GARAGE_PAINT_MATI") != "source":
         return ("carpaint", draw.target_material)
     return (draw.source_material, draw.target_material)
 
