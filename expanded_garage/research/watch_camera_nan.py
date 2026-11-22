@@ -110,13 +110,22 @@ def observe(host, pid, base, out, seconds, delay):
             if root is None:
                 raise ValueError("The verified MegaTexture object was not found")
             emit({"event": "verified_manager", "manager": hex(root)})
-            step, flushed, was_bad = 0, 0, False
+            step, flushed, was_bad, shot, cuts = 0, 0, False, None, 0
             while running() and time.monotonic() < end and not out.with_suffix(".stop").exists():
                 current = sample(target, root, base)
                 if current is not None:
                     step += 1
                     ring.append((step, current))
                     bad = bool(nonfinite_offsets(current[1][0x20:0x60]))
+                    # A presentation shot cut changes the FOV (+0x1B4) or the shot distances (+0x15C/+0x160).
+                    key = current[1][0x15C:0x164] + current[1][0x1B4:0x1B8]
+                    if shot is not None and key != shot and not bad and cuts < 12:
+                        cuts += 1
+                        window = list(ring)[-61:]
+                        for (_, before), (n, snap) in zip(window, window[1:]):
+                            emit({"event": "sample", **describe(n, before, snap, base)})
+                        emit({"event": "shot_cut", "step": step})
+                    shot = key
                     if bad and not was_bad:
                         items = list(ring)
                         for i, (n, snap) in enumerate(items):
