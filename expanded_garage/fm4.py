@@ -186,6 +186,8 @@ def collect_rows(databases, car_id):
     select("List_CarMake", "Id", car["MakeID"])
     select("List_Wheels", "Id", car["StockWheelID"])
     select("CameraOverrides", "CarID", car_id)
+    if "Combo_Colors" in tables:
+        select("Combo_Colors", "Ordinal", car_id)
     for table in sorted(tables):
         if table.startswith("List_Upgrade"):
             select(table, "Ordinal", car_id)

@@ -35,12 +35,30 @@ def surface_binding(label, component_kind="", component=""):
         return bind("wheelmaterials/aluminum_machined_satin",MaterialUse.RUNTIME)
     if name in {"caliper","brake","rotor","hub","metal"}:
         return bind("brakes/metal",MaterialUse.RUNTIME)
-    if name in {"head_light","reverse_light","tail_light","brake_light","turn_light","head_light_lod0",
-                "tail_light_lod0","reverse_light_lod0","lights_glass"} or name.startswith("detail_glass_"):
+    if name in {"tail_light","tail_light_lod0","brake_light","detail_glass_red"}:
+        # Red lens: native gls_colored with the donor's red tint parameters.
+        return bind("exterior_glass/gls_colored",MaterialUse.EFFECT,True,"native_red_lens_tint")
+    if name in {"head_light","reverse_light","turn_light","head_light_lod0",
+                "reverse_light_lod0","lights_glass"} or name.startswith("detail_glass_"):
         return bind("exterior_glass/gls_clear",MaterialUse.EFFECT,True,"missing_optical_channels")
-    if name in {"glass","window","black_glass","defrost_lines"}:
-        return bind("exterior_glass/gls_limotint" if name=="black_glass" else "exterior_glass/gls_clear",
-                    MaterialUse.FIDELITY if name=="defrost_lines" else MaterialUse.VISIBILITY, True)
+    if name == "black_glass":
+        return bind("specificuse/blackglass",MaterialUse.VISIBILITY,True)
+    if name == "defrost_lines":
+        return bind("interior_misc/defrostlines" if component_kind=="cockpit" else "exterior_misc/defrostlines",
+                    MaterialUse.FIDELITY,True)
+    if name in {"glass","window"}:
+        # Native glazing by pane: windscreen, rear screen, side windows; cabin side uses interior variants.
+        if component_kind == "cockpit":
+            member = "interior_glass/gls_windsheild_interior" if part == "glassf" else "interior_glass/gls_window_interior"
+        elif part == "glassf":
+            member = "exterior_glass/gls_windsheild"
+        elif part == "glassr":
+            member = "exterior_glass/gls_rearglass"
+        elif part.startswith("glass") and not part.endswith(("hl","tl")):
+            member = "exterior_glass/gls_window"
+        else:
+            member = "exterior_glass/gls_clear"
+        return bind(member,MaterialUse.VISIBILITY,True)
     if name in {"badge","emblem","wheel_emblem"}:
         return bind("exterior_metal/chrome",MaterialUse.FIDELITY,fidelity="missing_source_emblem_texture")
     if name == "gauge_needle":

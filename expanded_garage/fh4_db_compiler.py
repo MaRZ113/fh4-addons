@@ -274,6 +274,11 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
     if src.entries("CameraOverrides"):
         insert("CameraOverrides", car_id, src.record("CameraOverrides"), {},
                "FM4 camera offsets, native camera behavior pending", (car,))
+    if "Combo_Colors" in src.tables:
+        for item in sorted(src.raw_records("Combo_Colors", "Ordinal", src.id), key=lambda i: i["record"]["Sequence"]):
+            row = item["record"]
+            insert("Combo_Colors", car_id * 1000 + row["Sequence"], row, {"Ordinal": car_id},
+                   "FM4 stock manufacturer colour; swatches and paint materials in ManufacturerColors.bin", (car,))
     for item in src.raw_records("CarPartPositions", "Ordinal", src.id):
         row = item["record"]
         insert("CarPartPositions", body_id + row["PartId"], row, {"Ordinal": car_id},

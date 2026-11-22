@@ -15,7 +15,7 @@ import numpy as np
 from . import fh4_archive, fh4_db, fh4_model, fh4_physics
 from .fh4_scene_contract import NativeCarSceneContract
 from .fh4_runtime_rig import NativeRuntimeRigCompiler, verify_skeleton
-from . import fh4_driver_rig
+from . import fh4_driver_rig, fh4_paint, fh4_wheel_model
 from .fh4_granny_animation import verify_gauge_graph
 from .fh4_material_contract import surface_binding
 from .fh4_motion import GAUGES
@@ -171,6 +171,21 @@ def guess_lights(exterior):
     return result
 
 
+def fh4_model_box(data, blob):
+    """Return the BBox metadata of a Modl blob as ((low, high),)."""
+    tag, _, _, _, header, _, count = struct.unpack_from("<IBBHIII", data)
+    for index in range(count):
+        _, _, _, fields, metadata, offset, _, _ = struct.unpack_from("<IBBHIIII", data, 20 + index * 24)
+        if offset != blob["offset"]:
+            continue
+        for meta in range(metadata, metadata + fields * 8, 8):
+            kind, flags, relative = struct.unpack_from("<IHH", data, meta)
+            if kind == 0x42426f78:
+                values = struct.unpack_from("<6f", data, meta + relative)
+                return (("box", (values[:3], values[3:])),)
+    raise ValueError("Modl blob without BBox")
+
+
 def driver_side_from(grouped):
     steering = [d for k, ds in grouped["cockpit"].items() if k.casefold() == "steering_wheel" for d in ds]
     if not steering:
@@ -215,7 +230,8 @@ def make_models(root, ir, identity, library):
     with ZipFile(library) as archive:
         available = {name.lower(): name for name in archive.namelist()}
 
-        def emit(kind, key, draws, bone=0, translation=(0.0, 0.0, 0.0), attachment=None, component=None):
+        def emit(kind, key, draws, bone=0, translation=(0.0, 0.0, 0.0), attachment=None, component=None,
+                 path=None, rig=None):
             rotation = (0.,0.,0.,1.)
             if attachment:
                 bone, translation, rotation = attachment.index, attachment.point, attachment.rotation
@@ -236,6 +252,12 @@ def make_models(root, ir, identity, library):
                 if material not in references:
                     item = archive.getinfo(available[material])
                     references[material] = {"member": item.filename, "crc32": f"{item.CRC:08x}"}
+            if rig is not None:
+                # Convention-loaded model outside the Carbin (native stock wheel).
+                if path in payloads:
+                    raise ValueError(f"Duplicate output model name {path}")
+                payloads[path], _ = fh4_model.assemble(draws, rig, 0, shadows=True)
+                return
             local = re.sub(r"[^a-z0-9_]+", "_", key.lower()).strip("_")
             path = f"scene/{kind}/{local}.modelbin"
             if path in payloads:
@@ -260,11 +282,16 @@ def make_models(root, ir, identity, library):
                         emit(kind,key,needles,attachment=attachments.get(key))
                 else:
                     emit(kind, key, draws,attachment=attachments.get(key))
+        paint = None
+        colors = rows_for(rows, "Combo_Colors") if "Combo_Colors" in rows else []
+        if colors:
+            payloads["ManufacturerColors.bin"], paint = fh4_paint.manufacturer_colors(colors, set(available))
         wheel = [d for draws in grouped["wheel"].values() for d in draws]
+        wheel_model = None
         if wheel:
-            for corner, binding in corners.items():
-                local = [reflected(d) for d in wheel] if corner.startswith("R") else wheel
-                emit("wheel", f"wheel{corner}", local, binding["spindle"], binding["origin_m"])
+            normalised, wheel_bones, wheel_model = fh4_wheel_model.normalise(wheel)
+            wheel_model["member"] = fh4_wheel_model.wheel_path(identity["media_name"])
+            emit("wheel", "wheelLF", normalised, path=wheel_model["member"], rig=wheel_bones)
         for key, draws in sorted(grouped["brake"].items()):
             corner = key[-2:].upper()
             if corner in corners:
@@ -312,7 +339,7 @@ def make_models(root, ir, identity, library):
     return payloads, {
         "modelbins": len(models) + 1, "models_by_role": {k: sum(m.kind == k for m in models) for k in PART_TYPES},
         "bone_names": [bone.name for bone in bones], "scene_contract": contract.receipt(),
-        "driver_rig": driver_rig,
+        "driver_rig": driver_rig, "stock_wheel_model": wheel_model, "manufacturer_colors": paint,
         "material_library": {"sha256": library_hash, "references": references},
         "materials_with_diagnostic_fallback": fallback,"material_contract":material_contract,
         "retained_in_ir_only": sorted(filtered),
@@ -480,6 +507,22 @@ def validate_zip(blob, name, car_id, *, trial=None):
                 clips = verify_gauge_graph(archive.read(names[gsf]),lambda p: archive.read(names[p]),
                                            {b["name"]:b for b in rig},{label for _,label in bindings.values()})
                 used.update(clips | {gsf})
+        if "manufacturercolors.bin" in names:
+            if not fh4_paint.read_manufacturer_colors(archive.read(names["manufacturercolors.bin"])):
+                raise ValueError("Empty ManufacturerColors.bin")
+            used.add("manufacturercolors.bin")
+        wheel_member = fh4_wheel_model.wheel_path(aliases)
+        wheel_model = False
+        if wheel_member in names:
+            data = archive.read(names[wheel_member])
+            for b in geometry.blobs(data):
+                if b["tag"] == "Modl":
+                    meta = dict(fh4_model_box(data, b))
+                    fh4_wheel_model.check_bounds(*meta["box"])
+                    wheel_model = True
+                elif b["tag"] == "MatI":
+                    material_members.add(verify_material(data, b, geometry))
+            used.add(wheel_member)
         if "physicsdefinition.bin" in names:
             _, clouds, tail = systems.read_collision(archive.read(names["physicsdefinition.bin"]))
             if tail != bytes(12) or [flags for flags, _ in clouds] != [0xe05, 0xb05]:
@@ -491,10 +534,9 @@ def validate_zip(blob, name, car_id, *, trial=None):
             used.add("physicsdefinition.bin")
         if trial is not None:
             # Native handlers are separate from the accessory GSF motion graph.
-            wheel_bindings = {path.rsplit("\\",1)[-1].removesuffix(".modelbin").removeprefix("wheel").upper(): label
-                              for path,(_,label) in bindings.items()
-                              if path.startswith(virtual(aliases,"scene/wheel/"))}
-            trial.update(material_members=sorted(material_members), wheel_bindings=wheel_bindings,
+            carbin_wheels = sorted(path for path in bindings if path.startswith(virtual(aliases,"scene/wheel/")))
+            trial.update(material_members=sorted(material_members), stock_wheel_model=wheel_model,
+                         carbin_wheel_models=carbin_wheels,
                          steering_binding=any(label=="boneSteeringWheelSpindle" for _,label in bindings.values()),
                          locator_xml="locators.xml" in used, gsf=f"animations/{aliases}.gsf" in used,
                          gr2=gr2 in used)

@@ -1,6 +1,9 @@
 """Serialize FH4 Grub 1.1 rigid Modelbin and skeleton bundles from typed data."""
 
 from dataclasses import dataclass
+from functools import lru_cache
+from importlib.resources import files
+import json
 import struct
 
 import numpy as np
@@ -118,9 +121,12 @@ def stats(meshes, buffers, layouts, materials, lod_mask, low, high):
     return Chunk("Modl", (1, 2), body, (box_meta(low, high),))
 
 
+FLT_MAX = float(np.finfo(np.float32).max)
+
+
 def rig_model(bones):
-    zero = (0.0, 0.0, 0.0)
-    return bundle([skeleton(bones), stats(0, 0, 0, 0, 0, zero, zero)])
+    # Native skeleton Modelbins carry the empty box sentinel (min=+FLT_MAX, max=-FLT_MAX).
+    return bundle([skeleton(bones), stats(0, 0, 0, 0, 0, (FLT_MAX,) * 3, (-FLT_MAX,) * 3)])
 
 
 def vertex_layout(index, position_only):
@@ -139,13 +145,20 @@ def vertex_layout(index, position_only):
     return Chunk("VLay", (1, 1), payload, (id_meta(index),))
 
 
+@lru_cache(maxsize=1)
+def native_parameters():
+    """Donor MTPR blocks per shared library member (fh4-material-parameters-v1.json)."""
+    record = json.loads(files(__package__).joinpath("fh4-material-parameters-v1.json").read_text(encoding="utf-8"))
+    return {member: bytes.fromhex(item["mtpr"]) for member, item in record["parameters"].items()}
+
+
 def material(index, name, library_path):
     path = ("Game:\\Media\\cars\\_library\\materials\\" + library_path.replace("/", "\\")).encode("ascii")
     if len(path) >= 128:
         raise ValueError(f"Material path exceeds the supported one-byte length {library_path}")
     resource = Chunk("MATI", (1, 0), bytes([len(path)]) + path,
                      (name_meta(name), metadata("ATST", b"\0\0", 2)))
-    parameters = Chunk("MTPR", (2, 0), bytes(13))
+    parameters = Chunk("MTPR", (2, 0), native_parameters().get(library_path.lower(), bytes(13)))
     return Chunk("MatI", (1, 0), bundle([resource, parameters]), (name_meta(name), id_meta(index)))
 
 
@@ -255,11 +268,21 @@ def mesh(draw, mat_id, bone, index_start, position_offset, vb_id, transforms, lo
     return Chunk("Mesh", (1, 9), fields, (name_meta("Shadow" if shadow else draw.name), box_meta(low, high)))
 
 
+PAINT = "exterior_misc/carpaint.materialbin"
+
+
+def material_key(draw):
+    """Native models bind every painted surface to one MatI named `carpaint`."""
+    if draw.target_material.lower() == PAINT:
+        return ("carpaint", draw.target_material)
+    return (draw.source_material, draw.target_material)
+
+
 def assemble(draws, bones, bone=1, shadows=True):
     if not draws or not 0 <= bone < len(bones):
         raise ValueError("Modelbin needs a draw and a valid rigid bone")
     chunks = [skeleton(bones), Chunk("Mrph", (0, 0), struct.pack("<H", 1) + string("weight[0]"))]
-    materials = sorted({(d.source_material, d.target_material) for d in draws})
+    materials = sorted({material_key(d) for d in draws})
     ids = {entry: i for i, entry in enumerate(materials)}
     chunks.extend(material(i, name, path) for i, (name, path) in enumerate(materials))
     bindings = [vertex_layout(0, False), vertex_layout(1, True)]
@@ -268,7 +291,7 @@ def assemble(draws, bones, bone=1, shadows=True):
     minima, maxima = [], []
     for i, draw in enumerate(draws):
         pos, attr, transforms, low, high, scale, center = pack_streams(draw)
-        mat_id = ids[draw.source_material, draw.target_material]
+        mat_id = ids[material_key(draw)]
         vb_id = i + 1
         params = (draw, mat_id, bone, len(indices) // 4, len(positions), vb_id, transforms, low, high, scale, center)
         chunks.append(mesh(*params, shadow=False))

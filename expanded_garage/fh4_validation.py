@@ -329,8 +329,10 @@ def audit_catalogue(candidate, identity, scene, scene_contract, native=None, tir
 
 def audit_trial_assets(archive, frames, zip_evidence):
     missing = []
-    if zip_evidence["wheel_bindings"] != {corner:"spindle"+corner for corner in CORNER_IDS.values()}:
-        missing.append("Carbin must attach four owned wheel models to their matching spindle bones")
+    if not zip_evidence["stock_wheel_model"]:
+        missing.append("Missing the normalised stock wheel model scene/_library/scene/wheels/<media>_wheellf.modelbin")
+    if zip_evidence["carbin_wheel_models"]:
+        missing.append("Native Carbins carry no wheel models; the runtime loads the stock wheel by convention")
     for key, label in (("steering_binding","Carbin steering wheel on boneSteeringWheelSpindle"),
                        ("locator_xml","owned Locators.xml"),
                        ("gr2","own GR2 skeleton"),("gsf","named GSF with resolved accessory clips")):
