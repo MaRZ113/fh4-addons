@@ -270,3 +270,14 @@ Static reading of the dump (image base 0x140000000):
   steering -> 4, wheelLF..wheelRM -> 5..10. No RIP-relative reference to it was found yet.
 - Native carbins carry per-model AO swatch paths and material names (`Steering_plastic_2|steeringwheel_a`);
   the generated carbin leaves those fields empty.
+
+Shot data layout from the parser (0x32869C0, called from the Cam reader at 0x28A181D): a Cam holds `Type` at
++0x24 and the Anim block at +0x80 (PosAnimType +0x80: WorldSpace 0, CarSpace 1, WorldOffsetCar 2, PartSpace 3,
+BoundingBoxSpace 4; RotAnimType +0x84: TargetCar 0, TargetPart 1, WorldSpace 2, CarSpace 3; part index +0x88;
+keys at +0xA0, 64 bytes each).
+
+The skeleton Modelbin BBox is the empty sentinel (FLT_MAX, -FLT_MAX) in 60 of 60 sampled native cars; the bisection
+builds since d0ff43de used a zero box (`EXPANDED_GARAGE_SKELETON_BOX=zero`). A zero box is a valid box of size zero
+at the origin, which a box-normalised camera frame would divide by. The Fatal Error 0x333A9AC of d0ff43de came
+with two changes at once (sentinel box and merged carpaint MatI). Variant tx f368e7cc: native sentinel box,
+source paint MatI, carbin wheels, everything else as 3c7e5ff9.
