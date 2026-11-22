@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "profiles": [
+    {
+      "name": "Suzuki J20B six-speed manual",
+      "mode": "stick",
+      "make": "SUZ",
+      "years": [2010, 2012],
+      "displacement_cc": 1995,
+      "drive_type": 1,
+      "engine_placement": 1,
+      "gears": 6,
+      "wheelbase_m": 2.5,
+      "ratios": [3.481, 3.615, 2.047, 1.379, 1.029, 0.837, 0.707],
+      "minimum_matching_ratios": 6,
+      "final_drive": 4.117,
+      "suspension": {
+        "Front": "strut",
+        "Rear": "torsion_beam",
+        "reference": "https://xr793.org/wp-content/uploads/2022/08/2010-Suzuki-SX4-Hatchback-CN.pdf"
+      },
+      "references": [
+        "https://www.auto-brochures.com/makes/Suzuki/SX4/Suzuki_US%20SX4_2011.pdf",
+        "https://www.centuryu.com/uploads/1/4/4/6/144698822/2012_sx4.pdf"
+      ]
+    },
+    {
+      "name": "Honda DC2 1.8 five-speed manual",
+      "mode": "stick",
+      "make": "HON",
+      "years": [1995, 2001],
+      "displacement_cc": 1797,
+      "drive_type": 1,
+      "engine_placement": 1,
+      "gears": 5,
+      "wheelbase_m": 2.57,
+      "ratios": [3.0, 3.230, 2.105, 1.458, 1.107, 0.848],
+      "minimum_matching_ratios": 5,
+      "final_drive": 4.4,
+      "suspension": {
+        "Front": "wishbone",
+        "Rear": "wishbone",
+        "reference": "https://www.honda.co.jp/sportscar/sportscar/integra_type_r/"
+      },
+      "references": [
+        "https://www.honda.co.jp/auto-archive/integra/3door/type-r2001/grade_data/",
+        "https://www.honda.co.jp/factbook/auto/INTEGRA/19950824/in95-006.html"
+      ]
+    },
+    {
+      "name": "RUF 3.6-litre rear-engine six-speed manual",
+      "mode": "stick",
+      "make": "RUF",
+      "years": [1995, 1997],
+      "displacement_cc": 3600,
+      "drive_type": 2,
+      "engine_placement": 3,
+      "gears": 6,
+      "wheelbase_m": 2.272,
+      "mass_kg": 1380,
+      "references": [
+        "https://www.no-speedlimit.it/downloads/World%20of%20RUF%202017%20-%20Edition%20VII.pdf"
+      ]
+    }
+  ]
+}

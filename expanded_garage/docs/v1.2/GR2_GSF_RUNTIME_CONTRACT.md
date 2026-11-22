@@ -1,0 +1,9 @@
+# FH4 Granny skeleton and GSF
+
+The stock research compares five cars spanning front, rear and all-wheel drive and both steering sides. The pinned Granny reader decodes the v7 64-bit sections and relocations. Every sampled skeleton uses 0x80000039 and every sampled animation graph uses 0x806574E2. The evidence records each archive and member hash, sections, model bindings and resolved paths.
+
+The compiler builds a v7 Granny skeleton from the source Vehicle IR and authored hardpoints. It writes typed root, art coordinates, skeleton, model and bone records, parent-local transforms and inverse binds. `GrannyRootBone` is the Granny name for the Modelbin's `<root>`. The other names, parent indices and local positions read back identically. The new GR2 contains a chassis root, hub/spindle pairs and source-owned steering position where available. Both the Python verifier and the local ForzaTech Studio parser read back the generated files. The writer has no external Granny dependency.
+
+The GSF root declares `NumUniqueTokenized`, `StateMachine`, `AnimationSlots`, `AnimationSets`, model hints and optional metadata. The stock graph contains variant-typed nodes, edges, slot indexes, conditionals and transition state. Its Base set links relative GR2 clips for accessory motion. Sampled slot counts range from 5 to 16 and include doors, gauges, wipers and selected hood/trunk controllers. Wheel spindle references also occur in CarScene outside these slot lists. This establishes different serialized channels.
+
+There is no qualified GSF writer or independently bound clip set in 1.2.0a1. FM4 component bounds and gauge marker offsets are insufficient to establish hinge pivots, authored axes, neutral orientations or edge/output behavior. The rig receipt identifies the expected missing GSF path and retained source roles.

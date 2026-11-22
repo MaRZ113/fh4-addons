@@ -1,0 +1,9 @@
+# Native load failure
+
+Suzuki 12000 reaches the Autoshow listing, including its own thumbnail and manufacturer. Selecting it opened the correct vehicle ZIP, showed `EmptySceneWithSpinner`, and terminated FH4. In the same ordinary offline process, stock Acura RSX Type-S 422 and independent Honda 3477 each rendered in the 3D viewer and returned to the catalogue. No car was purchased.
+
+The confirmed immediate cause is a MegaTexture worker lookup for a rectangle outside the native texture grid. The owner dump records index `771927` on a nominal array of 2304 pointers and a read at `0x12e5ceaf938`. The local repeat took the same worker and rectangle path, then faulted parsing the selected record's file-name buffer at address `0x10`. Both rectangles contain tile coordinate `-16401`; the constructor configures a range of `-24` through `23` on each axis. The two exceptions are consistent with an unchecked invalid rectangle selecting different out-of-range memory in different processes. The repeat dump omits the grid and tile object pages, so it does not directly show the contents of the computed slot.
+
+The first invalid input is present before array lookup. Both stack frames contain `INT_MIN` in the pre-division rectangle. The worker consumes a ring rectangle built upstream. One upstream path converts floating-point inputs with `CVTTSS2SI` and writes the ring origins. `INT_MIN` is consistent with that instruction receiving NaN or an unrepresentable value. The capture does not show the incoming floats or prove which operation produced `INT_MIN`. Neither dump identifies a generating Carbin field, another vehicle dependency, or a streaming request file.
+
+Engineering and runtime acceptance remain open. The original `List_Wheels.MassLevel` fault at `0x095599AE` has a distinct instruction and contract. The two current dumps do not execute it. The generated Suzuki cannot be promoted to a new Offline Trial.

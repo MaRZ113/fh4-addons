@@ -1,0 +1,35 @@
+# Game installs, extracted media and private captures
+/game/
+/.scratch/
+/working/
+/build/
+/dist/
+
+# Release and handoff bundles (large, contain game-derived data)
+*.zip
+/Suzuki_V1/
+/Expanded-Garage-*/
+
+# Earlier research phases keep their own nested git histories
+/phase*/
+
+# Third-party tool checkouts and binaries
+/tools/*/
+*.exe
+*.dll
+*.pdb
+
+# Python
+*.egg-info/
+__pycache__/
+*.pyc
+
+# Game data never goes into the repository
+*.slt
+*.sqlite
+*.dmp
+*.bin
+*.modelbin
+*.swatchbin
+*.gr2
+private-*

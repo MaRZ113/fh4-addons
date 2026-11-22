@@ -1,0 +1,23 @@
+# Native wheel state and AeroPhysics initialization
+
+## Failure and repair
+
+The previous FM4 converter left four conditional additions unset on every imported `List_AeroPhysics` row. Those fields are `DragOffThrottleOffset`, `DownforceOffThrottleOffset`, `DragBrakingOffset` and `DownforceBrakingOffset`. All 1,160 native rows have defined values for the four columns. The stock Acura 422 and Honda 3477 front and rear upgrade rows use zero. A zero addition preserves the base curve at every throttle and brake input. The compiler now writes that neutral value for missing FM4 additions, preserves explicitly supplied values within the native catalogue ranges, and checks every referenced front bumper and rear wing aero row on readback. The FM4 base drag, downforce and slider data follow their existing conversion.
+
+The failing Suzuki readback had NULLs in both stock rows. Runtime capture recorded `7.421382448813694e33` at `CCarDynamics+0x1C74/+0x1C78/+0x1C7C/+0x1C80` and `+0x1CB4/+0x1CB8/+0x1CBC/+0x1CC0`. The eight values are already present while the staging position, velocities and wheel rates are finite. The two native controls have zero in those slots.
+
+`0x38A8F00` loads four floats from `+0x20..+0x2C` of each axle's aero record and writes the runtime blocks. Its observed two-stage conversion of binary32 max finite `0x7F7FFFFF` is `float32(float32(FLT_MAX * 0.09806650131940842f) * 0.0002223948516610489)`. The result reproduces the captured coefficient exactly. The investigation established the group and axle mapping. The order of the four named columns within each group was immaterial to the missing-value case.
+
+At `0x388B669` the derivatives routine calls `0x3887780`, which uses those coefficients in the aerodynamic force terms. The failing recorded staging input generated an X force term of about `−8.77e3` on step 4 and `+1.86e35` on step 5 in the 5 ms replay. The following update produced NaN. Acura and Honda supplied finite stage-matched controls. Replacing only the eight affected runtime values in the isolated replay left the original Suzuki input finite for all 20 steps at 1 ms, 5 ms and 1/60 s. The unmodified Suzuki input failed in six or seven steps. The real inputs come from read-only captures. The elapsed step sizes and independent execution in Unicorn are controlled replay conditions.
+
+## Wheel state and placement
+
+The wheel array starts at `CCarDynamics+0x1DB0` with stride `0x15E0`. The field at each wheel's `+0x04` participates in a vertical rate relative to the chassis up axis. `0x38B4524` subtracts the projection of chassis point velocity, calculated from linear and angular velocity, from this rate. `0x3892D6C` and `0x3892E3A` use the same quantity in travel-bound handling. The snapshot reader copies it to `state+0x80+i*0x14` at `0x389CF6A`; `0x38B2E77` integrates it and `0x38AE890` writes it back. `wheel+0x00` is the corresponding coordinate. The Y lane of the world-space wheel point sits at `wheel+0x124`, observed as `CCarDynamics+0x1ED4` on wheel zero.
+
+The base constructor zeroes chassis velocity and position. Wheel initialization copies the default wheel state at `0x389E95A` and assigns the initial coordinate at `0x389E9CE`. The observed live progression was finite staging, finite showroom chassis placement with non-finite wheel rates, then NaN in chassis Y and Y velocity. Neither control produced that persistent invalid wheel state at the matched placement stage. The native update creates the initial mass invalidation in the aerodynamic replay from a finite state, so the NaN values in the failing wheel fields are unnecessary for reproducing that first failure.
+
+The compensated position accumulator at `CCarDynamics+0x10ED0` is zero before the invalid transition and NaN after the finite showroom placement. The integrator adds it at `0x38B2D1A` before writing the next position. Independent replay of the already affected placement sample demonstrated a separate propagation path from the accumulator. Restoring only the wheel rates in the isolated sample made the four rate derivatives finite while the next chassis position still became NaN. The compiler fix addresses the initial coefficient overflow. It leaves the native accumulator and wheel runtime instructions intact.
+
+## Limits of the finding
+
+The data and replay establish an invalid conversion and a causal route to non-finite dynamics. The exact live scheduling and instruction at which the first non-finite value was produced were outside the passive sampling interval. The candidate requires showroom and road acceptance for the exact deployed package. Body geometry, Carbin, Modelbin, runtime rig, tyre selection and v27 collision resource were carried forward from the existing common build.
