@@ -126,6 +126,11 @@ def observe(host, pid, base, out, seconds, delay):
                         ring.clear()
                     was_bad = bad
                 time.sleep(delay)
+            if ring and not running():
+                # The process died without an observed NaN: keep the last samples for comparison.
+                items = list(ring)
+                for i, (n, snap) in enumerate(items):
+                    emit({"event": "sample", **describe(n, items[i - 1][1] if i else None, snap, base)})
             emit({"event": "end", "samples": step, "nonfinite_transitions": flushed, "process_alive": running()})
     finally:
         close(target.handle)
@@ -134,10 +139,21 @@ def observe(host, pid, base, out, seconds, delay):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", required=True, type=Path)
-    parser.add_argument("--pid", required=True, type=int)
-    parser.add_argument("--base", required=True, type=lambda n: int(n, 0))
+    parser.add_argument("--pid", type=int, help="Omit to wait for the next FH4 process")
+    parser.add_argument("--base", type=lambda n: int(n, 0))
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--seconds", type=int, default=1800)
     parser.add_argument("--delay", type=float, default=0.004)
     args = parser.parse_args()
+    if args.pid is None:
+        from .dump_runtime_code import find_pid, module_base
+        native.kernel = c.WinDLL("kernel32", use_last_error=True)
+        deadline = time.monotonic() + args.seconds
+        while args.pid is None and time.monotonic() < deadline:
+            args.pid = find_pid()
+            time.sleep(1)
+        if args.pid is None:
+            raise SystemExit("FH4 did not start")
+        time.sleep(5)
+        args.base = module_base(args.pid)
     observe(args.host, args.pid, args.base, args.out, args.seconds, args.delay)
