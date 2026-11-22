@@ -167,6 +167,7 @@ def inward(draw):
 
 
 GAUGE_BACKING_DEPTH = 0.002
+GAUGE_FACES = ("gauge_emissive", "digital_gauge")
 
 
 def gauge_backing(housing, kind, key):
@@ -470,6 +471,10 @@ def make_models(root, ir, identity, library):
                 else:
                     if kind == "cockpit" and window_part(key):
                         draws = [inward(d) for d in draws]
+                    if kind == "cockpit":
+                        # Dial faces also live in the cabin body (FM4 `interior`: gauge_emissive, digital_gauge).
+                        faces = [d for d in draws if d.source_material.casefold() in GAUGE_FACES]
+                        draws = draws + gauge_backing(faces, kind, key)
                     emit(kind, key, draws,attachment=attachments.get(key))
         paint = None
         colors = rows_for(rows, "Combo_Colors") if "Combo_Colors" in rows else []
