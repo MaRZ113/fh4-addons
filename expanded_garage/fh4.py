@@ -74,7 +74,28 @@ def virtual(alias, name):
     return f"game:\\media\\cars\\{alias.casefold()}\\" + name.replace("/", "\\").casefold()
 
 
-def carbin(identity, bones, skel, models, bounds, upgrade_groups=None):
+def modelbin_box(data):
+    """BBox metadata (low, high) of the Modl blob in a generated Modelbin."""
+    _, _, _, _, _, _, count = struct.unpack_from("<IBBHIII", data)
+    for index in range(count):
+        tag, _, _, fields, metadata, _, _, _ = struct.unpack_from("<IBBHIIII", data, 20 + index * 24)
+        if tag.to_bytes(4, "little") not in (b"Modl", b"ldoM"):
+            continue
+        for meta in range(metadata, metadata + fields * 8, 8):
+            kind, _, relative = struct.unpack_from("<IHH", data, meta)
+            if kind == 0x42426F78:
+                values = struct.unpack_from("<6f", data, meta + relative)
+                return values[:3], values[3:]
+    raise ValueError("Modelbin without a Modl BBox")
+
+
+# Fixed part groups whose models sit in their own local frame (brakes, wheels). Native carbins give these
+# groups the union of their models' local boxes (ACU_RSXTypeS_02 brakes -0.045..0.063 x +-0.161,
+# FOR_FiestaST_14 wheels 0..1 x +-0.14), not the car bounds.
+LOCAL_GROUPS = (4, 43)
+
+
+def carbin(identity, bones, skel, models, bounds, upgrade_groups=None, model_boxes=None):
     alias = identity["media_name"].casefold()
     upgrade_groups = upgrade_groups or {}
     conditional_members = {model.member for entries in upgrade_groups.values() for _, owned in entries for model in owned}
@@ -106,7 +127,13 @@ def carbin(identity, bones, skel, models, bounds, upgrade_groups=None):
         result.extend(struct.pack("<BHII", part_type, 2, part_type, len(parts)))
         for part in parts:
             result.extend(encode_model(part))
-        result.extend(bbox)
+        if part_type in LOCAL_GROUPS and model_boxes:
+            boxes = [model_boxes[part.member] for part in parts]
+            low = np.min([b[0] for b in boxes], axis=0)
+            high = np.max([b[1] for b in boxes], axis=0)
+            result.extend(struct.pack("<8f", *low, 0.0, *high, 0.0))
+        else:
+            result.extend(bbox)
     result.extend(struct.pack("<I", len(upgrade_groups)))
     for part_type, entries in sorted(upgrade_groups.items()):
         result.extend(struct.pack("<HII", 3, part_type, len(entries)))
@@ -322,7 +349,8 @@ def make_models(root, ir, identity, library):
                         for d in draws if d.lod == min(x.lod for x in draws)]
     bounds = (np.min([p.min(axis=0) for p in surface_geometry], axis=0),
               np.max([p.max(axis=0) for p in surface_geometry], axis=0))
-    payloads[f"{aliases}.carbin"] = carbin(identity, bones, skel, models, bounds, contract.groups(models))
+    payloads[f"{aliases}.carbin"] = carbin(identity, bones, skel, models, bounds, contract.groups(models),
+                                          {m.member: modelbin_box(payloads[m.member]) for m in models})
     # Native scene/ProxyLOD.modelbin (convention-loaded): coarsest LOD of every stock exterior part.
     proxy_draws = [d for component, draws in sorted(grouped["exterior"].items())
                    if component.casefold() not in nonstock

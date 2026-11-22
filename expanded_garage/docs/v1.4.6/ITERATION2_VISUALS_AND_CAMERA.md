@@ -307,3 +307,7 @@ Draw masks: native carbins never use 2 (197 sampled cars); cockpit-only models (
 Result tx 7841804a (cockpit draw 38): NaN at the first cut (step 615, 4.5 s after the manager was found), crash
 0x467A51F seven seconds later. Run-to-run variance is high (4 flybys on 8fb9d41f, 1 here), so single runs cannot
 rank these two variants; the draw mask stays native because 2 is not a native value.
+
+Carbin fixed-group boxes: native brake (type 4) and wheel (type 43) groups carry the union of their models' local
+boxes; the writer gave every group the car bounds. `LOCAL_GROUPS` now writes the local union read back from the
+generated Modelbins. Variant tx in installed-group-boxes.json: as 7841804a plus local group boxes.
