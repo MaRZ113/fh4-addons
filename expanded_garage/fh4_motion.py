@@ -123,6 +123,30 @@ def steering_rotation(draws, pivot):
     return tuple(map(float,q/np.linalg.norm(q))), z.tolist()
 
 
+def rim_center(draws, pivot, axis):
+    """Steering pivot on the rim's axis. Native steering wheels have the rim centred on the spindle
+    (within 3 mm over sampled cars); FM4's authored hardpoint sat ~5 cm off it, so the wheel swung
+    around off-centre. Keeps the hardpoint's depth along the axis and moves it in the rim plane to the
+    centre of a circle fitted to the outermost vertices."""
+    best = min(d.lod for d in draws)
+    vertices = np.concatenate([d.positions for d in draws if d.lod == best]).astype(np.float64)
+    pivot, axis = np.asarray(pivot, float), np.asarray(axis, float)
+    u = np.cross(axis, (1.0, 0.0, 0.0) if abs(axis[0]) < .9 else (0.0, 1.0, 0.0))
+    u /= np.linalg.norm(u)
+    v = np.cross(axis, u)
+    plane = np.stack([(vertices - pivot) @ u, (vertices - pivot) @ v], 1)
+    center = np.zeros(2)
+    for _ in range(4):
+        radius = np.linalg.norm(plane - center, axis=1)
+        rim = plane[radius >= np.percentile(radius, 85)]
+        a = np.c_[2 * rim, np.ones(len(rim))]
+        (cx, cy, _), *_ = np.linalg.lstsq(a, (rim ** 2).sum(1), rcond=None)
+        center = np.array((cx, cy))
+    if np.linalg.norm(center) > 0.15:
+        raise ValueError("Steering rim centre is implausibly far from the authored hardpoint")
+    return tuple(map(float, pivot + center[0] * u + center[1] * v))
+
+
 def compile_motion(alias, ir, bones, points, grouped):
     cockpit, exterior = grouped["cockpit"], grouped["exterior"]
     attachments, report, payloads = {}, {"gauges": [], "unresolved": []}, {}
@@ -130,10 +154,12 @@ def compile_motion(alias, ir, bones, points, grouped):
     if steering and 9 in points:
         try:
             rotation, axis = steering_rotation(steering, points[9].meters)
+            pivot = rim_center(steering, points[9].meters, axis)
             i = len(bones)
-            bones += [Bone("boneSteeringWheel",1,points[9].meters,rotation),Bone("boneSteeringWheelSpindle",i)]
-            attachments["steering_wheel"] = Attachment(i+1,points[9].meters,rotation)
-            report["steering"] = {"bone":"boneSteeringWheelSpindle", "pivot_m":points[9].meters,
+            bones += [Bone("boneSteeringWheel",1,pivot,rotation),Bone("boneSteeringWheelSpindle",i)]
+            attachments["steering_wheel"] = Attachment(i+1,pivot,rotation)
+            report["steering"] = {"bone":"boneSteeringWheelSpindle", "pivot_m":pivot,
+                                  "authored_pivot_m":points[9].meters,
                                   "axis_vehicle":axis, "source":points[9].source_asset, "runtime":"unverified"}
         except ValueError as error:
             report["unresolved"].append({"role":"steering","reason":str(error)})

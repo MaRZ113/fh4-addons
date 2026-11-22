@@ -72,6 +72,9 @@ def surface_binding(label, component_kind="", component=""):
         return bind(member,MaterialUse.VISIBILITY,True)
     if name in {"badge","emblem","wheel_emblem"}:
         return bind("exterior_metal/chrome",MaterialUse.FIDELITY,fidelity="missing_source_emblem_texture")
+    if name == "gauge_backing":
+        # Native gauge clusters lay the alpha-tested symbols over an opaque plastic face.
+        return bind("interior_plastic/plastic")
     if name == "gauge_needle":
         return bind("interior_misc/gauge_needle",MaterialUse.EFFECT,fidelity="missing_source_needle_texture")
     if name in {"gauge_emissive","digital_gauge"}:

@@ -160,3 +160,19 @@ class GlassBindingTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SteeringPivotTest(unittest.TestCase):
+    def test_pivot_moves_to_rim_centre_keeping_axial_depth(self):
+        from .fh4_motion import rim_center
+        angles = np.linspace(0, 2 * np.pi, 64, endpoint=False)
+        centre = np.array([-0.37, 0.80, -0.10])
+        rim = centre + np.c_[0.18 * np.cos(angles), 0.18 * np.sin(angles), np.zeros(64)]
+        hub = centre + np.c_[0.03 * np.cos(angles), 0.03 * np.sin(angles), np.full(64, 0.04)]
+        draw = Draw("steering_wheel", 0, "plastic", "interior_plastic/plastic.materialbin", False,
+                    np.r_[rim, hub].astype(np.float32), np.zeros((128, 3), np.float32),
+                    np.zeros((128, 2), np.float32), np.zeros((128, 2), np.float32),
+                    np.zeros((1, 3), np.uint32), {})
+        authored = centre + np.array([0.0, -0.05, 0.02])
+        pivot = rim_center([draw], authored, (0.0, 0.0, 1.0))
+        np.testing.assert_allclose(pivot, centre + np.array([0.0, 0.0, 0.02]), atol=1e-4)

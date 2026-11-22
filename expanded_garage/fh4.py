@@ -126,6 +126,20 @@ def breakable_glass(materials):
     return 0.5 if glass else -1.0
 
 
+# Native Carbin records carry exactly one AO-map entry per model (232 of 232 on ACU_RSXTypeS_02 and
+# FOR_FiestaST_14): version 3, texture path (empty on glass, lamps and interior LOD), type -1, id -1,
+# 16 zero bytes, then 01 00 1f. Without it our glass picked up a stale damage constant: honeycomb
+# shatter on the windscreen and panes vanishing with the camera angle in the showroom.
+AO_STUB = struct.pack("<H", 3) + fh4_model.string("") + struct.pack("<Ii", 0xFFFFFFFF, -1) + bytes(16) + b"\x01\x00\x1f"
+
+
+def ao_list():
+    # EXPANDED_GARAGE_AO_STUB=off writes the empty list again (bisection switch).
+    if os.environ.get("EXPANDED_GARAGE_AO_STUB") == "off":
+        return bytes(4)
+    return struct.pack("<I", 1) + AO_STUB
+
+
 # Carbin model record category: native records name the scene folder of the part (Windows 430,
 # PrimaryLights 654, SecondaryLights 602, InteriorWindows 417, Wheels, Brakes, BumperF ... over 99 cars).
 CATEGORY_RULES = (
@@ -137,6 +151,39 @@ CATEGORY_RULES = (
     (r"^seat", "Seats"), (r"_min", "Gauges"), (r"pillar", "Pillar"), (r"^interior", "InteriorLOD"),
     (r"^steering", "Dash"),
 )
+
+
+def window_part(key):
+    """Window glass by the Carbin category rules (lamp glass is PrimaryLights/SecondaryLights)."""
+    stem = key.casefold()
+    return next((category for pattern, category in CATEGORY_RULES if re.search(pattern, stem)), None) == "Windows"
+
+
+def inward(draw):
+    """Native cabin panes (glass*Int) are separate models facing into the cabin; FM4's cockpit panes face
+    out like the exterior ones, so from the driver's seat they were back-face culled."""
+    return replace(draw, indices=np.ascontiguousarray(draw.indices[:, ::-1]),
+                   normals=np.asarray(-draw.normals, dtype=np.float32))
+
+
+GAUGE_BACKING_DEPTH = 0.002
+
+
+def gauge_backing(housing, kind, key):
+    """Opaque face 2 mm behind the alpha-tested gauge symbols (native gaugeCluster: plastic under
+    int_gauges); without it the dial was see-through to the road."""
+    material = surface_binding("gauge_backing", kind, key).member
+    result = []
+    for d in housing:
+        # The dial's front face (by winding) faces the driver; vertex normals there are not consistent.
+        p = d.positions.astype(np.float64)
+        a, b, c = (p[d.indices[:, i]] for i in range(3))
+        face = np.cross(b - a, c - a).sum(0)
+        face /= max(np.linalg.norm(face), 1e-12)
+        result.append(replace(d, name=d.name + "_backing", source_material="gauge_backing", target_material=material,
+                              transparent=False,
+                              positions=np.asarray(p - face * GAUGE_BACKING_DEPTH, dtype=np.float32)))
+    return result
 
 
 def model_category(part):
@@ -195,7 +242,7 @@ def carbin(identity, bones, skel, models, bounds, upgrade_groups=None, model_box
                 + struct.pack("<16fH", *fh4_model.transform(part.translation,part.rotation).flat, part.lod)
                 + fh4_model.string(bone) + struct.pack("<hBI", part.bone, 0, draw)
                 + bytes(4) + material_list(materials) + bytes(1)
-                + struct.pack("<f", breakable_glass(materials)) + bytes(4 + 1) + MODEL_FLAGS[part.kind]
+                + struct.pack("<f", breakable_glass(materials)) + ao_list() + bytes(1) + MODEL_FLAGS[part.kind]
                 + fh4_model.string(model_category(part)) + guid(path) + bytes(20 + 4 + 4))
 
     for part_type, parts in sorted(groups.items()):
@@ -417,10 +464,12 @@ def make_models(root, ir, identity, library):
                     needles = [d for d in draws if d.source_material.casefold()=="gauge_needle"]
                     housing = [d for d in draws if d.source_material.casefold()!="gauge_needle"]
                     if housing:
-                        emit(kind,key+"_housing",housing)
+                        emit(kind,key+"_housing",housing+gauge_backing(housing,kind,key+"_housing"))
                     if needles:
                         emit(kind,key,needles,attachment=attachments.get(key))
                 else:
+                    if kind == "cockpit" and window_part(key):
+                        draws = [inward(d) for d in draws]
                     emit(kind, key, draws,attachment=attachments.get(key))
         paint = None
         colors = rows_for(rows, "Combo_Colors") if "Combo_Colors" in rows else []
