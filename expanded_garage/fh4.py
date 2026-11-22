@@ -449,8 +449,12 @@ def gauge_texture_parameters(root, ir, alias):
     pixels = np.frombuffer(bytes(rgba), np.uint8).reshape(height, width, 4).copy()
     pixels[..., 3] = 255
     luminance = pixels[..., :3].astype(np.float32).mean(axis=2)
-    lit = pixels.copy()
-    lit[..., :3] = np.where((luminance > 150)[..., None], pixels[..., :3], 0)
+    # Native illumination (ACU_RSXTypeS_02 gauges LITE): coloured marks on black, alpha = the same marks
+    # (correlation 0.96 with their brightness); an all-255 alpha lit nothing.
+    glow = np.clip((luminance - 120) / 80, 0, 1)
+    lit = np.zeros_like(pixels)
+    lit[..., :3] = np.where((glow > 0)[..., None], pixels[..., :3], 0)   # swatch() premultiplies by alpha
+    lit[..., 3] = np.round(255 * glow).astype(np.uint8)
     donor = gauge_donor()
     folder = "\\".join(("Game:", "Media", "cars", alias.casefold(), *GAUGE_FOLDER.strip("/").split("/"), ""))
     textures, members = {}, {}
@@ -518,7 +522,7 @@ def make_models(root, ir, identity, library):
             return None
 
         def emit(kind, key, draws, bone=0, translation=(0.0, 0.0, 0.0), attachment=None, component=None,
-                 path=None, rig=None):
+                 path=None, rig=None, mesh_bone=False):
             rotation = (0.,0.,0.,1.)
             if attachment:
                 bone, translation, rotation = attachment.index, attachment.point, attachment.rotation
@@ -555,6 +559,11 @@ def make_models(root, ir, identity, library):
             local_rig = kind in ("wheel", "brake") or attachment is not None
             component_rig = bones[:2] if local_rig else bones
             rigid_bone = 0 if local_rig else 1
+            if mesh_bone and attachment:
+                # Native needles: a <root> model whose meshes are rigidly bound (RigidBoneIndex) to the gauge
+                # bone, vertices in that bone's frame; the GSF pose reaches meshes, not Carbin attachments.
+                component_rig, rigid_bone = bones, attachment.index
+                bone, translation, rotation = 0, (0.0, 0.0, 0.0), (0., 0., 0., 1.)
             near = view_split(kind, key)
             payloads[path], mask = fh4_model.assemble(draws, component_rig, rigid_bone, shadows=kind != "cockpit",
                                                       fill_near=near == "fill", parameters=car_parameters)
@@ -571,7 +580,7 @@ def make_models(root, ir, identity, library):
                     if housing:
                         emit(kind,key+"_housing",housing+gauge_backing(housing,kind,key+"_housing"))
                     if needles:
-                        emit(kind,key,needles,attachment=attachments.get(key))
+                        emit(kind,key,needles,attachment=attachments.get(key),mesh_bone=True)
                 else:
                     if kind == "cockpit" and window_part(key):
                         draws = [inward(d) for d in draws]
@@ -784,6 +793,7 @@ def validate_zip(blob, name, car_id, *, trial=None):
                 references.append(binding["model"]["path"])
         used, scene_bones, scene_rest = set(), [], []
         material_members = set()
+        mesh_bound = set()   # bones that mesh RigidBoneIndex drives (native needles)
         for path in references:
             if not path.startswith(prefix):
                 raise ValueError(f"Nonlocal Carbin binding {path}")
@@ -815,6 +825,7 @@ def validate_zip(blob, name, car_id, *, trial=None):
                     mesh = geometry.mesh_info(original, b, materials, indices)
                     if not 0 <= mesh["bone"] < len(local_bones):
                         raise ValueError(f"Unknown rigid bone index in {key}")
+                    mesh_bound.add(local_bones[mesh["bone"]])
                     raw = original[mesh["start"]:mesh["start"] + mesh["indices"] * 4]
                     maximum = int(np.frombuffer(raw, dtype="<u4").max())
                     layout, slots = struct.unpack_from("<ii", original, b["offset"] + 55)
@@ -860,7 +871,8 @@ def validate_zip(blob, name, car_id, *, trial=None):
             gsf = f"animations/{aliases}.gsf"
             if gsf in names:
                 clips = verify_gauge_graph(archive.read(names[gsf]),lambda p: archive.read(names[p]),
-                                           {b["name"]:b for b in rig},{label for _,label in bindings.values()})
+                                           {b["name"]:b for b in rig},
+                                           {label for _,label in bindings.values()} | mesh_bound)
                 used.update(clips | {gsf})
         if PROXY_LOD in names:
             data = archive.read(names[PROXY_LOD])
