@@ -140,6 +140,9 @@ CATEGORY_RULES = (
 
 
 def model_category(part):
+    # EXPANDED_GARAGE_CATEGORIES=off writes the empty category of builds up to 6b269a5e (bisection switch).
+    if os.environ.get("EXPANDED_GARAGE_CATEGORIES") == "off":
+        return ""
     if part.kind == "wheel":
         return "Wheels"
     if part.kind == "brake":
@@ -388,7 +391,9 @@ def make_models(root, ir, identity, library):
                 # Native stock wheel: one normalised model at the convention path.
                 if path in payloads:
                     raise ValueError(f"Duplicate output model name {path}")
-                payloads[path], wheel_mask[0] = fh4_model.assemble(draws, rig, 0, shadows=True, wheel=True)
+                # EXPANDED_GARAGE_WHEEL_MORPH=off drops the morph targets and the wheel mesh role (bisection switch).
+                morph = os.environ.get("EXPANDED_GARAGE_WHEEL_MORPH") != "off"
+                payloads[path], wheel_mask[0] = fh4_model.assemble(draws, rig, 0, shadows=True, wheel=morph)
                 return
             local = re.sub(r"[^a-z0-9_]+", "_", key.lower()).strip("_")
             path = f"scene/{kind}/{local}.modelbin"
