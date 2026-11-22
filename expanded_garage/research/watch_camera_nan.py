@@ -66,11 +66,31 @@ def sample(target, root, base):
         if len(child) == CHILD_SIZE:
             vtable, = struct.unpack_from("<Q", child)
             children[offset] = (pointer, vtable - base if base <= vtable < base + 0x9B10E00 else None, child)
-    return camera, data, children
+    return camera, data, children, focus_identity(target, data, base)
+
+
+def focus_identity(target, data, base):
+    """CarID and scene name of the focused CarPresentation (CPresentationCamera+0x2F0 -> +0x6D8)."""
+    from .watch_megatexture_producer import CAR_PRESENTATION_VTABLE, CAR_SCENE_VTABLE
+    focused, = struct.unpack_from("<Q", data, 0x2F0)
+    if not focused or read_pointer(target, focused) != base + CAR_PRESENTATION_VTABLE:
+        return None
+    scene = read_pointer(target, focused + 0x6D8)
+    if not scene or read_pointer(target, scene) != base + CAR_SCENE_VTABLE:
+        return None
+    state = target.read(scene + 0x88, 0x39)
+    if len(state) != 0x39:
+        return None
+    ordinal, = struct.unpack_from("<I", state)
+    size, capacity = struct.unpack_from("<QQ", state, 0x18)
+    name = b""
+    if 0 < size <= 63:
+        name = state[8:8 + size] if capacity < 16 else target.read(read_pointer(target, scene + 0x90), size)
+    return {"car_id": ordinal, "media_name": name.decode("ascii", "replace")}
 
 
 def describe(step, previous, current, base):
-    camera, data, children = current
+    camera, data, children = current[:3]
     newly = sorted(nonfinite_offsets(data) - (nonfinite_offsets(previous[1]) if previous else set()))
     child_newly = {}
     for offset, (pointer, vtable, child) in children.items():
@@ -79,7 +99,7 @@ def describe(step, previous, current, base):
         if fresh:
             child_newly[hex(offset)] = {"object": hex(pointer), "vtable_rva": hex(vtable) if vtable is not None else None,
                                          "offsets": [hex(o) for o in sorted(fresh)]}
-    return {"step": step, "camera": hex(camera), "camera_new_nonfinite": [hex(o) for o in newly],
+    return {"step": step, "camera": hex(camera), "focus": current[3], "camera_new_nonfinite": [hex(o) for o in newly],
             "child_new_nonfinite": child_newly, "camera_bytes": data.hex(),
             "children": {hex(o): {"object": hex(p), "vtable_rva": hex(v) if v is not None else None, "bytes": b.hex()}
                          for o, (p, v, b) in children.items()}}
@@ -117,9 +137,10 @@ def observe(host, pid, base, out, seconds, delay):
                     step += 1
                     ring.append((step, current))
                     bad = bool(nonfinite_offsets(current[1][0x20:0x60]))
-                    # A presentation shot cut changes the FOV (+0x1B4) or the shot distances (+0x15C/+0x160).
-                    key = current[1][0x15C:0x164] + current[1][0x1B4:0x1B8]
-                    if shot is not None and key != shot and not bad and cuts < 12:
+                    # A presentation shot cut: FOV (+0x1B4) jumps by more than 1 degree or +0x160 changes.
+                    fov, = struct.unpack_from("<f", current[1], 0x1B4)
+                    key = (current[1][0x160:0x164], round(fov) if math.isfinite(fov) else None)
+                    if shot is not None and key != shot and not bad and cuts < 40:
                         cuts += 1
                         window = list(ring)[-61:]
                         for (_, before), (n, snap) in zip(window, window[1:]):
