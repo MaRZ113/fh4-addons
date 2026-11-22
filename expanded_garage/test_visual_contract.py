@@ -210,7 +210,7 @@ class AoVolumeTest(unittest.TestCase):
         self.assertGreater(int(under[3]), 150)          # strong occlusion under the body
         self.assertLess(int(under[1]), 127)             # open direction points down
         self.assertEqual(int(voxel(o2, fine, ao.DIMS, (0.0, 0.7, 0.0))[3]), 254)
-        self.assertEqual(int(voxel(o0, coarse, ao.DIMS // 4, (4.7, 0.7, 4.7))[3]), 0)
+        self.assertLess(int(voxel(o0, coarse, ao.DIMS // 4, (4.7, 0.7, 4.7))[3]), 10)
         side = voxel(o2, fine, ao.DIMS, (1.2, 0.7, 0.0))
         self.assertLess(int(side[0]), 127)              # +x side: open direction +x, stored as -x
 

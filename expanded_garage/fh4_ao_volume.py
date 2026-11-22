@@ -10,9 +10,10 @@ Native layout (reverse-engineered on ACU_RSXTypeS_02, FOR_FiestaST_14, AH_3000_6
   A is the occlusion (0 in the open, 254 inside the car), RGB the unoccluded direction stored as
   (-x, y, -z), 127-biased.
 
-Our occlusion estimate (hit fraction of 48 rays over 3 m against a solid voxelisation of the proxy)
-correlates 0.86-0.89 with native A and 0.93-0.97 with the native directions when run on the native
-proxy meshes; native A follows 255 * (1 - exp(-2.4 * occlusion)).
+Our occlusion estimate (hit fraction of 48 rays over 6 m against a solid voxelisation of the proxy,
+A = 255 * (1 - exp(-3 * fraction)), three 3-tap blur passes per level) reproduces the native volumes of
+FOR_FiestaST_14 and ACU_RSXTypeS_02 from their own proxies at an A RMS error of 12 / 13 / 24 (coarse /
+mid / fine), against 16 / 32 / 45 unblurred at 3 m.
 """
 
 import struct
@@ -23,8 +24,9 @@ DIMS = np.array((128, 64, 128))
 HALF_EXTENT = np.array((5.0, 4.0, 5.0))
 MARGINS = (None, 3.125, 1.25)   # total margin around the car per level (level 0 covers everything)
 CELL = 0.03
-REACH, STEP, RAYS = 3.0, 0.06, 48
-GAIN = 2.4
+REACH, STEP, RAYS = 6.0, 0.06, 48
+GAIN = 3.0
+BLUR_PASSES = 3
 
 
 def _grow(g):
@@ -140,6 +142,17 @@ def levels(low, high, centre):
     return result
 
 
+def _blur(field, passes):
+    """Separable 3-tap box blur over the first three (z, y, x) axes, edges clamped."""
+    for _ in range(passes):
+        for axis in range(3):
+            pad = [(1, 1) if a == axis else (0, 0) for a in range(field.ndim)]
+            padded = np.pad(field, pad, mode="edge")
+            n = field.shape[axis]
+            field = sum(np.take(padded, range(k, k + n), axis=axis) for k in range(3)) / 3
+    return field
+
+
 def build(triangles):
     """aovolumetexture.bin bytes for an occluder proxy given as triangles (n, 3, 3) in the car frame."""
     triangles = np.asarray(triangles, float)
@@ -155,10 +168,12 @@ def build(triangles):
         index = np.stack([i, j, k], -1).reshape(-1, 3) + offset
         points = centre - HALF_EXTENT + (index + 0.5) * voxel
         fraction, bent, inside = occlusion(points, occupancy, grid_low)
-        alpha = np.where(inside, 254, np.round(255 * (1 - np.exp(-GAIN * fraction))))
-        rgb = np.round(127 + 127 * bent * (-1, 1, -1))
-        rgb[inside] = 127
-        voxels = np.c_[rgb, alpha].clip(0, 254).astype(np.uint8)
+        alpha = np.where(inside, 254.0, 255 * (1 - np.exp(-GAIN * fraction)))
+        bent = np.where(inside[:, None], 0.0, bent)
+        # Native volumes are smooth across the car surface; a raw voxel step reads as a hard shadow edge.
+        field = _blur(np.c_[bent, alpha].reshape(dims[2], dims[1], dims[0], 4), BLUR_PASSES).reshape(-1, 4)
+        rgb = 127 + 127 * field[:, :3] * (-1, 1, -1)
+        voxels = np.round(np.c_[rgb, field[:, 3]]).clip(0, 254).astype(np.uint8)
         out += struct.pack("<3i3I", *offset, *dims) + voxels.tobytes()
     return bytes(out)
 
