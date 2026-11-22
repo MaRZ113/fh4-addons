@@ -4,6 +4,7 @@ from collections import defaultdict
 from dataclasses import dataclass, replace
 from io import BytesIO
 from pathlib import Path
+import os
 import re
 import struct
 import sys
@@ -288,7 +289,12 @@ def make_models(root, ir, identity, library):
             payloads["ManufacturerColors.bin"], paint = fh4_paint.manufacturer_colors(colors, set(available))
         wheel = [d for draws in grouped["wheel"].values() for d in draws]
         wheel_model = None
-        if wheel:
+        if wheel and os.environ.get("EXPANDED_GARAGE_WHEELS", "native") == "carbin":
+            # Bisection switch: the pre-v1.4.6 metre-scale wheels bound in the Carbin.
+            for corner, binding in corners.items():
+                local = [reflected(d) for d in wheel] if corner.startswith("R") else wheel
+                emit("wheel", f"wheel{corner}", local, binding["spindle"], binding["origin_m"])
+        elif wheel:
             normalised, wheel_bones, wheel_model = fh4_wheel_model.normalise(wheel)
             wheel_model["member"] = fh4_wheel_model.wheel_path(identity["media_name"])
             emit("wheel", "wheelLF", normalised, path=wheel_model["member"], rig=wheel_bones)
