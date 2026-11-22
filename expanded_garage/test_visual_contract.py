@@ -215,5 +215,24 @@ class AoVolumeTest(unittest.TestCase):
         self.assertLess(int(side[0]), 127)              # +x side: open direction +x, stored as -x
 
 
+
+class GroundAoTest(unittest.TestCase):
+    def test_ground_shadow_is_dark_under_the_body_and_front_is_row_zero(self):
+        from . import fh4_ao_volume as ao
+        # Body box raised 0.15 m over a thin "tyre" slab at its front end (+z) so the shadow is asymmetric.
+        def box(lo, hi):
+            c = np.array([[x, y, z] for x in (lo[0], hi[0]) for y in (lo[1], hi[1]) for z in (lo[2], hi[2])])
+            faces = [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)]
+            return [c[[a, b, d]] for q in faces for a, b, d in ((q[0], q[1], q[2]), (q[0], q[2], q[3]))]
+        tris = np.array(box((-0.8, 0.15, -2.0), (0.8, 1.3, 2.0)) + box((-0.9, 0.0, 1.0), (0.9, 0.15, 1.6)))
+        occ = ao.ground_occlusion(tris)
+        self.assertGreater(occ[64, 64], 0.8)        # centre of the 10 m square: under the body
+        self.assertLess(occ[2, 2], 0.05)            # corner: open sky
+        rows = occ[:, 64]
+        front, rear = rows[:64].argmax(), rows[64:].argmax() + 64
+        self.assertLess(front, 64)                  # +z (front, tyre slab) maps to the top half
+        self.assertGreater(rows[:64].sum(), rows[64:].sum())
+
+
 if __name__ == "__main__":
     unittest.main()

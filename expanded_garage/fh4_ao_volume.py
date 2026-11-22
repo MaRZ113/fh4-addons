@@ -181,3 +181,66 @@ def read(data):
     if offset != len(data) or len(blocks) != 3:
         raise ValueError("Truncated AOVT volume")
     return dict(dims=tuple(dims), extent=tuple(extent), centre=tuple(centre), vertices=vertices, blocks=blocks)
+
+
+GROUND_SIZE, GROUND_SAMPLES, GROUND_REACH, GROUND_RAYS = 512, 128, 6.0, 640
+GROUND_MEMBER = "Textures/AO/ground_AO.swatchbin"
+
+
+def ground_occlusion(triangles, samples=GROUND_SAMPLES):
+    """Cosine-weighted upper-hemisphere occlusion of the ground under the car, [z, x] with row 0 at +z,
+    over the 10 x 10 m square around the volume centre. Native ground_AO = 255 * (1 - this) (on the
+    native ACU proxy: correlation 0.998, RMS error 5 of 255)."""
+    triangles = np.asarray(triangles, float)
+    points = triangles.reshape(-1, 3)
+    centre = (points.min(0) + points.max(0)) / 2
+    ground = points[:, 1].min() + 0.02
+    occupancy, low = solid(triangles)
+    shape = np.array(occupancy.shape)
+    rays = directions(GROUND_RAYS)
+    rays = rays[rays[:, 1] > 0.05]
+    axis = (np.arange(samples) + 0.5) / samples * 2 * HALF_EXTENT[0] - HALF_EXTENT[0]
+    zz, xx = np.meshgrid(axis[::-1], axis, indexing="ij")
+    p = np.c_[centre[0] + xx.ravel(), np.full(xx.size, ground), centre[2] + zz.ravel()]
+    result = np.zeros(len(p))
+    for ray in rays:
+        hit = np.zeros(len(p), bool)
+        for distance in np.arange(STEP, GROUND_REACH, STEP):
+            index = np.floor((p + ray * distance - low) / CELL).astype(int)
+            ok = np.all((index >= 0) & (index < shape), axis=1)
+            found = np.zeros(len(p), bool)
+            found[ok] = occupancy[index[ok, 0], index[ok, 1], index[ok, 2]]
+            hit |= found
+        result += hit * ray[1]
+    image = (result / rays[:, 1].sum()).reshape(samples, samples)
+    # Two 3x3 box passes hide the residual ray banding (native falloff is smooth).
+    for _ in range(2):
+        padded = np.pad(image, 1, mode="edge")
+        image = sum(padded[i:i + samples, j:j + samples] for i in range(3) for j in range(3)) / 9
+    return image
+
+
+def _upsample(image, size):
+    """Bilinear resize of a square array to size x size (cell-centred)."""
+    n = image.shape[0]
+    pos = (np.arange(size) + 0.5) * n / size - 0.5
+    i0 = np.clip(np.floor(pos).astype(int), 0, n - 1)
+    i1 = np.clip(i0 + 1, 0, n - 1)
+    t = np.clip(pos - i0, 0, 1)
+    rows = image[i0] * (1 - t)[:, None] + image[i1] * t[:, None]
+    return rows[:, i0] * (1 - t)[None, :] + rows[:, i1] * t[None, :]
+
+
+def ground_texture(triangles, template):
+    """Textures/AO/ground_AO.swatchbin bytes: native container (fh4-ground-ao-v1.json) with our R8 mips."""
+    level = np.clip(255 * (1 - _upsample(ground_occlusion(triangles), GROUND_SIZE)), 0, 255)
+    chain = []
+    while True:
+        chain.append(np.round(level).astype(np.uint8).tobytes())
+        if level.shape[0] == 1:
+            break
+        level = level.reshape(level.shape[0] // 2, 2, level.shape[1] // 2, 2).mean((1, 3))
+    payload = b"".join(chain)
+    if len(payload) != template["payload"]:
+        raise ValueError("Ground AO mip chain does not fit the native container")
+    return bytes.fromhex(template["prefix"]) + payload + bytes.fromhex(template["suffix"])

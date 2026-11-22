@@ -592,6 +592,8 @@ def make_models(root, ir, identity, library):
         occluders += [fh4_ao_volume.tyre(np.asarray(c["origin_m"], float), c["radius_m"], c["width_m"])
                       for c in corners.values()]
         payloads[AO_VOLUME] = fh4_ao_volume.build(np.concatenate(occluders))
+        payloads[fh4_ao_volume.GROUND_MEMBER] = fh4_ao_volume.ground_texture(
+            np.concatenate(occluders), json.loads(files(__package__).joinpath("fh4-ground-ao-v1.json").read_text(encoding="utf-8")))
     if points:
         authored = {"carLocator_" + point.name for point in points.values()}
         extra, driver_rig["locators"] = fh4_driver_rig.transferred_locators(
@@ -826,6 +828,11 @@ def validate_zip(blob, name, car_id, *, trial=None):
             if volume["dims"] != (128, 64, 128) or not len(volume["vertices"]):
                 raise ValueError("Unexpected aovolumetexture.bin shape")
             used.add(AO_VOLUME)
+        ground = fh4_ao_volume.GROUND_MEMBER.casefold()
+        if ground in names:
+            if len(archive.read(names[ground])) != 248 + 349525:
+                raise ValueError("Unexpected ground_AO.swatchbin size")
+            used.add(ground)
         if "lights.bin" in names or "lightpresets.bin" in names:
             from .research.extract_light_rig import read_lights
             presets = archive.read(names["lightpresets.bin"])

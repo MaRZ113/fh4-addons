@@ -460,7 +460,9 @@ def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False):
         role = (WHEEL_BLUR if draw.name.casefold().startswith("blur") else WHEEL_MESH) if wheel else 0
         chunks.append(mesh(*params, shadow=False, lod_fields=fields, role=role))
         count += 1
-        if shadows and not draw.transparent:
+        # Native glass casts shadows too (glass meshes have bucket-9 shadow twins); only the wheel blur
+        # discs do not. Skipping all translucent draws let sunlight through the cabin.
+        if shadows and not draw.name.casefold().startswith("blur"):
             chunks.append(mesh(*params, shadow=True, lod_fields=fields, role=role))
             count += 1
         positions.extend(pos)
