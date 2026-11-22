@@ -57,7 +57,7 @@ class DriverRigTest(unittest.TestCase):
 
     def test_locators_carry_native_guids(self):
         import xml.etree.ElementTree as ET
-        from .fh4_vehicle_systems import locator_xml, validate_locator_xml
+        from .fh4_vehicle_systems import locator_xml, parse_native_xml, validate_locator_xml
         points = {0: Point("headlightL", (-0.61, 0.54, 1.68)), 1: Point("headlightR", (0.61, 0.54, 1.68)),
                   2: Point("taillightL", (-0.68, 0.75, -1.70)), 3: Point("taillightR", (0.68, 0.75, -1.70)),
                   9: Point("steeringWheel", (-0.33, 0.85, 0.30))}
@@ -65,7 +65,8 @@ class DriverRigTest(unittest.TestCase):
         extra, _ = rig.transferred_locators(points, authored, "L")
         data = locator_xml("EG_TEST", points, extra)
         validate_locator_xml(data, ["<root>"])
-        guids = {n.find("Name").get("value"): n.find("GUID").get("value") for n in ET.fromstring(data)}
+        self.assertIn(b'BoneName="<root>"', data)   # raw, as in every native Locators.xml
+        guids = {n.find("Name").get("value"): n.find("GUID").get("value") for n in parse_native_xml(data)}
         # Native identities shared by the roster (fh4-locator-guids-v1.json).
         self.assertEqual(guids["carLocator_headlightL"], "533329f7-828f-4b39-9a40-e98419652e57")
         self.assertEqual(guids["carLocator_taillightR"], "037ca44a-864b-4190-b4b6-d55677c76d63")

@@ -41,6 +41,13 @@ SLOT_WINDOW = 0x40
 RING = 120
 
 
+def member(view, sorted_values):
+    """Boolean mask of `view` entries present in `sorted_values` (binary search, no sort of the view)."""
+    index = np.searchsorted(sorted_values, view)
+    np.minimum(index, len(sorted_values) - 1, out=index)
+    return sorted_values[index] == view
+
+
 def shot_patterns(folder):
     """{12-byte first-key pattern: [(file, cam index, anim types)]} for every Cam."""
     patterns = {}
@@ -88,17 +95,32 @@ def scan(target, match, step):
 
 
 def locate(target, patterns, log):
-    heads = np.array(sorted({struct.unpack_from("<I", p)[0] for p in patterns}), dtype="<u4")
+    # Match PosX and PosY together as one 8-byte value at both 4-byte phases; a lone float such as 0.0
+    # would hit millions of words.
+    heads = np.array(sorted({struct.unpack_from("<Q", p)[0] for p in patterns}), dtype="<u8")
     keys = {}
-    for address, data, offset in scan(target, lambda v: np.isin(v, heads), 4):
-        if data[offset:offset + 12] in patterns:
-            keys[address] = patterns[data[offset:offset + 12]]
-    log({"event": "key_arrays", "count": len(keys)})
+    for base, size in regions(target):
+        for start in range(base, base + size, CHUNK):
+            data = target.read(start, min(CHUNK, base + size - start))
+            for phase in (0, 4):
+                usable = (len(data) - phase) // 8 * 8
+                if usable <= 0:
+                    continue
+                view = np.frombuffer(data[phase:phase + usable], dtype="<u8")
+                for index in np.nonzero(member(view, heads))[0]:
+                    offset = phase + int(index) * 8
+                    if data[offset:offset + 12] in patterns:
+                        keys[start + offset] = patterns[data[offset:offset + 12]]
+    from collections import Counter
+    log({"event": "key_arrays", "count": len(keys),
+         "files": dict(Counter(s["file"] for found in keys.values() for s in found)),
+         "arrays": {hex(a): [f"{s['file']}#{s['cam']}" for s in v] for a, v in sorted(keys.items())
+                    if not all(s["file"].startswith("CarRelative") for s in v)}})
     if not keys:
         return {}, {}
     wanted = np.array(sorted(keys), dtype="<u8")
     cams = {}
-    for address, _, _ in scan(target, lambda v: np.isin(v, wanted), 8):
+    for address, _, _ in scan(target, lambda v: member(v, wanted), 8):
         array = struct.unpack("<Q", target.read(address, 8))[0]
         # The surrounding bytes keep the evidence if the runtime Cam layout differs from the parser's.
         cams[address - CAM_KEYS] = {"keys": hex(array), "shots": keys[array], "pointer_at": hex(address),
@@ -109,7 +131,7 @@ def locate(target, patterns, log):
         return cams, {}
     wanted = np.array(sorted(cams), dtype="<u8")
     slots = {}
-    for address, _, _ in scan(target, lambda v: np.isin(v, wanted), 8):
+    for address, _, _ in scan(target, lambda v: member(v, wanted), 8):
         slots[address] = struct.unpack("<Q", target.read(address, 8))[0]
     log({"event": "slots", "count": len(slots),
          "slots": {hex(a): hex(v) for a, v in sorted(slots.items())}})

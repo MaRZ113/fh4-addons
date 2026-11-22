@@ -83,11 +83,27 @@ def locator_xml(alias, points, extra=()):
                               "PartId": "-1", "ParentUpgradeId": "-1"}
         ET.SubElement(locator, "UpgradeInfo", upgrade)
     ET.indent(root, space="  ")
-    return ET.tostring(root, encoding="utf-8")
+    return native_attribute_text(ET.tostring(root, encoding="utf-8"))
+
+
+def native_attribute_text(data):
+    """Native Locators.xml writes bone names raw (BoneName="<root>", 3,189 of 3,189 sampled attachments;
+    no entity anywhere). The game's reader takes the attribute text literally, so "&lt;root&gt;" names no bone."""
+    return data.replace(b"&lt;", b"<").replace(b"&gt;", b">")
+
+
+def parse_native_xml(data):
+    """Parse native-style XML whose attributes may hold raw angle brackets."""
+    import re
+    text = data.decode("utf-8-sig")
+    text = re.sub(r'="([^"]*)"', lambda m: '="' + m[1].replace("<", "&lt;").replace(">", "&gt;") + '"', text)
+    return ET.fromstring(text)
 
 
 def validate_locator_xml(data, bones):
-    root = ET.fromstring(data)
+    if b"&lt;" in data or b"&gt;" in data:
+        raise ValueError("Locator XML must carry raw bone names like the native files")
+    root = parse_native_xml(data)
     if root.tag != "CarLocators" or root.get("Version") != "2":
         raise ValueError("Unexpected locator envelope")
     names, guids = set(), set()

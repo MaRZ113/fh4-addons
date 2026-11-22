@@ -318,3 +318,18 @@ Result tx f8b81695 (local group boxes): crash at the first flyby again.
 from the decoded Camera.zip XML), the slots that point at them, and logs every slot change with the presentation
 camera; a NaN or 100/999 frame flushes the active Cam bytes. Run: scan with a stable car in the garage (it beeps
 when ready), then switch to the car under test.
+
+## Garage flyby source and locator attachment (tx e57f4a4312f04e6cb7837fa657822fb5)
+
+`watch_shot_director.py` run (Acura, then Suzuki): only CarRelativeCams shots are resident in the garage;
+HomeSpaceCams/ColorSelectCams are not loaded, so they do not drive the flyby. The garage flyby is the cinematic
+`Cinematics_pri_150.zip/Library/Player_Houses/PGC0661_player_house_autoshow_cameras_01.xml`: a CarProxy `ui1`
+(UseAutoVistaMode=1) and a director cutting ForzaCamera004 (HomespaceLocator) at 0 s, 006 at 5 s, 007 at 9 s, then
+030, 021, 020, 024, 013, 031, 025, 029. Cameras and their targets live in car locator spaces
+`car:ui1:carLocator_headlightL` (the first car-space shot), taillightR, wheelLR/RR/RF/LF, dashboard, hood,
+headlightR, bumperR. A space that fails to resolve leaves an identity transform: the eye at the world origin
+(the grey "out of the showroom" frame, eye ~0 at step 61) and a NaN look-at when eye and target coincide.
+
+Native Locators.xml writes bone names raw: `BoneName="<root>"` in 3,189 of 3,189 sampled attachments, no XML
+entity anywhere. ElementTree wrote `BoneName="&lt;root&gt;"`, which the game reads literally, so every Suzuki
+locator named a bone that does not exist. `locator_xml` now emits the native raw text; the validator parses it.
