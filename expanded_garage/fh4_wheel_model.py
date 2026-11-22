@@ -36,8 +36,13 @@ def rim_radius(draws):
     raise ValueError(f"Cannot separate the rim from the tyre (max radius {everything.max():.3f} m)")
 
 
+# FM4 speed-blur meshes (a disc over the spokes and a lip band) are shown only in motion; drawn at rest
+# they cover the rim with a dark translucent disc.
+SPEED_BLUR = ("blur_rim", "blur_lip")
+
+
 def rim_only(draw, limit):
-    if draw.source_material.casefold() in ("tire", "tyre"):
+    if draw.source_material.casefold() in ("tire", "tyre") + SPEED_BLUR:
         return None
     inside = radii(draw.positions) <= limit
     keep = draw.indices[np.all(inside[draw.indices], axis=1)]

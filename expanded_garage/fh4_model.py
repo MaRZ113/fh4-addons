@@ -252,14 +252,27 @@ def pack_streams(draw):
     return packed_positions.tobytes(), attrs.tobytes(), transforms + [UV_IDENTITY] * 3, lo, hi, scale, center
 
 
+@lru_cache(maxsize=1)
+def render_buckets():
+    record = json.loads(files(__package__).joinpath("fh4-render-buckets-v1.json").read_text(encoding="utf-8"))
+    return {name: entry["translucent"] for name, entry in record["materials"].items()}
+
+
+def translucent_bucket(material):
+    """Render bucket for a translucent draw: the roster's non-opaque mode for the material
+    (research/extract_render_buckets.py; window glass 28, lamp lenses 60). Native meshes never use 4."""
+    return render_buckets().get(material.lower(), 28)
+
+
 def mesh(draw, mat_id, bone, index_start, position_offset, vb_id, transforms, low, high, scale, center, shadow,
          lod_fields=None):
     if shadow:
         material_id, layout, bucket = -1, 1, 9
     else:
-        material_id, layout, bucket = mat_id, 0, 4 if draw.transparent else 17
+        material_id, layout, bucket = mat_id, 0, translucent_bucket(draw.target_material) if draw.transparent else 17
     num_indices = draw.indices.size
-    mask, low_lod = lod_fields if lod_fields else (lod_mask(draw.lod), 0)
+    # Native meshes record their LOD index next to the mask (0b11 -> 0, 0b100 -> 1, ...).
+    mask, low_lod = lod_fields if lod_fields else (lod_mask(draw.lod), draw.lod)
     fields = struct.pack("<5hHBBH5BH", -1, material_id, -1, -1, bone, mask,
                          low_lod, 255, bucket, 0, 0, 0, 0, 1, 4)
     fields += struct.pack("<6ifIii", 0, 0, index_start, 0, num_indices, num_indices // 3,
