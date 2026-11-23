@@ -25,12 +25,34 @@ LAMP_SURFACES = {"head_light", "head_light_lod0", "tail_light", "tail_light_lod0
                  "reverse_light", "reverse_light_lod0", "turn_light"}
 
 
+# FM4 cockpit surfaces take their colour (and printed labels, patterns, baked shading) from the car's
+# cockpit atlas interior_LOD0.xds through UV0; FM4 techniques only add the finish. A bare FH4 library
+# material dropped that colour, and `metal` (gear knob cap) / `reflector` (climate knob rings, dome lens)
+# turned into bright metal and chrome. These classes now use the native textured cabin shader
+# (int_ch1diffnormglossalpha) with the atlas as diffuse and a per-class gloss (GlossA_floatVal).
+COCKPIT_ATLAS_MATERIAL = "interior_plastic/plastic_perforated_004"
+COCKPIT_ATLAS_GLOSS = {
+    "plastic": 0.35, "bump_plastic": 0.3, "bump_plastic2": 0.3, "interior": 0.35, "solid": 0.3,
+    "black": 0.3, "frame": 0.3, "mottled": 0.3, "leather": 0.45, "bump_leather": 0.45,
+    "bump_stitching": 0.2, "cloth": 0.1, "headliner": 0.1, "rubber": 0.2, "metal": 0.6, "reflector": 0.55,
+}
+# Cockpit components that are the exterior seen from inside sample the body textures, not the atlas.
+COCKPIT_EXTERIOR_PARTS = ("hood", "mirror", "a_pillar", "glass", "cage")
+
+
+def cockpit_atlas_surface(label, component_kind, component):
+    return (component_kind == "cockpit" and label.casefold() in COCKPIT_ATLAS_GLOSS
+            and not component.casefold().startswith(COCKPIT_EXTERIOR_PARTS))
+
+
 def surface_binding(label, component_kind="", component=""):
     name = label.casefold()
     part = component.casefold()
     def bind(member, purpose=MaterialUse.VISIBILITY, alpha=False, fidelity="shared_base", resolved=True,
              compatibility="native_shared_binding"):
         return SurfaceBinding(member+".materialbin", purpose, alpha, resolved, fidelity, compatibility)
+    if cockpit_atlas_surface(label, component_kind, component):
+        return bind(COCKPIT_ATLAS_MATERIAL, fidelity="source_cockpit_atlas")
     if name in {"body","body_2","body_3","paint","matte_colors","race_kit_red"}:
         return bind("exterior_misc/carpaint",MaterialUse.RUNTIME)
     if name in {"tire","tyre"}:

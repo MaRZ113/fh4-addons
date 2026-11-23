@@ -451,7 +451,7 @@ def raw_member(root, ir, suffix):
     return None
 
 
-def gauge_texture_parameters(root, ir, alias):
+def gauge_texture_parameters(root, ir, alias, library=None):
     """({(gauge_emissive, int_gauges): (version, MTPR)}, {member: swatchbin}) for the car's own dial art.
 
     FM4 dial faces (`gauge_emissive`) sample the cockpit atlas interior_LOD0.xds with atlas UVs (the IR draws
@@ -484,7 +484,38 @@ def gauge_texture_parameters(root, ir, alias):
         textures[donor["diffuse" if role == "diff" else "illumination"]] = folder + name + ".swatchbin"
     from . import fh4_mtpr
     mtpr = fh4_mtpr.set_textures(bytes.fromhex(donor["mtpr"]), textures, tuple(donor["version"]))
-    return {("gauge_emissive", GAUGE_MATERIAL): (tuple(donor["version"]), mtpr)}, members
+    parameters = {("gauge_emissive", GAUGE_MATERIAL): (tuple(donor["version"]), mtpr)}
+    if library is not None:
+        parameters.update(cockpit_atlas_parameters(library, textures[donor["diffuse"]]))
+    return parameters, members
+
+
+ATLAS_DIFFUSE = 0x810e7224   # int_ch1diffnormglossalpha CH1 diffuse texture (same slot as int_gauges)
+
+
+def cockpit_atlas_parameters(library, atlas_path):
+    """{(FM4 class, plastic_perforated_004): (version, MTPR)}: the library block with its diffuse texture
+    switched on and pointed at the car's cockpit atlas, normal/AO/opacity layers off, white tint and the
+    class gloss. EXPANDED_GARAGE_COCKPIT_ATLAS=off keeps the untextured library materials."""
+    if os.environ.get("EXPANDED_GARAGE_COCKPIT_ATLAS") == "off":
+        return {}
+    from . import fh4_mtpr
+    from .fh4_material_contract import COCKPIT_ATLAS_GLOSS, COCKPIT_ATLAS_MATERIAL
+    member = COCKPIT_ATLAS_MATERIAL + ".materialbin"
+    data = ZipFile(library).read(member)
+    _, geometry = previous_readers()
+    block = next((data[b["offset"]:b["offset"] + b["size"]], b["version"])
+                 for b in geometry.blobs(data) if b["tag"] == "MTPR")
+    body, version = block
+    out = {}
+    for label, gloss in COCKPIT_ATLAS_GLOSS.items():
+        patched = fh4_mtpr.patch(body, {
+            "CH1DiffColTextureSwitchBool": 1, "CH1NormalMapSwitchBool": 0, "CH1LocalAOSwitchBool": 0,
+            "CH1OpacityMaskSwitchBool": 0, "DiffTintColorParam": (1.0, 1.0, 1.0, 1.0),
+            "DiffuseColorGroupColorParam": (1.0, 1.0, 1.0, 1.0), "GlossA_floatVal": gloss,
+            "GlossB_floatVal": gloss}, version)
+        out[(label, member)] = (tuple(version), fh4_mtpr.set_textures(patched, {ATLAS_DIFFUSE: atlas_path}, version))
+    return out
 
 
 def make_models(root, ir, identity, library):
@@ -495,7 +526,7 @@ def make_models(root, ir, identity, library):
     native_rig = NativeRuntimeRigCompiler()
     contract = NativeCarSceneContract(ir, identity["body_id"])
     geometry = ir["sections"]["geometry"]["data"]
-    car_parameters, texture_payloads = gauge_texture_parameters(root, ir, identity["media_name"])
+    car_parameters, texture_payloads = gauge_texture_parameters(root, ir, identity["media_name"], library)
     grouped = {category: defaultdict(list) for category in ("exterior", "cockpit", "wheel", "brake")}
     filtered = set()
     for source in geometry["models"]:

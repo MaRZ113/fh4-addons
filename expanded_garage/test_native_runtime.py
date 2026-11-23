@@ -50,9 +50,13 @@ class ScopeTests(unittest.TestCase):
         self.assertEqual(surface_binding("gauge_emissive").use,MaterialUse.EFFECT)
         self.assertFalse(surface_binding("new_unknown").drive_resolved)
         self.assertTrue(surface_binding("tire").drive_resolved)
-        self.assertEqual(surface_binding("solid","cockpit","seatL").trial_compatibility,"trial-compatible")
-        self.assertNotEqual(surface_binding("solid","cockpit","seatL").member,
-                            surface_binding("solid","cockpit","interior").member)
+        # Cockpit atlas classes take the textured cabin shader; the exterior seen from the cockpit does not.
+        atlas = surface_binding("solid","cockpit","seatL")
+        self.assertEqual((atlas.member,atlas.fidelity),
+                         ("interior_plastic/plastic_perforated_004.materialbin","source_cockpit_atlas"))
+        self.assertEqual(surface_binding("reflector","cockpit","interior").member,atlas.member)
+        self.assertNotEqual(surface_binding("black","cockpit","a_pillar").member,atlas.member)
+        self.assertEqual(surface_binding("chrome","cockpit","interior").member,"exterior_metal/chrome.materialbin")
         self.assertFalse(surface_binding("misc","exterior","unclassified").drive_resolved)
 
 
