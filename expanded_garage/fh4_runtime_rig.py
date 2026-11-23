@@ -38,6 +38,7 @@ BONE_SIZE = 164
 # 81 (root) down to ~3.7; a zero error left every bone below the threshold, so the gauge graph never
 # posed the needles. One constant error keeps the required descending order.
 SKELETON_LOD_TYPE = 1
+GRANNY_MODEL = "GrannyRootBone"
 BONE_LOD_ERROR = 100.0
 
 
@@ -163,7 +164,10 @@ def skeleton_file(alias, bones):
     struct.pack_into("<I", main.raw, skeleton + 8, len(bones))
     struct.pack_into("<i", main.raw, skeleton + 20, SKELETON_LOD_TYPE)
     main.pointer(skeleton + 12, 0, array)
-    main.pointer(model, 0, main.string(alias))
+    # Every native car rig names its Granny model like its skeleton, "GrannyRootBone" (65/65 sampled);
+    # a model named after the car let the GSF load yet never pose the needles (bisected against the
+    # unchanged ACU_RSXTypeS_02 animation stack, whose needles moved on this car's meshes).
+    main.pointer(model, 0, main.string(GRANNY_MODEL))
     main.pointer(model + 8, 0, skeleton)
     scale = (1, 0, 0, 0, 1, 0, 0, 0, 1)
     struct.pack_into("<I3f4f9f", main.raw, model + 16, 0, 0, 0, 0, 0, 0, 0, 1, *scale)
@@ -262,7 +266,7 @@ def verify_skeleton(data, alias):
         raise ValueError("Wrong Granny file identity or root list cardinality")
     skel = pointer(0, pointer(0, 52, 0), 0)
     model = pointer(0, pointer(0, 100, 0), 0)
-    if string(0, skel) != "GrannyRootBone" or string(0, model) != alias or pointer(0, model + 8, 0) != skel:
+    if string(0, skel) != "GrannyRootBone" or string(0, model) != GRANNY_MODEL or pointer(0, model + 8, 0) != skel:
         raise ValueError("Granny rig model links do not resolve to the generated skeleton")
     size, = struct.unpack_from("<I", main, skel + 8)
     if struct.unpack_from("<i", main, skel + 20)[0] != SKELETON_LOD_TYPE:
