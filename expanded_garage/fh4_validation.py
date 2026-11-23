@@ -417,7 +417,12 @@ def integrated_report(baseline, baseline_manifest, library, output, mount, build
                 }.items() if key not in members)
                 if native is not None:
                     native_gr2 = receipt["render"]["runtime_rig"]["gr2"]["member"]
-                    skeleton = verify_skeleton(archive.read(native_gr2), alias.casefold())
+                    if receipt["render"]["runtime_rig"].get("animation_probe"):
+                        # Diagnostic donor skeleton in the archive; audit wheels on the authored rig.
+                        report["animation_probe"] = receipt["render"]["runtime_rig"]["animation_probe"]
+                        skeleton = receipt["render"]["runtime_rig"]["gr2"]["bones"]
+                    else:
+                        skeleton = verify_skeleton(archive.read(native_gr2), alias.casefold())
                     if skeleton != receipt["render"]["runtime_rig"]["gr2"]["bones"]:
                         raise ValueError("Granny readback differs from the rig receipt")
                     report["wheel_frames"] = audit_wheel_frames(candidate, report, skeleton)

@@ -424,6 +424,26 @@ def gauge_donor():
     return json.loads(files(__package__).joinpath("fh4-gauge-parameters-v1.json").read_text(encoding="utf-8"))
 
 
+def animation_probe():
+    """EXPANDED_GARAGE_ANIMATION_PROBE=<native car ZIP>: ship its animation stack unchanged (bisection)."""
+    value = os.environ.get("EXPANDED_GARAGE_ANIMATION_PROBE")
+    return Path(value) if value else None
+
+
+def probe_members(donor, alias):
+    out = {}
+    with ZipFile(donor) as archive:
+        for name in archive.namelist():
+            low = name.casefold()
+            if low.startswith("animations/") and low.endswith(".gsf"):
+                out[f"animations/{alias}.gsf"] = archive.read(name)
+            elif low.startswith("animations/") and low.endswith(".gr2"):
+                out[low] = archive.read(name)
+            elif low.startswith("scene/") and low.endswith("_skeleton.gr2"):
+                out[f"scene/{alias}_skeleton.gr2"] = archive.read(name)
+    return out
+
+
 def raw_member(root, ir, suffix):
     for member in ir.get("raw_members", ()):
         if member["name"].casefold().endswith(suffix):
@@ -690,6 +710,12 @@ def make_models(root, ir, identity, library):
         rig_report["gsf"] = {"state":"structurally_verified","member":f"animations/{aliases}.gsf",
                              "runtime":"unverified","clips":[g["member"] for g in motion["gauges"]]}
     payloads[rig_report["gr2"]["member"]] = gr2
+    if probe := animation_probe():
+        # Diagnostic: the donor's whole animation stack, byte for byte (skeleton GR2, GSF, clips).
+        for member in [m for m in payloads if m.startswith("animations/")]:
+            del payloads[member]
+        payloads.update(probe_members(probe, aliases))
+        rig_report["animation_probe"] = str(probe)
     return payloads, {
         "modelbins": len(models) + 1, "models_by_role": {k: sum(m.kind == k for m in models) for k in PART_TYPES},
         "bone_names": [bone.name for bone in bones], "scene_contract": contract.receipt(),
@@ -849,7 +875,9 @@ def validate_zip(blob, name, car_id, *, trial=None):
             fh4_driver_rig.validate_ik_anchor_xml(archive.read(names["ikanchorbones.xml"]), scene_bones)
             used.add("ikanchorbones.xml")
         gr2 = scene["skeleton"][len(prefix):].replace("\\", "/").removesuffix(".modelbin") + ".gr2"
-        if gr2 in names:
+        if animation_probe() and gr2 in names:
+            used.update(m for m in names if m == gr2 or m.startswith("animations/"))
+        elif gr2 in names:
             rig = modelbin_view(verify_skeleton(archive.read(names[gr2]), aliases))
             if len(rig) != len(scene_rest) or any(
                     (bone["name"],bone["parent"]) != ("GrannyRootBone" if i==0 else label,parent)
