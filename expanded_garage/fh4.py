@@ -491,6 +491,43 @@ def gauge_texture_parameters(root, ir, alias, library=None):
 
 
 ATLAS_DIFFUSE = 0x810e7224   # int_ch1diffnormglossalpha CH1 diffuse texture (same slot as int_gauges)
+EXTERIOR_FOLDER = "textures/exterior/swatches/"
+
+
+def library_mtpr(library, member):
+    data = ZipFile(library).read(member)
+    _, geometry = previous_readers()
+    return next((data[b["offset"]:b["offset"] + b["size"]], b["version"])
+                for b in geometry.blobs(data) if b["tag"] == "MTPR")
+
+
+def exterior_atlas_parameters(root, ir, alias, library):
+    """({(emblem|badge, m_002): (version, MTPR)}, {member: swatchbin}): FM4 nodamage_LOD0.xds as the
+    opaque diffuse of the native badge shader. EXPANDED_GARAGE_EXTERIOR_ATLAS=off keeps plain chrome."""
+    if os.environ.get("EXPANDED_GARAGE_EXTERIOR_ATLAS") == "off" or library is None:
+        return {}, {}
+    atlas = raw_member(root, ir, "/nodamage_lod0.xds") or raw_member(root, ir, "/nodamage.xds")
+    from .fh4_presentation import swatch, xds_codec
+    codec = xds_codec(None)
+    if atlas is None or codec is None:
+        return {}, {}
+    width, height, rgba = codec[0](atlas)
+    pixels = np.frombuffer(bytes(rgba), np.uint8).reshape(height, width, 4).copy()
+    pixels[..., 3] = 255   # swatch() premultiplies; FM4 alpha here is a paint/dirt mask, not coverage
+    name = f"{alias.casefold()}_nodamage_diff_{uuid.uuid5(uuid.NAMESPACE_URL, f'urn:fh4-expanded-garage:{alias}:nodamage:diff')}"
+    folder = "\\".join(("Game:", "Media", "cars", alias.casefold(), *EXTERIOR_FOLDER.strip("/").split("/"), ""))
+    from . import fh4_mtpr
+    from .fh4_material_contract import EXTERIOR_ATLAS_GLOSS, EXTERIOR_ATLAS_MATERIAL
+    member = EXTERIOR_ATLAS_MATERIAL + ".materialbin"
+    body, version = library_mtpr(library, member)
+    out = {}
+    for label, gloss in EXTERIOR_ATLAS_GLOSS.items():
+        patched = fh4_mtpr.patch(body, {"CH1DiffColTextureSwitchBool": 1, "CH1OpacityMaskSwitchBool": 0,
+                                        "DiffuseColorGroupColorParam": (1.0, 1.0, 1.0, 1.0),
+                                        "GlossA_floatVal": gloss}, version)
+        out[(label, member)] = (tuple(version), fh4_mtpr.set_textures(
+            patched, {ATLAS_DIFFUSE: folder + name + ".swatchbin"}, version))
+    return out, {EXTERIOR_FOLDER + name + ".swatchbin": swatch(name, width, height, pixels.tobytes())}
 
 
 def cockpit_atlas_parameters(library, atlas_path):
@@ -502,11 +539,7 @@ def cockpit_atlas_parameters(library, atlas_path):
     from . import fh4_mtpr
     from .fh4_material_contract import COCKPIT_ATLAS_GLOSS, COCKPIT_ATLAS_MATERIAL
     member = COCKPIT_ATLAS_MATERIAL + ".materialbin"
-    data = ZipFile(library).read(member)
-    _, geometry = previous_readers()
-    block = next((data[b["offset"]:b["offset"] + b["size"]], b["version"])
-                 for b in geometry.blobs(data) if b["tag"] == "MTPR")
-    body, version = block
+    body, version = library_mtpr(library, member)
     out = {}
     for label, gloss in COCKPIT_ATLAS_GLOSS.items():
         patched = fh4_mtpr.patch(body, {
@@ -527,6 +560,9 @@ def make_models(root, ir, identity, library):
     contract = NativeCarSceneContract(ir, identity["body_id"])
     geometry = ir["sections"]["geometry"]["data"]
     car_parameters, texture_payloads = gauge_texture_parameters(root, ir, identity["media_name"], library)
+    exterior_parameters, exterior_payloads = exterior_atlas_parameters(root, ir, identity["media_name"], library)
+    car_parameters.update(exterior_parameters)
+    texture_payloads.update(exterior_payloads)
     grouped = {category: defaultdict(list) for category in ("exterior", "cockpit", "wheel", "brake")}
     filtered = set()
     for source in geometry["models"]:
@@ -955,7 +991,7 @@ def validate_zip(blob, name, car_id, *, trial=None):
                 raise ValueError("Unexpected ground_AO.swatchbin size")
             used.add(ground)
         for name in names:
-            if name.startswith(GAUGE_FOLDER) and name.endswith(".swatchbin"):
+            if name.startswith((GAUGE_FOLDER, EXTERIOR_FOLDER)) and name.endswith(".swatchbin"):
                 if len(archive.read(names[name])) <= 140:
                     raise ValueError(f"Empty gauge texture {name}")
                 used.add(name)

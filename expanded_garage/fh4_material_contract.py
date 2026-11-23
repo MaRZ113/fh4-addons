@@ -40,6 +40,13 @@ COCKPIT_ATLAS_GLOSS = {
 COCKPIT_EXTERIOR_PARTS = ("hood", "mirror", "a_pillar", "glass", "cage")
 
 
+# FM4 exterior emblems and badges draw the car's own logo and lettering (pre-shaded chrome) from
+# nodamage_LOD0.xds through UV0; untextured chrome showed featureless blobs. Native badge shader
+# badge_ch1difgloss (mfr_emblems/m_002) with its diffuse texture switched on carries that art.
+EXTERIOR_ATLAS_MATERIAL = "mfr_emblems/m_002"
+EXTERIOR_ATLAS_GLOSS = {"emblem": 0.9, "badge": 0.9}
+
+
 def cockpit_atlas_surface(label, component_kind, component):
     return (component_kind == "cockpit" and label.casefold() in COCKPIT_ATLAS_GLOSS
             and not component.casefold().startswith(COCKPIT_EXTERIOR_PARTS))
@@ -53,6 +60,8 @@ def surface_binding(label, component_kind="", component=""):
         return SurfaceBinding(member+".materialbin", purpose, alpha, resolved, fidelity, compatibility)
     if cockpit_atlas_surface(label, component_kind, component):
         return bind(COCKPIT_ATLAS_MATERIAL, fidelity="source_cockpit_atlas")
+    if component_kind == "exterior" and name in EXTERIOR_ATLAS_GLOSS:
+        return bind(EXTERIOR_ATLAS_MATERIAL, MaterialUse.FIDELITY, fidelity="source_exterior_atlas")
     if name in {"body","body_2","body_3","paint","matte_colors","race_kit_red"}:
         return bind("exterior_misc/carpaint",MaterialUse.RUNTIME)
     if name in {"tire","tyre"}:

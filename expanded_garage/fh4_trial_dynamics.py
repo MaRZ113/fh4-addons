@@ -89,9 +89,30 @@ class TrialDynamics:
                         "cohort_car_ids":[row["Id"] for row in peers], "aero_caps":caps,"ffb":ffb_support,
                         "relaxed_distance":peers is not self.peers}
 
+    def twin_spring(self, axle, legacy_mode, topology):
+        """The stock axle of the native FH4 car built on the same chassis (profile `native_twin`). FH4 does
+        not keep the real topology for every layout (its DC2, ACU_IntegraR_01, runs RevoKnuckle and
+        FWD_TrailingBeam on a double-wishbone car), so the twin is stronger evidence than a family rule."""
+        twin = topology["native_twin"]
+        row = self.db.execute(
+            f"""SELECT p.SuspensionPhysicsTypeID,p.UseProgressiveSpring,p.BumpStopHeight,t.Path,t.Name
+                FROM Data_Car c JOIN List_UpgradeSpringDamper s ON s.Ordinal=c.Id AND s.IsStock=1
+                JOIN List_SpringDamperPhysics p ON p.SpringDamperPhysicsID=s.{axle}SpringDamperPhysicsID
+                JOIN List_SuspensionPhysicsType t ON t.SuspensionPhysicsTypeID=p.SuspensionPhysicsTypeID
+                WHERE c.MediaName=? AND c.Id<12000""", (twin,)).fetchone()
+        if row is None or row[4] != "ARTICULATED" or not row[3] or row[1] not in (0, 1)                 or not finite_between(row[2], -.1, .1):
+            return {}, {}
+        self.suspension_types[axle] = row[0]
+        return {"SuspensionPhysicsTypeID":row[0],"UseProgressiveSpring":row[1],"BumpStopHeight":row[2]}, {
+            "rule":"Stock axle of the native FH4 car on the same chassis","source_mode":legacy_mode,
+            "source_topology":topology.get(axle),"topology_reference":topology["reference"],
+            "native_twin":twin,"resource":row[3]}
+
     def spring(self, axle, legacy_mode):
         source_profile = (self.shift or {}).get("manufacturer_evidence") or {}
         topology = source_profile.get("suspension",{})
+        if topology.get("native_twin") and legacy_mode == "INDEPENDANT":
+            return self.twin_spring(axle, legacy_mode, topology)
         family = SUSPENSION_FAMILIES.get(topology.get(axle))
         if not family or legacy_mode != "INDEPENDANT":
             return {}, {}
@@ -130,6 +151,16 @@ class TrialDynamics:
         kind = self.suspension_types.get(axle)
         if not kind:
             return {}, {}
+        topology = ((self.shift or {}).get("manufacturer_evidence") or {}).get("suspension",{})
+        if twin := topology.get("native_twin"):
+            row = self.db.execute(
+                f"""SELECT b.BeamStiffness FROM Data_Car c
+                    JOIN List_UpgradeAntiSway{axle} a ON a.Ordinal=c.Id AND a.IsStock=1
+                    JOIN List_AntiSwayPhysics b ON b.AntiSwayPhysicsID=a.AntiSwayPhysicsID
+                    WHERE c.MediaName=? AND c.Id<12000""", (twin,)).fetchone()
+            if row is not None and finite_between(row[0],0,1500):
+                return {"BeamStiffness":row[0]}, {"rule":"Stock beam stiffness of the native FH4 twin",
+                                                  "native_twin":twin,"template_id":kind}
         rows = self.db.execute(
             f"""SELECT b.BeamStiffness FROM List_UpgradeAntiSway{axle} a
                 JOIN List_AntiSwayPhysics b ON b.AntiSwayPhysicsID=a.AntiSwayPhysicsID
@@ -143,9 +174,34 @@ class TrialDynamics:
         return {"BeamStiffness":median(values)}, {"rule":"Median stock beam stiffness for the same shared axle template",
                                                  "template_id":kind,"sample_rows":len(values)}
 
+    def twin_driveline(self):
+        """Stock driveline of the native FH4 car on the same chassis, when too few similar stock cars
+        share this layout for the peer rule (RUF CTR2 on the 993: POR_911GT2_95)."""
+        topology = ((self.shift or {}).get("manufacturer_evidence") or {}).get("suspension",{})
+        twin = topology.get("native_twin")
+        if not twin:
+            return {}, {}
+        row = self.db.execute(
+            f"""SELECT {",".join("l."+k for k in DRIVELINE)} FROM Data_Car c
+                JOIN List_UpgradeDrivetrain u ON u.Ordinal=c.Id AND u.IsStock=1
+                JOIN Data_Drivetrain d ON d.DrivetrainId=u.DrivetrainId
+                JOIN List_UpgradeDrivetrainDriveline l ON l.DrivetrainId=d.DrivetrainId AND l.IsStock=1
+                WHERE c.MediaName=? AND c.Id<12000 AND d.DrivetypeID=?""",
+            (twin, self.layout["DrivetypeID"])).fetchone()
+        if row is None:
+            return {}, {}
+        values = dict(zip(DRIVELINE,row,strict=True))
+        if not (all(finite_between(values[k],1,10000) for k in DRIVELINE[:3])
+                and finite_between(values["OneOverSpringConstant"],.00001,.01)
+                and finite_between(values["MultipleOfEngineTorqueForSpring"],.5,12)
+                and values["FlexMaxAngle"] == 0.):
+            return {}, {}
+        return values, {"rule":"Stock driveline of the native FH4 twin on the same chassis and layout",
+                        "native_twin":twin}
+
     def driveline(self):
         if len(self.peers)<5:
-            return {}, {}
+            return self.twin_driveline()
         tuples = Counter(tuple(row[key] for key in DRIVELINE[:3]) for row in self.peers if row["FlexMaxAngle"]==0.)
         if not tuples:
             return {}, {}
@@ -153,7 +209,7 @@ class TrialDynamics:
         related = [row for row in self.peers if tuple(row[key] for key in DRIVELINE[:3])==profile
                    and row["FlexMaxAngle"]==0.]
         if count<3 or not all(finite_between(v,1,10000) for v in profile):
-            return {}, {}
+            return self.twin_driveline()
         values = dict(zip(DRIVELINE[:3],profile,strict=True))
         values[DRIVELINE[3]] = median(r[DRIVELINE[3]] for r in related)
         values[DRIVELINE[4]] = median(r[DRIVELINE[4]] for r in related)

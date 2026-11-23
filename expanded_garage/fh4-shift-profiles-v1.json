@@ -39,6 +39,7 @@
       "final_drive": 4.4,
       "suspension": {
         "Front": "wishbone",
+        "native_twin": "ACU_IntegraR_01",
         "Rear": "wishbone",
         "reference": "https://www.honda.co.jp/sportscar/sportscar/integra_type_r/"
       },
@@ -58,6 +59,12 @@
       "gears": 6,
       "wheelbase_m": 2.272,
       "mass_kg": 1380,
+      "suspension": {
+        "Front": "strut",
+        "Rear": "multilink",
+        "native_twin": "POR_911GT2_95",
+        "reference": "https://www.ultimatecarpage.com/car/7967/Ruf-CTR2.html"
+      },
       "references": [
         "https://www.no-speedlimit.it/downloads/World%20of%20RUF%202017%20-%20Edition%20VII.pdf"
       ]

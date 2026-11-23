@@ -376,13 +376,16 @@ def record_runtime_acceptance(host, transaction_id, evidence):
 
 
 def suspension_xml_evidence(raw, axle):
-    # Stock comments contain XML-incompatible double hyphens. Retain the full
-    # native plaintext digest and omit comments only from structural readback.
-    tree = ET.fromstring(re.sub(rb"<!--.*?-->",b"",raw,flags=re.S))
+    # Stock comments contain XML-incompatible double hyphens, and generated templates (RevoKnuckle,
+    # Strut_DW_Linear_Camber, 5link_hyper1) open with `//` header lines. Retain the full native
+    # plaintext digest and omit both comment forms only from structural readback.
+    # They also run attributes together (x="..."y="...") and spell Steered="TRUE".
+    text = re.sub(rb"(?m)^[ \t]*//[^\n]*\n?",b"",re.sub(rb"<!--.*?-->",b"",raw,flags=re.S))
+    tree = ET.fromstring(re.sub(rb'"([A-Za-z_][A-Za-z0-9_]*=)',rb'" \1',text))
     steered = axle == "Front"
     required = (tree.find(".//Locator[@Id='S']") is not None
                 and all(tree.find(f".//{part}") is not None for part in ("Chassis","Upright")))
-    if (tree.tag != "Suspension" or tree.get("Steered") != str(steered).lower() or not required
+    if (tree.tag != "Suspension" or tree.get("Steered","").casefold() != str(steered).lower() or not required
             or steered and tree.find("Kingpin") is None
             or not 0 < float(tree.get("HalfTrack","0")) < 2
             or not 0 < float(tree.get("TireRadius","0")) < 1
