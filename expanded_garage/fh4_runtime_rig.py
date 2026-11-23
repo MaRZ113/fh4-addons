@@ -80,7 +80,49 @@ def granny_container(main, types, root_type, tag):
     return bytes(output)
 
 
+# Native Granny skeletons group animated accessories under helper bones that the Modelbin skeleton
+# lacks (ACU_RSXTypeS_02: boneFuel/boneSpeed/boneTach/boneTemp are children of root_boneGauges). The
+# native car graph samples the gauge pose as the subtree of `root_boneGauges`; without that bone the
+# needles never received it. The game matches the two skeletons by bone name.
+GROUP_BONES = {"root_boneGauges": ("boneFuel", "boneSpeed", "boneTach", "boneTemp")}
+
+
+def granny_bones(bones):
+    """The Granny rig: Modelbin bones plus identity group bones under `root` for present children."""
+    from .fh4_model import Bone
+    names = [b.name for b in bones]
+    if len(names) < 2 or names[1] != "root":
+        return list(bones)
+    out, remap = list(bones[:2]), {0: 0, 1: 1}
+    groups = {}
+    for group, members in GROUP_BONES.items():
+        if any(m in names for m in members):
+            groups[group] = len(out)
+            out.append(Bone(group, 1))
+    owner = {m: g for g, ms in GROUP_BONES.items() if g in groups for m in ms}
+    for i, bone in enumerate(bones[2:], start=2):
+        remap[i] = len(out)
+        parent = groups[owner[bone.name]] if bone.name in owner and bone.parent == 1 else remap[bone.parent]
+        out.append(Bone(bone.name, parent, bone.translation, bone.rotation))
+    return out
+
+
+def modelbin_view(rig):
+    """Granny readback rows with the identity group bones folded away (Modelbin bone order)."""
+    keep, remap = [], {}
+    for i, row in enumerate(rig):
+        if row["name"] in GROUP_BONES:
+            if any(row["local_m"]) or "local_rotation" in row:
+                raise ValueError("Granny group bone is not an identity frame")
+            remap[i] = remap[row["parent"]]
+            continue
+        remap[i] = len(keep)
+        keep.append(dict(row, parent=remap[row["parent"]] if row["parent"] >= 0 else -1))
+    return keep
+
+
 def skeleton_file(alias, bones):
+    bones = granny_bones(bones)
     main, types = SectionBuilder(), SectionBuilder()
     declarations = {"Root": ROOT, "Art": ART, "Skeleton": SKELETON, "Bone": BONE, "Model": MODEL}
     offsets = {name: types.reserve((len(fields) + 1) * TYPE.size) for name, fields in declarations.items()}

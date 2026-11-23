@@ -18,7 +18,7 @@ import numpy as np
 
 from . import fh4_archive, fh4_db, fh4_model, fh4_physics
 from .fh4_scene_contract import NativeCarSceneContract
-from .fh4_runtime_rig import NativeRuntimeRigCompiler, verify_skeleton
+from .fh4_runtime_rig import NativeRuntimeRigCompiler, modelbin_view, verify_skeleton
 from . import fh4_ao_volume, fh4_driver_rig, fh4_paint, fh4_wheel_model
 from .fh4_granny_animation import verify_gauge_graph
 from .fh4_material_contract import surface_binding
@@ -850,7 +850,7 @@ def validate_zip(blob, name, car_id, *, trial=None):
             used.add("ikanchorbones.xml")
         gr2 = scene["skeleton"][len(prefix):].replace("\\", "/").removesuffix(".modelbin") + ".gr2"
         if gr2 in names:
-            rig = verify_skeleton(archive.read(names[gr2]), aliases)
+            rig = modelbin_view(verify_skeleton(archive.read(names[gr2]), aliases))
             if len(rig) != len(scene_rest) or any(
                     (bone["name"],bone["parent"]) != ("GrannyRootBone" if i==0 else label,parent)
                     or not np.allclose(matrix,fh4_model.transform(bone["local_m"],
