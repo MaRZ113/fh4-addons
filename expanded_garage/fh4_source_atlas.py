@@ -14,6 +14,7 @@ import numpy as np
 from . import fh4_mtpr
 from .fh4_material_contract import (ATLAS_PLASTIC_GLOSS, BRAKE_ATLAS_GLOSS, EXTERIOR_ATLAS_GLOSS,
                                     EXTERIOR_ATLAS_MATERIAL, EXTERIOR_ATLAS_PLASTIC, EXTERIOR_STICKER, GRILLE_MESH,
+                                    COCKPIT_ATLAS_MATERIAL,
                                     TINTED_LENSES, WHEEL_ATLAS_GLOSS, WHEEL_ATLAS_SURFACES, atlas_source)
 
 FAR = "_lod15"
@@ -73,6 +74,8 @@ class Textures:
         image = pixels.copy()
         if role == "opac":
             image[..., :3] = pixels[..., 3:4]
+        elif role == "outline":
+            image[..., :3] = badge_outline(pixels)
         elif role == "rim":
             # Edge texels blend the logo with the pad behind it; spread the logo colour over the rim.
             image[..., :3] = grey_dilate(pixels[..., :3], BADGE_EDGE_TEXELS)
@@ -100,6 +103,27 @@ def grey_dilate(rgb, steps):
         out = np.max([padded[1 + dy:padded.shape[0] - 1 + dy, 1 + dx:padded.shape[1] - 1 + dx]
                       for dy in (-1, 0, 1) for dx in (-1, 0, 1)], axis=0)
     return out
+
+
+def badge_outline(pixels, width=BADGE_EDGE_TEXELS, reach=12):
+    """Atlas RGB with each alpha shape filled by the local colour around it, except its inner rim (which takes
+    the logo colour spread over the antialiased edge): the FM4 cabin logo as a raised outline on the pad."""
+    rgb = pixels[..., :3].astype(np.float64)
+    solid = pixels[..., 3] >= 128
+    edge = badge_edge(pixels[..., 3], width) > 0
+    background = ~solid
+    total = np.where(background[..., None], rgb, 0.0)
+    count = background.astype(np.float64)
+    # Box mean of the background over (2*reach+1)^2 texels via integral images.
+    def box(a):
+        c = np.cumsum(np.cumsum(np.pad(a, ((reach + 1, reach), (reach + 1, reach)) + ((0, 0),) * (a.ndim - 2),
+                                       mode="edge"), 0), 1)
+        k = 2 * reach + 1
+        return c[k:, k:] - c[:-k, k:] - c[k:, :-k] + c[:-k, :-k]
+    fill = box(total) / np.maximum(box(count), 1e-9)[..., None]
+    out = np.where(solid[..., None], fill, rgb)
+    out = np.where(edge[..., None], grey_dilate(pixels[..., :3], width).astype(np.float64), out)
+    return np.clip(np.rint(out), 0, 255).astype(np.uint8)
 
 
 def badge_edge(alpha, width=BADGE_EDGE_TEXELS):
@@ -199,7 +223,7 @@ def parameters(root, ir, alias, library, grouped):
         else:
             suffix = GRILLE_SOURCES[source]
         scale = wheel_scales.get(name, 1.0) if source == "wheel" else 1.0
-        diffuse = textures.swatch(suffix, "rim" if source == "cabin_badge" else "diff", scale)
+        diffuse = textures.swatch(suffix, "outline" if source == "cabin_badge" else "diff", scale)
         if diffuse is None:
             continue
         key = (far_name(label) if far else label, member)
@@ -215,6 +239,11 @@ def parameters(root, ir, alias, library, grouped):
                 "DiffuseColorGroupColorParam": (1.0, 1.0, 1.0, 1.0),
                 "GlossA_floatVal": CABIN_BADGE_GLOSS if cabin else STICKER_GLOSS},
                 {DIFFUSE: diffuse, OPACITY: textures.swatch(suffix, "edge" if cabin else "opac")})
+        elif library_member == COCKPIT_ATLAS_MATERIAL:
+            out[key] = _block(library, library_member, {
+                "CH1DiffColTextureSwitchBool": 1, "CH1NormalMapSwitchBool": 0, "CH1LocalAOSwitchBool": 0,
+                "CH1OpacityMaskSwitchBool": 0, "DiffuseColorGroupColorParam": (1.0, 1.0, 1.0, 1.0),
+                "GlossA_floatVal": CABIN_BADGE_GLOSS, "GlossB_floatVal": CABIN_BADGE_GLOSS}, {DIFFUSE: diffuse})
         elif library_member == GRILLE_MESH:
             out[key] = _block(library, library_member, {"CH1OpacityMaskSwitchBool": 1},
                               {OPACITY: textures.swatch(suffix, "opac")})

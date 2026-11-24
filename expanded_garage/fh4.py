@@ -410,8 +410,9 @@ def part_ao(alias, grouped, nonstock=frozenset(), exterior_sides=None, corners=N
     # Under native paint the map reads ~150 of 255 (ACU, Fiesta): without it our bodies took full indirect light
     # and looked brighter than natives in the same paint (owner, visual-53). One bake for the whole car with the
     # ground as occluder, smoothed in 3D across models (fh4_part_ao.bake_exterior; the visual-47 per-model chart
-    # maps showed seams). EXPANDED_GARAGE_EXTERIOR_AO=off keeps the empty Carbin AO record outside the cabin.
-    if os.environ.get("EXPANDED_GARAGE_EXTERIOR_AO") != "off" and exterior_sides and corners:
+    # maps showed seams). Off by default since visual-57: still uneven in game (RUF tail panel, SX4 door facets
+    # near the mirror and handles); EXPANDED_GARAGE_EXTERIOR_AO=on bakes it.
+    if os.environ.get("EXPANDED_GARAGE_EXTERIOR_AO") == "on" and exterior_sides and corners:
         keys = [key for key in sorted(exterior_sides)
                 if key.casefold() not in nonstock and not key.casefold().startswith("glass")]
         models = [(grouped["exterior"][key], exterior_sides[key]) for key in keys]
@@ -948,6 +949,17 @@ def make_models(root, ir, identity, library):
                 filtered.add((role, section, draw.source_material))
     if not grouped["exterior"]:
         raise ValueError("No source exterior geometry available")
+    # Cabin badges get their own MatI label, on the cockpit models and on their exterior-view copies.
+    from .fh4_material_contract import CABIN_BADGE, COCKPIT_EXTERIOR_PARTS as _BODY_PARTS
+    if os.environ.get("EXPANDED_GARAGE_CABIN_BADGE") != "atlas":
+        cabin_parts = {k.casefold() for k in grouped["cockpit"] if not k.casefold().startswith(_BODY_PARTS)}
+        badge_binding = surface_binding(CABIN_BADGE, "cockpit", "")
+        for kind in ("cockpit", "exterior"):
+            for key, draws in grouped[kind].items():
+                if key.casefold() in cabin_parts:
+                    draws[:] = [replace(d, source_material=CABIN_BADGE, target_material=badge_binding.member,
+                                        transparent=badge_binding.transparent)
+                                if d.source_material.casefold() == "badge" else d for d in draws]
     # Native exterior models carry TEXCOORD2 as their own non-overlapping 0..1 unwrap (ACU body_a carPaint
     # 0.01-0.98, bumpers their own square); FH4's DynamicRainDropRenderer draws the drops into a texture through
     # TexCoord2. Ours was zero outside the cabin, and the car never got rain or splash drops (owner, visual-43).

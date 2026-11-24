@@ -82,6 +82,12 @@ MIRROR_SURFACES = {"mirrorleft": "specificuse/mirrorleft", "mirrorright": "speci
                    "mirrormiddle": "specificuse/mirrorcenter", "mirrorcenter": "specificuse/mirrorcenter"}
 
 
+# MatI label of cabin badges (fh4.make_models renames them, also on the cabin parts drawn in the exterior view).
+# MTPR blocks are keyed car-wide by (label, member): sharing `badge` with the exterior stickers gave one of the
+# two the other's atlas and mask (owner, visual-56: RUF horn-pad logo in two tones).
+CABIN_BADGE = "cabin_badge"
+
+
 def exterior_like(component_kind, component):
     """Exterior parts, and the cockpit copies of body parts (FM4 keeps hood/mirror LOD0 in the cockpit set)."""
     return component_kind == "exterior" or (component_kind == "cockpit"
@@ -96,6 +102,8 @@ def atlas_source(label, component_kind="", component=""):
     name = label.casefold()
     if component_kind == "brake" and name in BRAKE_ATLAS_GLOSS:
         return "body"
+    if name == CABIN_BADGE:
+        return "cabin_badge"
     if (component_kind == "cockpit" and name == "badge" and not component.casefold().startswith(COCKPIT_EXTERIOR_PARTS)
             and os.environ.get("EXPANDED_GARAGE_CABIN_BADGE") != "atlas"):
         return "cabin_badge"
@@ -129,7 +137,11 @@ def surface_binding(label, component_kind="", component=""):
         # Alpha-tested sticker whose mask is only the inner rim of the atlas alpha (fh4_source_atlas, role
         # 'edge'); thin script (SX4/Integra console) is narrower than the rim and stays whole.
         # EXPANDED_GARAGE_CABIN_BADGE=atlas: the visual-53 opaque binding.
-        return bind(EXTERIOR_STICKER, MaterialUse.FIDELITY, True, fidelity="source_cockpit_badge_edge")
+        # visual-57: the sticker shader bevels its opacity mask (raised-badge look): on a thin outline the bevel
+        # lit the horizontal strokes white and the slanted ones dark (owner, visual-56). Opaque textured cabin
+        # shader instead, with the logo filled by the surrounding pad colour and only the rim kept
+        # (fh4_source_atlas role 'outline').
+        return bind(COCKPIT_ATLAS_MATERIAL, MaterialUse.FIDELITY, fidelity="source_cockpit_badge_outline")
     if cockpit_atlas_surface(label, component_kind, component):
         return bind(COCKPIT_ATLAS_MATERIAL, fidelity="source_cockpit_atlas")
     source = atlas_source(label, component_kind, component)
