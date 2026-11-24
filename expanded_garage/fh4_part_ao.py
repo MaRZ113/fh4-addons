@@ -184,7 +184,9 @@ def unwrap(draws):
         else:
             lo_d, best = mid, (mid, offsets)
     if best is None:
-        raise ValueError("AO charts do not fit the map")
+        # Tens of thousands of charts (FM4 meshes with scattered per-face normals) do not pack even at one texel
+        # each: the model gets no TEXCOORD2 unwrap (no AO, no rain mask) instead of failing the build.
+        return list(draws), 0
     density, offsets = best
     frame_data = {"low": low, "density": density, "offsets": offsets, "side": side, "frames": frames}
 

@@ -949,6 +949,22 @@ def make_models(root, ir, identity, library):
                 filtered.add((role, section, draw.source_material))
     if not grouped["exterior"]:
         raise ValueError("No source exterior geometry available")
+    # Lamp glass: FM4 Integra glassLTL carries a clear cover (`glass` -> gls_clear) 4-30 mm over its red lens
+    # (detail_glass_red -> gls_colored). Both translucent in the same bucket (60): drawn cover-first, the red lens
+    # vanished with the camera angle (owner, visual-57). Clear triangles lying over a tinted lens of the same
+    # lamp are dropped. EXPANDED_GARAGE_LAMP_COVER=keep keeps them.
+    if os.environ.get("EXPANDED_GARAGE_LAMP_COVER") != "keep":
+        lamps = defaultdict(list)
+        for key, draws in grouped["exterior"].items():
+            m = re.match(r"glass([lr])(hl|tl)$|(head|tail)light([lr])$", key.casefold())
+            if m:
+                side = m.group(1) or m.group(4)
+                lamps[(side, m.group(2) or ("hl" if m.group(3) == "head" else "tl"))].append(key)
+        for keys in lamps.values():
+            group = [d for key in keys for d in grouped["exterior"][key]]
+            for key in keys:
+                draws = grouped["exterior"][key]
+                draws[:] = [d for d in (uncovered_lamp_glass(d, group) for d in draws) if d is not None]
     # Cabin badges get their own MatI label, on the cockpit models and on their exterior-view copies.
     from .fh4_material_contract import CABIN_BADGE, COCKPIT_EXTERIOR_PARTS as _BODY_PARTS
     if os.environ.get("EXPANDED_GARAGE_CABIN_BADGE") != "atlas":
@@ -1308,6 +1324,41 @@ def make_models(root, ir, identity, library):
         "authored_hardpoints": [vars(point) for point in points.values()],
         "wheel_rest_frame": "Chassis-space placement and bone rest are serialized separately as in stock scenes. Runtime composition is unverified.",
     }, analysis
+
+
+def uncovered_lamp_glass(draw, draws, reach=0.012):
+    """`draw` without the clear-glass triangles lying 1.5 mm to `reach` over a tinted lens of the same lamp and LOD."""
+    if not draw.target_material.endswith("gls_clear.materialbin"):
+        return draw
+    lenses = [d for d in draws if d.lod == draw.lod and d.target_material.endswith("gls_colored.materialbin")]
+    if not lenses:
+        return draw
+    lens = np.concatenate([d.positions[d.indices].astype(np.float64) for d in lenses])
+    a, ab, ac = lens[:, 0], lens[:, 1] - lens[:, 0], lens[:, 2] - lens[:, 0]
+    normal = np.cross(ab, ac)
+    length = np.linalg.norm(normal, axis=1)
+    keep_lens = length > 1e-10
+    a, ab, ac, normal = a[keep_lens], ab[keep_lens], ac[keep_lens], normal[keep_lens] / length[keep_lens, None]
+    d00, d01, d11 = np.sum(ab * ab, 1), np.sum(ab * ac, 1), np.sum(ac * ac, 1)
+    den = np.where(np.abs(d00 * d11 - d01 * d01) < 1e-18, 1e-18, d00 * d11 - d01 * d01)
+    tri = draw.positions[draw.indices].astype(np.float64).mean(axis=1)
+    covered = np.zeros(len(tri), bool)
+    for start in range(0, len(tri), 256):
+        q = tri[start:start + 256][:, None] - a[None]                       # (n, m, 3)
+        along = np.abs(np.sum(q * normal[None], axis=2))
+        d20, d21 = np.sum(q * ab[None], axis=2), np.sum(q * ac[None], axis=2)
+        v = (d11[None] * d20 - d01[None] * d21) / den[None]
+        w = (d00[None] * d21 - d01[None] * d20) / den[None]
+        inside = (v >= -0.05) & (w >= -0.05) & (v + w <= 1.05)
+        covered[start:start + 256] = np.any(inside & (along >= 0.0015) & (along <= reach), axis=1)
+    if not covered.any():
+        return draw
+    keep = draw.indices[~covered]
+    if not len(keep):
+        return None
+    used, remap = np.unique(keep, return_inverse=True)
+    return replace(draw, positions=draw.positions[used], normals=draw.normals[used], uv0=draw.uv0[used],
+                   uv1=draw.uv1[used], indices=remap.reshape(-1, 3).astype(draw.indices.dtype))
 
 
 def brake_mounts(brakes):
