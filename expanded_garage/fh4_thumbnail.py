@@ -55,10 +55,39 @@ def bc7_pixels(im):
     return bytes(out)
 
 
+# Native framing in the dealership tiles (owner, icons.png: Sunbeam Lotus, Racemo, Gurkha beside the SX4): the
+# car spans ~72-74 % of the frame width and ~46-50 % of its height, wheels resting at ~90 % of the height. The
+# visual-50 frame (88 % / 80 %) let FM4's taller three-quarter views fill the tile up into the title.
+FRAME_WIDTH, FRAME_HEIGHT, FRAME_BOTTOM = 0.74, 0.50, 0.90
+
+
+def main_view(source):
+    """The largest car view of an FM4 thumbnail. FM4 thumbnails (768x288) hold a three-quarter view and a small
+    side profile at the right edge; shrunk whole into FH4's frame, the car sat small and off-centre with the
+    profile beside it in the dealership (owner, visual-49). Views are split at fully transparent columns."""
+    alpha = np.asarray(source.getchannel("A")) > 8
+    columns = alpha.any(axis=0)
+    runs, start = [], None
+    for x, filled in enumerate(list(columns) + [False]):
+        if filled and start is None:
+            start = x
+        elif not filled and start is not None:
+            runs.append((int(alpha[:, start:x].sum()), start, x))
+            start = None
+    if not runs:
+        return source
+    _, left, right = max(runs)
+    rows = np.nonzero(alpha[:, left:right].any(axis=1))[0]
+    return source.crop((left, int(rows[0]), right, int(rows[-1]) + 1))
+
+
 def thumbnail_swatch(source, size):
-    scaled = ImageOps.contain(source,size,Image.Resampling.LANCZOS)
+    view = main_view(source)
+    scale = min(size[0] * FRAME_WIDTH / view.width, size[1] * FRAME_HEIGHT / view.height)
+    scaled = view.resize((max(1, round(view.width * scale)), max(1, round(view.height * scale))),
+                         Image.Resampling.LANCZOS)
     target = Image.new("RGBA",size)
-    target.paste(scaled,((size[0]-scaled.width)//2,(size[1]-scaled.height)//2))
+    target.paste(scaled,((size[0]-scaled.width)//2, round(size[1] * FRAME_BOTTOM) - scaled.height))
     red,green,blue,alpha = target.split()
     target = Image.merge("RGBA",tuple(ImageChops.multiply(channel,alpha) for channel in (red,green,blue))+(alpha,))
     payload = bc7_pixels(target)

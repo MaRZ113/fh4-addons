@@ -56,8 +56,9 @@ class ScopeTests(unittest.TestCase):
                          ("interior_plastic/plastic_perforated_004.materialbin","source_cockpit_atlas"))
         self.assertEqual(surface_binding("reflector","cockpit","interior").member,atlas.member)
         self.assertNotEqual(surface_binding("black","cockpit","a_pillar").member,atlas.member)
-        self.assertEqual(surface_binding("chrome","cockpit","interior").member,"exterior_metal/chrome.materialbin")
-        self.assertFalse(surface_binding("misc","exterior","unclassified").drive_resolved)
+        self.assertEqual(surface_binding("chrome","cockpit","interior").member,"interior_metal/chrome_satin.materialbin")
+        self.assertEqual(surface_binding("chrome","cockpit","hoodb").member,"exterior_metal/chrome.materialbin")
+        self.assertFalse(surface_binding("weird_new_class","exterior","unclassified").drive_resolved)
 
 
 @unittest.skipUnless(all((CONTROLS/c/"ir/vehicle.json").is_file() for c,*_ in FIXTURES)

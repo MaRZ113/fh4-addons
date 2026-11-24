@@ -23,9 +23,11 @@ EXE_SHA = "b838a79a65c6d1e12f46deaba3584e4c88ebccdfdc4214b4535ece4ba3c0abbe"
 CRYPTO_SHA = "e7de706754590c8e8666d3c0185b0ffa6b523d8a92d56f4938f6b9951d3581a0"
 DB_PATH = "media/stripped/gamedbRC.slt"
 MANIFEST_PATH = "media/zipmanifest.xml"
-REPLACEABLE = (DB_PATH, MANIFEST_PATH, EN_PATH)
+AUDIO_MAPPING = "media/audio/cars/CarEngineEventMapping.xml"   # fh4_audio.MAPPING
+REPLACEABLE = (DB_PATH, MANIFEST_PATH, EN_PATH, AUDIO_MAPPING)
 HEX = re.compile(r"[0-9a-f]{64}")
 ARCHIVE = re.compile(r"media/cars/EG_[a-zA-Z0-9_]+\.zip")
+ENGINE_PACK = re.compile(r"media/stripped/mediaoverride/rc0/audio/enginesynth/pc/EG_[A-Za-z0-9_]+\.zip")   # fh4_audio
 THUMBNAIL = re.compile(r"media/stripped/RC[0-9]{5,10}(HiRes)?\.zip")
 PRESENTATION = re.compile(r"media/expanded_garage/(?:manufacturers/[A-Za-z0-9_]+\.swatchbin|thumbnails/thumbnail_[0-9]+\.png)")
 MATERIALS = "media/cars/_library/Materials.zip"
@@ -44,7 +46,8 @@ def plain_path(path):
 
 def native_path(host, relative):
     if relative not in REPLACEABLE and not (
-            ARCHIVE.fullmatch(relative) or PRESENTATION.fullmatch(relative) or THUMBNAIL.fullmatch(relative)):
+            ARCHIVE.fullmatch(relative) or PRESENTATION.fullmatch(relative) or THUMBNAIL.fullmatch(relative)
+            or ENGINE_PACK.fullmatch(relative)):
         raise ValueError(f"Unowned FH4 installation path {relative}")
     return plain_path(host.joinpath(*PurePosixPath(relative).parts))
 
@@ -141,7 +144,7 @@ def check_entries(files):
             raise ValueError("Invalid package preimage hash")
         core = item["path"] in REPLACEABLE
         if core != (item["before"] is not None):
-            raise ValueError("Only the pinned GameDB, manifest and verified locale archive may replace existing files")
+            raise ValueError("Only the pinned GameDB, manifest, locale archive and engine sound mapping may replace existing files")
 
 
 def recover(host, folder, record, guard):
@@ -478,6 +481,13 @@ def prepare_package(build, output, crypto, original_db, original_manifest, origi
             stage_file(folder, EN_PATH, build / EN_PATH, english["baseline_sha256"], english["archive_sha256"])
         for art in presentation["art"]:
             stage_file(folder, art["path"], build / art["path"], None, art["sha256"])
+        if (build / "audio.json").is_file():
+            # FM4 engine sound (fh4_audio): new packs and the stock mapping with the cars' entries.
+            audio = read_json(build / "audio.json")
+            for item in audio["packs"]:
+                stage_file(folder, item["path"], build / item["path"], None, item["sha256"])
+            mapping = audio["mapping"]
+            stage_file(folder, mapping["path"], build / mapping["path"], mapping["baseline_sha256"], mapping["sha256"])
         shutil.copyfile(validation_path, folder / "validation.json")
         plan = {"executable_sha256": EXE_SHA, "validation_sha256": current(folder / "validation.json"),
                 "target": validation["target"], "state": validation["state"], "files": files,

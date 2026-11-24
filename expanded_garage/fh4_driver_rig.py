@@ -10,6 +10,7 @@ onto the car with a per-axis affine fit over the shared hardpoints.
 
 from importlib.resources import files
 import json
+import os
 import re
 import xml.etree.ElementTree as ET
 
@@ -198,14 +199,27 @@ def autovista(points, locator_names, driver_side):
     positions under other locators are local offsets and stay unchanged.
     """
     record = json.loads(files(__package__).joinpath(AUTOVISTA_FILE).read_text(encoding="utf-8"))
-    if driver_side != record["driver_side"]:
-        # Seat states and views are side-specific (InLeftFrontSeat, LeftFrontSeatView); no mirror yet.
+    # Right-hand drive keeps the donor file as it is. MRZ_IntegraJ_00 (owner's RHD port of ACU_IntegraR_01,
+    # car 3477) ships the left-hand-drive ACU .avpins byte for byte and moves only carLocator_steeringWheel to
+    # +X; Forzavista seats and starts it from the right. Without any .avpins (our RHD cars until visual-50) the
+    # start sequence fell back to the left door (owner). EXPANDED_GARAGE_RHD_AUTOVISTA=off restores that.
+    if driver_side != record["driver_side"] and os.environ.get("EXPANDED_GARAGE_RHD_AUTOVISTA") == "off":
         return None, {"donor": record["donor"], "generated": False,
-                      "reason": "donor has the opposite driver side; Autovista mirroring is not implemented"}
-    donor = [{"name": name, "matrix": [0.0] * 12 + list(xyz) + [1.0]} for name, xyz in record["fit_points"].items()]
+                      "reason": "donor has the opposite driver side (EXPANDED_GARAGE_RHD_AUTOVISTA=off)"}
+    fit_points = dict(record["fit_points"])
+    if driver_side != record["driver_side"] and "carLocator_steeringWheel" in fit_points:
+        # The wheel sits on the other side: mirror it for the axis fit only (the file itself stays as the donor's).
+        x, y, z = fit_points["carLocator_steeringWheel"]
+        fit_points["carLocator_steeringWheel"] = (-x, y, z)
+    donor = [{"name": name, "matrix": [0.0] * 12 + list(xyz) + [1.0]} for name, xyz in fit_points.items()]
     coefficients, residual = fit_axes(points, donor)
     root = ET.fromstring(record["avpins"])
     referenced, moved = set(), 0
+    # Right-hand drive: the donor template (FOR_FocusRS_17) places the seat views and the StartCar pin in car
+    # space on the left (StartCar at X -0.225 under Locator="root", gated by InLeftFrontSeat), so the Integra
+    # still got in and started from the left (owner, visual-51). Car-space positions and headings are mirrored
+    # in X: the "left front seat" state then is the driver's seat on the right. Locator-relative offsets stay.
+    mirror = driver_side != record["driver_side"] and os.environ.get("EXPANDED_GARAGE_RHD_MIRROR") != "off"
 
     def walk(node, frame):
         nonlocal moved
@@ -214,8 +228,13 @@ def autovista(points, locator_names, driver_side):
             referenced.add(node.get("Locator"))
         if node.tag == "Pos" and frame == "root":
             for axis, (a, b) in zip("XYZ", coefficients):
-                node.set(axis, f"{a * float(node.get(axis)) + b:.6f}")
+                value = a * float(node.get(axis)) + b
+                if mirror and axis == "X":
+                    value = -value   # about the car's centre line
+                node.set(axis, f"{value:.6f}")
             moved += 1
+        if mirror and node.tag == "Axis" and frame == "root" and node.get("Yaw") is not None:
+            node.set("Yaw", f"{(360.0 - float(node.get('Yaw'))) % 360.0:.6f}")
         for child in node:
             walk(child, frame)
 
@@ -226,7 +245,8 @@ def autovista(points, locator_names, driver_side):
     data = b"\xef\xbb\xbf" + ET.tostring(root, encoding="utf-8")
     return data, {"donor": record["donor"], "donor_sha256": record["donor_sha256"],
                   "template": root.get("Template"), "moved_root_positions": moved,
-                  "max_hardpoint_residual_m": residual, "referenced_locators": sorted(referenced)}
+                  "max_hardpoint_residual_m": residual, "referenced_locators": sorted(referenced),
+                  "driver_side": driver_side, "donor_driver_side": record["driver_side"], "mirrored_x": mirror}
 
 
 def validate_autovista(data, locator_names):

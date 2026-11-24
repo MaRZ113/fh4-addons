@@ -260,6 +260,8 @@ class Draw:
     uv1: np.ndarray
     indices: np.ndarray
     origin: dict
+    uv2: object = None    # TEXCOORD2: the model's AO unwrap (fh4_part_ao.unwrap), None without an AO map
+    color: object = None  # COLOR0 per vertex (N, 4) uint8 (fh4_dirt.vertex_colors); None: the material's median
 
 
 def pack_streams(draw):
@@ -284,9 +286,21 @@ def pack_streams(draw):
     attrs = np.zeros((len(p), 36), dtype=np.uint8)
     attrs[:, 0:4] = np.rint(np.clip(n[:, 1:], -1, 1) * 32767).astype("<i2").view(np.uint8)
     transforms = []
-    channels = [draw.uv0, draw.uv1]
-    if draw.transparent:
+    glass = draw.transparent or glass_family(draw.target_material)
+    # Glass keeps the pre-visual-29 layout: FM4's UV1 (or the planar pane) and TANGENT1 = TANGENT0.
+    source_detail = os.environ.get("EXPANDED_GARAGE_DETAIL_UV") == "source" or glass
+    detail = draw.uv1 if source_detail else detail_uv(p, n, draw.uv1, draw.target_material)
+    channels = [draw.uv0, detail]
+    if glass:
+        # Glass-family shaders (also the opaque blackglass frit) read wiper/dirt masks through TEXCOORD2-3:
+        # the pane in 0..1 and a small atlas window. The livery atlas there smeared dirt over the frit and
+        # made it look matte (owner, visual-35).
         channels = [draw.uv0, *glass_channels(p, draw.uv1)]
+    elif os.environ.get("EXPANDED_GARAGE_LIVERY_UV") != "off":
+        # Native TEXCOORD3 is the livery/dirt atlas (left and right doors apart, matching LiveryMasks and
+        # Textures/Damage). FM4's UV0 on paint is that atlas (92% of side triangles inside their FM4 mask).
+        ao_uv = draw.uv2 if draw.uv2 is not None else np.zeros_like(draw.uv0)
+        channels = [draw.uv0, detail, ao_uv, draw.uv0]
     for i, uv in enumerate(channels):
         uv_min, uv_max = uv.min(axis=0), uv.max(axis=0)
         span = np.where(uv_max - uv_min < 1e-8, 1, uv_max - uv_min)
@@ -295,13 +309,110 @@ def pack_streams(draw):
         transforms.append((uv_min[0], span[0], uv_min[1], span[1]))
     tangent = steps(p, n, draw.uv0, tri).reshape(-1, 1).view(np.uint8)
     attrs[:, 24:28] = tangent
-    attrs[:, 28:32] = tangent
-    attrs[:, 32:36] = vertex_color(draw.target_material)
+    # Native TANGENTn follows TEXCOORDn (layouts without TEXCOORD0 carry only TANGENT1).
+    attrs[:, 28:32] = tangent if source_detail else steps(p, n, channels[1], tri).reshape(-1, 1).view(np.uint8)
+    # Native exterior COLOR0 varies per vertex: the carpaint weather block reads G as accumulated dirt and
+    # R as exposure (fh4_dirt.vertex_colors). One median per material spread speckles evenly (owner, visual-42).
+    if draw.color is not None and len(draw.color) == len(p):
+        attrs[:, 32:36] = draw.color
+    else:
+        attrs[:, 32:36] = vertex_color(draw.target_material)
     transforms += [UV_IDENTITY] * (5 - len(transforms))
     return packed_positions.tobytes(), attrs.tobytes(), transforms, lo, hi, scale, center
 
 
+# Translucent materials that still cast shadows: the native blackGlass frit has bucket-9 shadow twins.
+SHADOW_FRITS = {"specificuse/blackglass.materialbin"}
+
+
+def glass_family(material):
+    material = material.casefold()
+    return material.startswith(("exterior_glass/", "interior_glass/")) or material == "specificuse/blackglass.materialbin"
+
+
 GLASS_DETAIL_DENSITY = 1.5
+PROJECTION_AXES = {0: (2, 1), 1: (0, 2), 2: (0, 1)}
+
+
+@lru_cache(maxsize=1)
+def detail_densities():
+    return json.loads(files(__package__).joinpath("fh4-detail-uv-density-v1.json").read_text(encoding="utf-8"))
+
+
+def uv_density(positions, uv):
+    """Largest UV extent per largest position extent (the measure of research/extract_detail_density.py)."""
+    size = float(np.ptp(positions, axis=0).max())
+    return float(np.ptp(uv, axis=0).max()) / size if size > 1e-6 else 0.0
+
+
+TRIM_NORMAL_LIMIT = 10.0   # degrees
+
+
+def geometric_normals(positions, normals, indices, limit=TRIM_NORMAL_LIMIT):
+    """Vertex normals where FM4's disagree with the draw's own surface by more than `limit` degrees.
+
+    FM4 smooths trim normals toward neighbouring geometry (window frames, the pillar edge): on the SX4
+    plastic2 pillar the vertex normals sit 14 deg (median) to 30 deg (p90) off their faces, and long
+    triangles spread that tilt over flat areas as lighter polygons (owner, visual-31). The replacement is
+    the area-weighted mean of the faces sharing the vertex inside this draw; agreeing normals are kept."""
+    tri = indices.reshape(-1, 3)
+    face = np.cross(positions[tri[:, 1]] - positions[tri[:, 0]], positions[tri[:, 2]] - positions[tri[:, 0]])
+    summed = np.zeros_like(positions, dtype=np.float64)
+    for corner in range(3):
+        np.add.at(summed, tri[:, corner], face)
+    length = np.linalg.norm(summed, axis=1, keepdims=True)
+    valid = length[:, 0] > 1e-12
+    geometric = np.where(valid[:, None], summed / np.where(valid[:, None], length, 1), 0)
+    unit = normals / np.maximum(np.linalg.norm(normals, axis=1, keepdims=True), 1e-12)
+    # Orientation follows the source normal (some FM4 trims wind the other way).
+    sign = np.where(np.sum(geometric * unit, axis=1, keepdims=True) < 0, -1.0, 1.0)
+    geometric *= sign
+    angle = np.degrees(np.arccos(np.clip(np.sum(geometric * unit, axis=1), -1, 1)))
+    replace_rows = valid & (angle > limit)
+    out = normals.copy()
+    out[replace_rows] = geometric[replace_rows].astype(normals.dtype)
+    return out, int(replace_rows.sum())
+
+
+def detail_density(material):
+    record = detail_densities()
+    return record["materials"].get(material.lower(), record["default"])
+
+
+def projected_detail(positions, normals, uv0, indices, material):
+    """(positions, normals, uv0, indices, uv1) with TEXCOORD1 as a per-triangle axis projection.
+
+    Native TEXCOORD1 is a near-isotropic metric unwrap the detail layers (paint flakes, grain, dirt, normal
+    detail) tile over, at a per-material density (fh4-detail-uv-density-v1.json: carpaint ~3 units/m,
+    chrome ~2.5, leather ~5). FM4's second UV is 6-20x denser, LOD0 only, and 4-10x anisotropic on side
+    panels (stretched door flakes, owner visual-29). Each triangle is projected on the plane of its
+    dominant face axis in world metres x density; vertices shared by triangles with different axes are
+    duplicated so no triangle blends two projections. Normals are kept, so lighting has no seams."""
+    tri = indices.reshape(-1, 3)
+    face = np.cross(positions[tri[:, 1]] - positions[tri[:, 0]], positions[tri[:, 2]] - positions[tri[:, 0]])
+    axis = np.argmax(np.abs(face), axis=1)
+    keys = tri * 3 + axis[:, None]
+    unique, inverse = np.unique(keys.ravel(), return_inverse=True)
+    vertex, vertex_axis = unique // 3, unique % 3
+    p, n, u0 = positions[vertex], normals[vertex], uv0[vertex]
+    projected = np.empty((len(vertex), 2), dtype=np.float64)
+    for dominant, (u, v) in PROJECTION_AXES.items():
+        rows = vertex_axis == dominant
+        projected[rows] = p[rows][:, (u, v)]
+    return p, n, u0, inverse.reshape(-1, 3), projected * detail_density(material)
+
+
+def detail_uv(positions, normals, uv1, material):
+    """TEXCOORD1 for pack_streams: the projected channel from projected_detail() when the draw has one,
+    otherwise a per-vertex projection on the dominant normal axis (generated helper geometry)."""
+    if np.ptp(uv1, axis=0).max() > 1e-6:
+        return uv1
+    axis = np.argmax(np.abs(normals), axis=1)
+    projected = np.empty((len(positions), 2), dtype=np.float64)
+    for dominant, (u, v) in PROJECTION_AXES.items():
+        rows = axis == dominant
+        projected[rows] = positions[rows][:, (u, v)]
+    return projected * detail_density(material)
 
 
 def glass_channels(positions, uv1):
@@ -314,7 +425,7 @@ def glass_channels(positions, uv1):
     axes = np.argsort(span)[::-1][:2]
     planar = positions[:, axes] - positions[:, axes].min(axis=0)
     unit = planar / np.where(span[axes] < 1e-6, 1, span[axes])
-    detail = uv1 if np.ptp(uv1, axis=0).max() > 1e-6 else planar * GLASS_DETAIL_DENSITY
+    detail = uv1 if np.ptp(uv1, axis=0).max() > 1e-6 else planar * GLASS_DETAIL_DENSITY   # uv1: detail_uv()
     return [detail, 0.03 + unit * 0.94, 0.3 + unit * 0.2]
 
 
@@ -375,6 +486,9 @@ def mesh(draw, mat_id, bone, index_start, position_offset, vb_id, transforms, lo
 
 
 PAINT = "exterior_misc/carpaint.materialbin"
+
+
+FAR_MATI = "_lod15"   # fh4_source_atlas.FAR
 
 
 def material_key(draw):
@@ -443,11 +557,18 @@ def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False, p
         near |= lod_mask(level)
     weights = ("weight[0]", "weight[1]") if wheel else ("weight[0]",)
     chunks = [skeleton(bones), Chunk("Mrph", (0, 0), struct.pack("<H", len(weights)) + b"".join(map(string, weights)))]
-    materials = sorted({material_key(d) for d in draws})
-    ids = {entry: i for i, entry in enumerate(materials)}
-    translucent = {material_key(d) for d in draws if d.transparent}
     # `parameters`: {(source name, library member): (MTPR version, bytes)} for car-owned texture slots.
     overrides = parameters or {}
+
+    def keyed(draw):
+        # FM4 LOD1-5 models read the far atlases (nodamage.xds, lights.xds, wheel.xds): their own MatI.
+        key = material_key(draw)
+        far = (key[0] + FAR_MATI, key[1])
+        return far if draw.lod >= 1 and far in overrides else key
+
+    materials = sorted({keyed(d) for d in draws})
+    ids = {entry: i for i, entry in enumerate(materials)}
+    translucent = {keyed(d) for d in draws if d.transparent}
     chunks.extend(material(i, name, path, (name, path) in translucent, overrides.get((name, path)))
                   for i, (name, path) in enumerate(materials))
     bindings = [vertex_layout(0, False), vertex_layout(1, True)]
@@ -456,7 +577,7 @@ def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False, p
     minima, maxima = [], []
     for i, draw in enumerate(draws):
         pos, attr, transforms, low, high, scale, center = pack_streams(draw)
-        mat_id = ids[material_key(draw)]
+        mat_id = ids[keyed(draw)]
         # Native MBuf ids are dense (0..n-1) and equal to the id of the attribute VerB they pair
         # with; the loader indexes them by id, so morphing models number their VerBs from 0.
         vb_id = i if wheel else i + 1
@@ -465,9 +586,13 @@ def assemble(draws, bones, bone=1, shadows=True, fill_near=False, wheel=False, p
         role = (WHEEL_BLUR if draw.name.casefold().startswith("blur") else WHEEL_MESH) if wheel else 0
         chunks.append(mesh(*params, shadow=False, lod_fields=fields, role=role))
         count += 1
-        # Native glass casts shadows too (glass meshes have bucket-9 shadow twins); only the wheel blur
-        # discs do not. Skipping all translucent draws let sunlight through the cabin.
-        if shadows and not draw.name.casefold().startswith("blur"):
+        # Native panes never cast shadows (ACU/Fiesta windows: only the opaque blackGlass frit has bucket-9
+        # twins; gls_window 0 of 451 sampled meshes); wheel blur discs neither. Pane shadows fell on the
+        # pillars and frames as flickering polygons (owner, visual-32). EXPANDED_GARAGE_GLASS_SHADOW=on
+        # restores them (bisection switch).
+        glass_shadow = os.environ.get("EXPANDED_GARAGE_GLASS_SHADOW") == "on"
+        casts = glass_shadow or not draw.transparent or draw.target_material.casefold() in SHADOW_FRITS
+        if shadows and not draw.name.casefold().startswith("blur") and casts:
             chunks.append(mesh(*params, shadow=True, lod_fields=fields, role=role))
             count += 1
         positions.extend(pos)

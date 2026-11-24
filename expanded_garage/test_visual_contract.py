@@ -150,7 +150,7 @@ class MaterialAtstTest(unittest.TestCase):
 class GlassBindingTest(unittest.TestCase):
     def test_panes_use_native_glazing(self):
         self.assertEqual(surface_binding("window", "exterior", "glassF").member, "exterior_glass/gls_windsheild.materialbin")
-        self.assertEqual(surface_binding("glass", "exterior", "glassR").member, "exterior_glass/gls_rearglass.materialbin")
+        self.assertEqual(surface_binding("glass", "exterior", "glassR").member, "exterior_glass/gls_window.materialbin")
         self.assertEqual(surface_binding("window", "exterior", "glassLF").member, "exterior_glass/gls_window.materialbin")
         self.assertEqual(surface_binding("window", "cockpit", "glassLF").member,
                          "interior_glass/gls_window_interior.materialbin")

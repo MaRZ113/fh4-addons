@@ -682,6 +682,9 @@ def verify_integration(output, baseline=None, manifest=None, library=None):
         if en := presentation["english"]:
             if sha256(output / en["path"]) != en["archive_sha256"]:
                 raise ValueError("English archive hash changed")
+        if (output / "audio.json").is_file():
+            from . import fh4_audio
+            fh4_audio.verify(output, json.loads((output / "audio.json").read_text(encoding="utf-8")))
     return saved
 
 

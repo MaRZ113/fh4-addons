@@ -3,6 +3,7 @@
 from contextlib import ExitStack, closing
 from dataclasses import dataclass
 import importlib
+import json
 from pathlib import Path
 import re
 import sqlite3
@@ -439,6 +440,79 @@ def limits(status, data, *issues):
     return {"status": status, "data": data, "limitations": list(issues)}
 
 
+# Textures of FM4 cars/Shared.zip that car techniques sample by sampler name (carbin-format.md: grille1/grille2
+# and their _alpha variants read Grille1Sampler/Grille2Sampler = grille1_alpha.xds/grille2_alpha.xds).
+SHARED_TEXTURES = ("grille1_alpha.xds", "grille2_alpha.xds")
+SHARED_PREFIX = "media/cars/shared/"
+
+
+def shared_entries(stack, reader, base):
+    archive = child(base, "cars", "Shared.zip")
+    if not archive:
+        return {}
+    entries = archive_entries(stack, reader, archive)
+    return {SHARED_PREFIX + name: entries[name] for name in SHARED_TEXTURES if name in entries}
+
+
+def add_shared_textures(ir_path, fm4_root, checkout):
+    """Add the shared FM4 textures to an IR extracted before they were collected (idempotent)."""
+    from .vehicle_ir import Assets, write_json
+    base = media_root(fm4_root)
+    reader, _, _ = source_tools(checkout)
+    ir = json.loads((ir_path / "vehicle.json").read_text(encoding="utf-8"))
+    present = {m["name"] for m in ir["raw_members"]}
+    assets = Assets(ir_path)
+    assets.records = ir["assets"]
+    added = []
+    with ExitStack() as stack:
+        for key, entry in sorted(shared_entries(stack, reader, base).items()):
+            if key in present:
+                continue
+            digest, _ = capture(assets, entry, "vehicle-member")
+            ir["raw_members"].append({"name": key, "provenance": provenance(digest, entry.name, "source-native")})
+            ir["sections"]["materials"]["data"]["textures"].append(
+                {"name": key, "provenance": provenance(digest, entry.name, "encoded texels")})
+            added.append(key)
+    ir["assets"] = assets.records
+    write_json(ir_path / "vehicle.json", ir)
+    return added
+
+
+def add_catalogue_rows(ir_path, table="Combo_Colors", column="Ordinal"):
+    """Add a car's rows of `table` to an IR extracted before the table was collected (idempotent).
+
+    The FM4 databases are in the IR already (role `database`, base first, DLC patches after), so the rows come
+    from those blobs with the same provenance collect_rows writes. Returns the number of rows added."""
+    ir = json.loads((ir_path / "vehicle.json").read_text(encoding="utf-8"))
+    tables = ir["sections"]["physics"]["data"]["tables"]
+    if tables.get(table):
+        return 0
+    car_id = ir["vehicle"]["source_id"]
+    databases = [digest for digest, record in ir["assets"].items()
+                 if any(source["role"] == "database" for source in record["sources"])]
+    # Base database first: the order its source entries were captured in (Media/db/gamedb.slt).
+    databases.sort(key=lambda d: not any(s["entry"].casefold().endswith("db/gamedb.slt")
+                                         for s in ir["assets"][d]["sources"]))
+    found = {}
+    with tempfile.TemporaryDirectory(prefix="garage-db-") as temp:
+        for i, digest in enumerate(databases):
+            path = Path(temp) / f"{i}.sqlite"
+            path.write_bytes((ir_path / ir["assets"][digest]["path"]).read_bytes())
+            with closing(sqlite3.connect(path)) as db:
+                db.row_factory = sqlite3.Row
+                names = {n for (n,) in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+                if table not in names:
+                    continue
+                for row in query(db, table, column, car_id):
+                    found[row[0]] = {"record": json_row(row),
+                                     "provenance": provenance(digest, f"{table}:first-column={row[0]}", "source-native")}
+    if not found:
+        return 0
+    tables[table] = list(found.values())
+    write_json(ir_path / "vehicle.json", ir)
+    return len(found)
+
+
 def build(base, packs, name, output, checkout, stfs_tool=None):
     base = media_root(base)
     name = media_name(name)
@@ -484,6 +558,7 @@ def build(base, packs, name, output, checkout, stfs_tool=None):
             collected.update({k: v for k, v in overrides.items() if k.startswith(prefix)})
         if not any(k.startswith("media/cars/") for k in collected):
             raise ValueError(f"Missing FM4 car archive for {name}")
+        collected.update(shared_entries(stack, reader, base))
         geometry, opaque, xmls, textures, raw_members = [], [], {}, [], []
         for key, entry in sorted(collected.items()):
             digest, raw = capture(assets, entry, "vehicle-member")

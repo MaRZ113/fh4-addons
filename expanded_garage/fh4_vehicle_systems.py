@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from importlib.resources import files
 import json
+import os
 from math import isfinite
 import struct
 import uuid
@@ -224,3 +225,78 @@ def build_collision(vertices):
         "elevated_plane_m": 0.2, "coordinate_frame": "chassis meters",
         "coverage": "Stock envelope without upgrade shape assignments. Native contacts and damage behavior untested.",
     }
+
+
+EXHAUST_REAR_BAND_M = 0.03   # vertices this close to an exhaust model's rearmost point form its openings
+EXHAUST_SPLIT_M = 0.05       # openings further apart across the car are separate pipes
+EXHAUST_LOCATOR = "carLocator_Exhaust_{:03d}"
+
+
+def exhaust_tips(components):
+    """[(x, y, z)] centres of the tail-pipe openings of the stock exhaust models (finest LOD).
+
+    FM4 has no exhaust hardpoint; the game spawns backfire flames at carLocator_Exhaust_NNN. These were the donor's
+    (FOR_FiestaST_14, two tips right of centre) moved by the hardpoint fit, so every car's flames came out beside
+    its pipe and the RUF's centre pipe fired off-centre (owner). The rear band of each exhaust model, split
+    where the openings are more than 5 cm apart across the car, gives one locator per opening."""
+    tips = []
+    for name, draws in sorted(components.items()):
+        if not name.casefold().startswith("exhaust"):
+            continue
+        finest = min(d.lod for d in draws)
+        points = np.concatenate([d.positions for d in draws if d.lod == finest and not d.transparent])
+        rear = points[points[:, 2] < points[:, 2].min() + EXHAUST_REAR_BAND_M]
+        rear = rear[np.argsort(rear[:, 0])]
+        for group in np.split(rear, np.nonzero(np.diff(rear[:, 0]) > EXHAUST_SPLIT_M)[0] + 1):
+            low, high = group.min(axis=0), group.max(axis=0)
+            tips.append((float((low[0] + high[0]) / 2), float((low[1] + high[1]) / 2), float(low[2])))
+    return sorted(tips)
+
+
+def exhaust_locators(extra, tips):
+    """`extra` (transferred donor locators) with the donor exhaust locators replaced by one per FM4 tip, keeping
+    the donor's rearward frame; Audio_Exhaust moves to the first tip. Unchanged when no tip was found."""
+    donor = [item for item in extra if item["name"].startswith("carLocator_Exhaust_")]
+    if not tips or not donor:
+        return extra, []
+    frame, upgrade = donor[0]["matrix"], donor[0]["upgrade"]
+    kept = [item for item in extra if not item["name"].startswith("carLocator_Exhaust_")]
+    for item in kept:
+        if item["name"] == "Audio_Exhaust":
+            item["matrix"] = list(item["matrix"][:12]) + list(tips[0]) + [1.0]
+    added = [{"name": EXHAUST_LOCATOR.format(i + 1), "matrix": list(frame[:12]) + list(tip) + [1.0],
+              "upgrade": dict(upgrade)} for i, tip in enumerate(tips)]
+    return kept + added, [item["name"] for item in added]
+
+
+HOOD_CAMERA_OFFSET = (0.2, -0.5)    # native median CamHoodHeightOffset, CamHoodZOffset (fh4_native_defaults)
+HOOD_CAMERA_CLEARANCE_M = 0.10
+HOOD_SAMPLE_M = 0.10
+
+
+def surface_height(points, x, z, half=HOOD_SAMPLE_M):
+    near = points[(np.abs(points[:, 0] - x) < half) & (np.abs(points[:, 2] - z) < half)]
+    return float(near[:, 1].max()) if len(near) else None
+
+
+def hood_locator(extra, points):
+    """`extra` with carLocator_hood on the bonnet surface, high enough that the bonnet camera (the locator plus
+    the native median offsets, 0.2 m up and 0.5 m back) clears the body under it by 10 cm.
+
+    The locator came from the donor by the hardpoint fit, 7-14 cm under our bonnets; the camera then rode 1-2 cm
+    over the rising bonnet and dipped into it (owner, visual-51, all three cars)."""
+    if os.environ.get("EXPANDED_GARAGE_HOOD_LOCATOR") == "donor" or not len(points):
+        return extra, None
+    for item in extra:
+        if item["name"] != "carLocator_hood":
+            continue
+        x, y, z = item["matrix"][12:15]
+        surface = surface_height(points, x, z)
+        under_camera = surface_height(points, x, z + HOOD_CAMERA_OFFSET[1])
+        if surface is None:
+            return extra, None
+        height = max(surface, (under_camera if under_camera is not None else surface)
+                     + HOOD_CAMERA_CLEARANCE_M - HOOD_CAMERA_OFFSET[0])
+        item["matrix"] = list(item["matrix"][:13]) + [height] + list(item["matrix"][14:])
+        return extra, {"donor_y_m": y, "bonnet_y_m": surface, "under_camera_y_m": under_camera, "locator_y_m": height}
+    return extra, None

@@ -19,9 +19,9 @@ import numpy as np
 from . import fh4_archive, fh4_db, fh4_model, fh4_physics
 from .fh4_scene_contract import NativeCarSceneContract
 from .fh4_runtime_rig import NativeRuntimeRigCompiler, modelbin_view, verify_skeleton
-from . import fh4_ao_volume, fh4_driver_rig, fh4_paint, fh4_wheel_model
+from . import fh4_ao_volume, fh4_dirt, fh4_driver_rig, fh4_livery, fh4_paint, fh4_wheel_model
 from .fh4_granny_animation import verify_gauge_graph
-from .fh4_material_contract import surface_binding
+from .fh4_material_contract import MaterialUse, surface_binding
 from .fh4_motion import GAUGES
 from .fh4_wheel_transform import WheelTransformCompiler
 from . import fh4_vehicle_systems as systems
@@ -69,6 +69,12 @@ class Model:
     component: str = ""
     rotation: tuple = (0.,0.,0.,1.)
     draw: int = 0
+    ao: str = ""    # Carbin AO record path of the model map (Textures/AO/<model>_ao.swatchbin)
+
+
+# Native plate records (FOR_FiestaST_14, ACU_IntegraR_01, HON_CivicTypeR_97): draw 1, LOD mask 127, <root>.
+PLATE_DRAW, PLATE_LOD_MASK = 1, 127
+NATIVE_COPY_FOLDERS = ("scene/exterior/plate/",)
 
 
 def guid(name):
@@ -134,10 +140,14 @@ def breakable_glass(materials):
 AO_STUB = struct.pack("<H", 3) + fh4_model.string("") + struct.pack("<Ii", 0xFFFFFFFF, -1) + bytes(16) + b"\x01\x00\x1f"
 
 
-def ao_list():
+def ao_list(path=""):
     # EXPANDED_GARAGE_AO_STUB=off writes the empty list again (bisection switch).
     if os.environ.get("EXPANDED_GARAGE_AO_STUB") == "off":
         return bytes(4)
+    if path:
+        # Native record with a map: same layout as the stub, the texture path in place of "".
+        return (struct.pack("<I", 1) + struct.pack("<H", 3) + fh4_model.string(path)
+                + struct.pack("<Ii", 0xFFFFFFFF, -1) + bytes(16) + b"\x01\x00\x1f")
     return struct.pack("<I", 1) + AO_STUB
 
 
@@ -150,7 +160,7 @@ CATEGORY_RULES = (
     (r"^bumperf", "BumperF"), (r"^bumperr", "BumperR"), (r"^hood", "Hood"), (r"^trunk", "Trunk"),
     (r"^skirt", "SideSkirts"), (r"^wing", "Trunk"), (r"^mirror|^door", "Doors"), (r"^body", "Platform"),
     (r"^seat", "Seats"), (r"_min", "Gauges"), (r"pillar", "Pillar"), (r"^interior", "InteriorLOD"),
-    (r"^steering", "Dash"),
+    (r"^steering", "Dash"), (r"^plate", "Plate"),
 )
 
 
@@ -298,7 +308,7 @@ def carbin(identity, bones, skel, models, bounds, upgrade_groups=None, model_box
                 + struct.pack("<16fH", *fh4_model.transform(part.translation,part.rotation).flat, part.lod)
                 + fh4_model.string(bone) + struct.pack("<hBI", part.bone, 0, draw)
                 + bytes(4) + material_list(materials) + bytes(1)
-                + struct.pack("<f", breakable_glass(materials)) + ao_list() + bytes(1) + MODEL_FLAGS[part.kind]
+                + struct.pack("<f", breakable_glass(materials)) + ao_list(part.ao) + bytes(1) + MODEL_FLAGS[part.kind]
                 + fh4_model.string(model_category(part)) + guid(path) + bytes(20 + 4 + 4))
 
     for part_type, parts in sorted(groups.items()):
@@ -325,6 +335,102 @@ def carbin(identity, bones, skel, models, bounds, upgrade_groups=None, model_box
     return bytes(result)
 
 
+AO_FOLDER = "Textures/AO/"
+# Cockpit parts drawn in both views (hood, mirrors) or see-through get no cabin AO; a_pillar is cockpit-only
+# (draw 38) since visual-30 and is shaded with the cabin it borders.
+AO_SKIP_PARTS = ("hood", "mirror", "glass", "cage")
+EXTERIOR_AO_SIDE = 128
+AO_UNSHADED = set(GAUGE_FACES) | {"gauge_backing", "gauge_needle"}
+
+
+def unshaded_triangles(draw, exterior):
+    """Triangles that keep full AO: dial faces and their backing (the cluster read black under a recess AO),
+    and cabin triangles lying on the exterior LOD0 surface (the same skin, seen from outside)."""
+    tri = draw.indices.reshape(-1, 3)
+    if draw.source_material.casefold() in AO_UNSHADED:
+        return np.ones(len(tri), bool)
+    corners = draw.positions[tri].astype(np.float64)
+    normal = np.cross(corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0])
+    area = np.linalg.norm(normal, axis=1)
+    cells = np.rint(corners.mean(axis=1) / OVERLAP_CELL).astype(np.int64)
+    out = np.zeros(len(tri), bool)
+    for k, (cell, n) in enumerate(zip(cells, normal)):
+        if area[k] < 1e-10:
+            continue
+        n = n / area[k]
+        for dx, dy, dz in NEIGHBOURS:
+            other = exterior.get((cell[0] + dx, cell[1] + dy, cell[2] + dz))
+            # Same facing only: a cabin trim backing onto the body from inside faces the other way.
+            if other is not None and float(other @ n) > 0.95:
+                out[k] = True
+                break
+    return out
+
+
+def part_ao(alias, grouped, nonstock=frozenset(), exterior_sides=None):
+    """Per-model AO maps for the cabin (fh4_part_ao): unwraps the cockpit components in place (TEXCOORD2)
+    and returns ({(kind, key): Carbin AO path}, {member: swatchbin}). EXPANDED_GARAGE_PART_AO=off skips it."""
+    if os.environ.get("EXPANDED_GARAGE_PART_AO") == "off":
+        return {}, {}
+    from . import fh4_cache, fh4_part_ao
+    stock = [v for kind in ("exterior", "cockpit") for key, v in grouped[kind].items() if key.casefold() not in nonstock]
+    opaque, glass = fh4_part_ao.occluder_triangles(stock), fh4_part_ao.occluder_triangles(stock, glass=True)
+    built = []
+
+    def occluders():   # the voxel shells are only needed on a cache miss
+        if not built:
+            built.append(fh4_part_ao.Occluders(opaque, glass))
+        return built[0]
+    folder = "\\".join(("game:", "media", "cars", alias.casefold(), "textures", "ao", ""))
+    exterior = exterior_surface_keys([d for v in grouped["exterior"].values() for d in v if d.lod == 0])
+    paths, payloads = {}, {}
+    for key in sorted(grouped["cockpit"]):
+        # Gauge needles, panes and the body seen from the cabin (hood, mirrors, pillars, drawn in both views)
+        # get no cabin AO: a cabin-dark map on them showed outside (owner, visual-34).
+        if key in GAUGE_POSES or key.casefold().startswith(AO_SKIP_PARTS):
+            continue
+        draws, side = fh4_part_ao.unwrap(grouped["cockpit"][key])
+        if not side:
+            continue
+        grouped["cockpit"][key] = draws
+        bright = {id(d): unshaded_triangles(d, exterior) for d in draws if d.uv2 is not None}
+        name = re.sub(r"[^a-z0-9_]+", "_", key.lower()).strip("_") + "_ao"
+        inputs = (opaque, glass, side, [(d.lod, d.positions, d.normals, d.indices, d.uv2, bright.get(id(d)))
+                                        for d in draws])
+        image = fh4_cache.cached_array("part-ao", (fh4_part_ao.__name__,), inputs,
+                                       lambda: fh4_part_ao.bake(draws, occluders(), side, bright))
+        payloads[AO_FOLDER + name + ".swatchbin"] = fh4_part_ao.texture(name, image)
+        paths[("cockpit", key)] = folder + name + ".swatchbin"
+    # Exterior models: native cars carry an AO map on every exterior model (ACU_RSXTypeS_02: bumperf_a_ao,
+    # hood_*_ao, doorjambs_a_ao ...; panes none), read through the model's TEXCOORD2 unwrap (make_models).
+    # EXPANDED_GARAGE_EXTERIOR_AO=off keeps the empty Carbin AO record outside the cabin.
+    # Off by default since visual-48: the 128^2 chart maps showed seams and blotches on the panels (owner) and
+    # did not bring the rain drops. EXPANDED_GARAGE_EXTERIOR_AO=on bakes them.
+    if os.environ.get("EXPANDED_GARAGE_EXTERIOR_AO") == "on":
+        for key, side in sorted((exterior_sides or {}).items()):
+            if key.casefold() in nonstock or key.casefold().startswith("glass"):
+                continue
+            # Exterior occlusion is low-frequency (gaps, wells, the underside): 128^2 at most bakes 4x faster
+            # than the cabin's 256^2 (~25 models per car); the unwrap is resolution-free, only the padding narrows.
+            side = min(side, EXTERIOR_AO_SIDE)
+            draws = grouped["exterior"][key]
+            name = "ext_" + re.sub(r"[^a-z0-9_]+", "_", key.lower()).strip("_") + "_ao"
+            inputs = (opaque, glass, side, [(d.lod, d.positions, d.normals, d.indices, d.uv2, None)
+                                            for d in draws])
+            image = fh4_cache.cached_array("part-ao", (fh4_part_ao.__name__,), inputs,
+                                           lambda: fh4_part_ao.bake(draws, occluders(), side, None))
+            payloads[AO_FOLDER + name + ".swatchbin"] = fh4_part_ao.texture(name, image)
+            paths[("exterior", key)] = folder + name + ".swatchbin"
+    return paths, payloads
+
+
+DEFROST_LINE_UV = (0.5, 13 / 32)
+# Exterior trims whose bent FM4 normals are rebuilt from their own faces with EXPANDED_GARAGE_TRIM_NORMALS=on
+# (fh4_model.geometric_normals; off by default since visual-34: it did not change the showroom pillar).
+TRIM_SURFACES = {"plastic2", "plastic", "black_glass", "frame", "black", "rubber_trim", "bottom",
+                 "rubber", "weatherstrip"}
+
+
 def uv(data, transform):
     return data * np.asarray(transform[1::2], dtype="<f4") + np.asarray(transform[::2], dtype="<f4")
 
@@ -344,13 +450,30 @@ def load_draws(root, src):
                 role = src["role"]
                 kind = "exterior" if role.startswith("exterior") else "brake" if role in ("caliper", "rotor") else role
                 binding = surface_binding(draw["material"],kind,section["name"])
+                uv0 = uv(vertices[p["uv0"]][ids], draw["uv_transform"][:4])
+                uv1 = uv(vertices[p["uv1"]][ids], draw["uv_transform"][4:])
+                indices = compact.reshape(-1, 3)
+                if binding.member.endswith("defrostlines.materialbin") and np.ptp(uv0, axis=0).max() < 0.01:
+                    # FM4 heater wires are real strips sampling one atlas texel; native defrostlines tiles
+                    # a stripe opacity mask (defrostlines_001_opac: 64x32, opaque rows 12-13) over the pane.
+                    # Point the strips at the opaque row (owner, visual-29: rear-glass lines missing).
+                    uv0 = np.tile(np.asarray(DEFROST_LINE_UV, dtype=uv0.dtype), (len(uv0), 1))
+                # EXPANDED_GARAGE_DETAIL_UV=source keeps FM4's second UV as TEXCOORD1 (bisection switch).
+                if (kind == "exterior" and not binding.transparent and draw["material"].casefold() in TRIM_SURFACES
+                        and os.environ.get("EXPANDED_GARAGE_TRIM_NORMALS") == "on"):
+                    normals, _ = fh4_model.geometric_normals(positions, normals, compact.reshape(-1, 3))
+                # Gauge needle poses (min/mid/max) are matched vertex by vertex: keep their vertex sets.
+                # Glass-family shaders keep the pre-visual-29 channels (FM4 UV1, TANGENT1 = TANGENT0): the
+                # projected detail unwrap turned every black-glass frit matte (owner, visual-36).
+                if (os.environ.get("EXPANDED_GARAGE_DETAIL_UV") != "source" and section["name"] not in GAUGE_POSES
+                        and not fh4_model.glass_family(binding.member)):
+                    positions, normals, uv0, indices, uv1 = fh4_model.projected_detail(
+                        positions, normals, uv0, indices, binding.member)
                 yield section["name"], fh4_model.Draw(
                     name=f'{section["name"]}_{draw["triangles"]}', lod=draw["lod"],
                     source_material=draw["material"], target_material=binding.member, transparent=binding.transparent,
                     positions=positions, normals=normals,
-                    uv0=uv(vertices[p["uv0"]][ids], draw["uv_transform"][:4]),
-                    uv1=uv(vertices[p["uv1"]][ids], draw["uv_transform"][4:]),
-                    indices=compact.reshape(-1, 3), origin=draw["provenance"],
+                    uv0=uv0, uv1=uv1, indices=indices, origin=draw["provenance"],
                 )
 
 
@@ -451,6 +574,57 @@ def raw_member(root, ir, suffix):
     return None
 
 
+def livery_sources(root, ir):
+    """{basename: bytes} of the FM4 car's liverymasks/ members."""
+    out = {}
+    for member in ir.get("raw_members", ()):
+        name = member["name"].casefold()
+        if "/liverymasks/" in name:
+            out[name.rsplit("/", 1)[-1]] = (root / "blobs" / member["provenance"]["asset"]).read_bytes()
+    return out
+
+
+OVERLAP_CELL = 0.002   # metres
+
+
+def surface_cells(draw):
+    """Quantised centroids and unit normals of a draw's triangles."""
+    tri = draw.positions[draw.indices]
+    normal = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
+    area = np.linalg.norm(normal, axis=1)
+    keep = area > 1e-10
+    return np.rint(tri[keep].mean(axis=1) / OVERLAP_CELL).astype(np.int64), normal[keep] / area[keep, None]
+
+
+def exterior_surface_keys(draws):
+    keys = {}
+    for draw in draws:
+        cells, normals = surface_cells(draw)
+        for cell, normal in zip(map(tuple, cells), normals):
+            keys.setdefault(cell, normal)
+    return keys
+
+
+NEIGHBOURS = [(x, y, z) for x in (-1, 0, 1) for y in (-1, 0, 1) for z in (-1, 0, 1)]
+
+
+def exterior_overlap(draws, keys):
+    """Share of a component's LOD0 triangles that coincide (centroid within ~2 mm, parallel) with exterior LOD0."""
+    hits = total = 0
+    for draw in draws:
+        if draw.lod != 0:
+            continue
+        cells, normals = surface_cells(draw)
+        total += len(cells)
+        for cell, normal in zip(cells, normals):
+            for dx, dy, dz in NEIGHBOURS:
+                other = keys.get((cell[0] + dx, cell[1] + dy, cell[2] + dz))
+                if other is not None and abs(float(other @ normal)) > 0.95:
+                    hits += 1
+                    break
+    return hits / total if total else 0.0
+
+
 def gauge_texture_parameters(root, ir, alias, library=None):
     """({(gauge_emissive, int_gauges): (version, MTPR)}, {member: swatchbin}) for the car's own dial art.
 
@@ -461,7 +635,7 @@ def gauge_texture_parameters(root, ir, alias, library=None):
     if os.environ.get("EXPANDED_GARAGE_GAUGE_TEXTURES") == "off":
         return {}, {}
     atlas = raw_member(root, ir, "/interior_lod0.xds")
-    from .fh4_presentation import swatch, xds_codec
+    from .fh4_presentation import swatch_bc7 as swatch, xds_codec
     codec = xds_codec(None)
     if atlas is None or codec is None:
         return {}, {}
@@ -486,8 +660,67 @@ def gauge_texture_parameters(root, ir, alias, library=None):
     mtpr = fh4_mtpr.set_textures(bytes.fromhex(donor["mtpr"]), textures, tuple(donor["version"]))
     parameters = {("gauge_emissive", GAUGE_MATERIAL): (tuple(donor["version"]), mtpr)}
     if library is not None:
-        parameters.update(cockpit_atlas_parameters(library, textures[donor["diffuse"]]))
+        parameters.update(cockpit_atlas_parameters(library, textures[donor["diffuse"]],
+                                                   cockpit_texel_scales(raw_member(root, ir, "/shadersettings.xml"))))
+        parameters.update(needle_parameters(library, textures[donor["diffuse"]]))
     return parameters, members
+
+
+NEEDLE_MATERIAL = "interior_misc/gauge_needle.materialbin"
+NEEDLE_GLOW_FALLBACK = (1.0, 1.0, 1.0)   # the library block's EmissiveColorColorParam
+
+
+def needle_glow(root, ir, needles):
+    """Linear RGB of the needle's lit colour: the area-weighted median of the bright cockpit-atlas texels
+    under the FM4 needle triangles (SX4: the red face, not the dark hub).
+
+    The lit needle draws EmissiveColorColorParam: natives with red needles set it red (BMW_M5_95, AUD_R8Plus_13:
+    0.58, 0, 0, even over a grey diffuse). The library white turned our textured red needles white once the
+    dash lights came on (owner, visual-42: red in ForzaVista, white on the road)."""
+    atlas = raw_member(root, ir, "/interior_lod0.xds")
+    from .fh4_presentation import xds_codec
+    codec = xds_codec(None)
+    if atlas is None or codec is None or not needles:
+        return NEEDLE_GLOW_FALLBACK
+    width, height, rgba = codec[0](atlas)
+    pixels = np.frombuffer(bytes(rgba), np.uint8).reshape(height, width, 4)[..., :3].astype(np.float64)
+    colours, weights = [], []
+    for draw in needles:
+        corners = draw.positions[draw.indices]
+        area = np.linalg.norm(np.cross(corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0]), axis=1) / 2
+        for bary in ((1/3, 1/3, 1/3), (0.6, 0.2, 0.2), (0.2, 0.6, 0.2), (0.2, 0.2, 0.6)):
+            point = sum(draw.uv0[draw.indices[:, k]] * bary[k] for k in range(3))
+            x = np.clip((point[:, 0] % 1) * width, 0, width - 1).astype(int)
+            y = np.clip((point[:, 1] % 1) * height, 0, height - 1).astype(int)
+            colours.append(pixels[y, x])
+            weights.append(area)
+    colours, weights = np.concatenate(colours), np.concatenate(weights)
+    bright = colours.max(axis=1) > 60
+    if not bright.any() or weights[bright].sum() <= 0:
+        return NEEDLE_GLOW_FALLBACK
+    colours, weights = colours[bright], weights[bright]
+    order = np.argsort(colours.mean(axis=1))
+    cumulative = np.cumsum(weights[order])
+    median = colours[order][np.searchsorted(cumulative, cumulative[-1] / 2)]
+    return tuple(float(round((c / 255) ** 2.2, 4)) for c in median)
+
+
+def needle_parameters(library, atlas_path):
+    """{(gauge_needle, gauge_needle): (version, MTPR)}: the needle's colour from the FM4 cockpit atlas.
+
+    FM4 needles carry no colour of their own: UV0 points at the needle strip of interior_LOD0.xds (SX4: red
+    face, dark hub; RUF: white; Integra: yellow). The library block draws DiffuseColorColorParam 0.58 grey
+    with its diffuse texture off, so every converted needle read white (owner, visual-40). Native red
+    needles set the same colour parameter (FOR_EscortRSCosworth_92, BMW_M5_95: 0.72, 0, 0). Here the
+    library block's own diffuse slot (CH1, the slot int_gauges and the cabin atlas use) takes the atlas,
+    switched on, under a white colour. EXPANDED_GARAGE_NEEDLE_TEXTURE=off keeps the library needle."""
+    if os.environ.get("EXPANDED_GARAGE_NEEDLE_TEXTURE") == "off":
+        return {}
+    from . import fh4_mtpr
+    body, version = library_mtpr(library, NEEDLE_MATERIAL)
+    patched = fh4_mtpr.patch(body, {"CH1DiffColTextureSwitchBool": 1,
+                                    "DiffuseColorColorParam": (1.0, 1.0, 1.0, 0.0)}, version)
+    return {("gauge_needle", NEEDLE_MATERIAL): (tuple(version), fh4_mtpr.set_textures(patched, {ATLAS_DIFFUSE: atlas_path}, version))}
 
 
 ATLAS_DIFFUSE = 0x810e7224   # int_ch1diffnormglossalpha CH1 diffuse texture (same slot as int_gauges)
@@ -507,7 +740,7 @@ def exterior_atlas_parameters(root, ir, alias, library):
     if os.environ.get("EXPANDED_GARAGE_EXTERIOR_ATLAS") == "off" or library is None:
         return {}, {}
     atlas = raw_member(root, ir, "/nodamage_lod0.xds") or raw_member(root, ir, "/nodamage.xds")
-    from .fh4_presentation import swatch, xds_codec
+    from .fh4_presentation import swatch_bc7 as swatch, xds_codec
     codec = xds_codec(None)
     if atlas is None or codec is None:
         return {}, {}
@@ -530,9 +763,80 @@ def exterior_atlas_parameters(root, ir, alias, library):
     return out, {EXTERIOR_FOLDER + name + ".swatchbin": swatch(name, width, height, pixels.tobytes())}
 
 
-def cockpit_atlas_parameters(library, atlas_path):
+SHADER_SECTION = re.compile(r"<\s*(cockpit_\w+)\s*>(.*?)<\s*/\s*\1\s*>", re.S | re.I)
+SHADER_VALUE = re.compile(r'<\s*(\w+)\s+value\s*=\s*"([^"]+)"', re.I)
+
+
+def cockpit_texel_scales(car_settings=None):
+    """{FM4 cockpit class: texel multiplier (linear)}: fm4-cockpit-shading-v1.json (FM4 shared Normal.xml)
+    overridden by the car's own ShaderSettings.xml. EXPANDED_GARAGE_COCKPIT_SCALE=off gives 1 everywhere."""
+    if os.environ.get("EXPANDED_GARAGE_COCKPIT_SCALE") == "off":
+        return {}
+    record = json.loads(files(__package__).joinpath("fm4-cockpit-shading-v1.json").read_text(encoding="utf-8"))
+    priority = record["priority"]
+    scales = {name: entry["scale"] for name, entry in record["techniques"].items()}
+    if car_settings:
+        for technique, body in SHADER_SECTION.findall(car_settings.decode("utf-8", "replace")):
+            values = {k: float(v) for k, v in SHADER_VALUE.findall(body)}
+            key = next((k for k in priority if k in values), None)
+            if key is not None and np.isfinite(values[key]):
+                scales[technique.casefold()[len("cockpit_"):]] = values[key]
+    return scales
+
+
+LAMP_FOLDER = "textures/lights/swatches/"
+REFLECTOR_GLOSS = 0.85
+LAMP_GLOW_TEXTURE = 0x8f890e20   # lights_smooth_ch1 texture slot (donor: _library lightglows/light_32_lite)
+
+
+def lamp_texture_parameters(root, ir, alias, library=None):
+    """({(lamp label, lights_smooth_ch1): (version, MTPR)}, {member: swatchbin}): the donor lamp block with its
+    glow texture pointed at the car's own FM4 lamp atlas (lights_LOD0.xds; alpha is FM4's glow mask).
+
+    The donor slot held _library lightglows/light_32_lite (256x256); FM4 lamp UV0 addresses its own atlas, so
+    the donor pattern was stretched into blocks on the lenses (owner, visual-35: the high-mount stop lamp).
+    LOD1-5 draws read lights.xds, a separate layout, through `<label>_lod15` MatIs (fh4_source_atlas).
+    EXPANDED_GARAGE_LAMP_TEXTURE=off keeps the donor texture."""
+    if os.environ.get("EXPANDED_GARAGE_LAMP_TEXTURE") == "off":
+        return {}, {}
+    from .fh4_presentation import swatch_bc7, xds_codec
+    from .fh4_source_atlas import far_name
+    codec = xds_codec(None)
+    near = raw_member(root, ir, "/lights_lod0.xds") or raw_member(root, ir, "/lights.xds")
+    if near is None or codec is None:
+        return {}, {}
+    far = raw_member(root, ir, "/lights.xds") or near
+    from . import fh4_mtpr
+    out, payloads = {}, {}
+    if library is not None:
+        from .fh4_material_contract import EXTERIOR_ATLAS_MATERIAL
+        member = EXTERIOR_ATLAS_MATERIAL + ".materialbin"
+        body, badge_version = library_mtpr(library, member)
+        reflector = fh4_mtpr.patch(body, {"CH1DiffColTextureSwitchBool": 1, "CH1OpacityMaskSwitchBool": 0,
+                                          "DiffuseColorGroupColorParam": (1.0, 1.0, 1.0, 1.0),
+                                          "GlossA_floatVal": REFLECTOR_GLOSS}, badge_version)
+    for role, atlas in (("lite", near), ("lite_lod15", far)):
+        width, height, rgba = codec[0](atlas)
+        pixels = np.frombuffer(bytes(rgba), np.uint8).reshape(height, width, 4)
+        name = f"{alias.casefold()}_lights_{role}_{uuid.uuid5(uuid.NAMESPACE_URL, f'urn:fh4-expanded-garage:{alias}:lights:{role}')}"
+        path = "\\".join(("Game:", "Media", "cars", alias.casefold(), *LAMP_FOLDER.strip("/").split("/"), "")) + name + ".swatchbin"
+        payloads[LAMP_FOLDER + name + ".swatchbin"] = swatch_bc7(name, width, height, pixels.tobytes())
+        named = (lambda label: label) if role == "lite" else far_name
+        for label in fh4_model.LAMP_FUNCTIONS:
+            block = fh4_model.lamp_parameters(label, fh4_model.LAMP_MATERIAL)
+            version = tuple(fh4_model.lamp_donor()["version"])
+            out[(named(label), fh4_model.LAMP_MATERIAL)] = (version, fh4_mtpr.set_textures(block, {LAMP_GLOW_TEXTURE: path}, version))
+        if library is not None:
+            # textured_reflector / reflector: the badge shader with the lamp atlas as its diffuse.
+            for label in ("textured_reflector", "reflector"):
+                out[(named(label), member)] = (tuple(badge_version), fh4_mtpr.set_textures(
+                    reflector, {ATLAS_DIFFUSE: path}, badge_version))
+    return out, payloads
+
+
+def cockpit_atlas_parameters(library, atlas_path, scales=None):
     """{(FM4 class, plastic_perforated_004): (version, MTPR)}: the library block with its diffuse texture
-    switched on and pointed at the car's cockpit atlas, normal/AO/opacity layers off, white tint and the
+    switched on and pointed at the car's cockpit atlas, normal/AO/opacity layers off, the FM4 class texel scale as tint and the
     class gloss. EXPANDED_GARAGE_COCKPIT_ATLAS=off keeps the untextured library materials."""
     if os.environ.get("EXPANDED_GARAGE_COCKPIT_ATLAS") == "off":
         return {}
@@ -544,8 +848,10 @@ def cockpit_atlas_parameters(library, atlas_path):
     for label, gloss in COCKPIT_ATLAS_GLOSS.items():
         patched = fh4_mtpr.patch(body, {
             "CH1DiffColTextureSwitchBool": 1, "CH1NormalMapSwitchBool": 0, "CH1LocalAOSwitchBool": 0,
-            "CH1OpacityMaskSwitchBool": 0, "DiffTintColorParam": (1.0, 1.0, 1.0, 1.0),
+            "CH1OpacityMaskSwitchBool": 0,
             "DiffuseColorGroupColorParam": (1.0, 1.0, 1.0, 1.0), "GlossA_floatVal": gloss,
+            # FM4 cockpit_<class> scales the atlas texel in linear light (cockpit_texel_scales).
+            "DiffTintColorParam": (*(min(1.0, max(0.0, (scales or {}).get(label, 1.0))),) * 3, 1.0),
             "GlossB_floatVal": gloss}, version)
         out[(label, member)] = (tuple(version), fh4_mtpr.set_textures(patched, {ATLAS_DIFFUSE: atlas_path}, version))
     return out
@@ -560,9 +866,9 @@ def make_models(root, ir, identity, library):
     contract = NativeCarSceneContract(ir, identity["body_id"])
     geometry = ir["sections"]["geometry"]["data"]
     car_parameters, texture_payloads = gauge_texture_parameters(root, ir, identity["media_name"], library)
-    exterior_parameters, exterior_payloads = exterior_atlas_parameters(root, ir, identity["media_name"], library)
-    car_parameters.update(exterior_parameters)
-    texture_payloads.update(exterior_payloads)
+    lamp_parameters, lamp_payloads = lamp_texture_parameters(root, ir, identity["media_name"], library)
+    car_parameters.update(lamp_parameters)
+    texture_payloads.update(lamp_payloads)
     grouped = {category: defaultdict(list) for category in ("exterior", "cockpit", "wheel", "brake")}
     filtered = set()
     for source in geometry["models"]:
@@ -577,6 +883,49 @@ def make_models(root, ir, identity, library):
                 filtered.add((role, section, draw.source_material))
     if not grouped["exterior"]:
         raise ValueError("No source exterior geometry available")
+    # Native exterior models carry TEXCOORD2 as their own non-overlapping 0..1 unwrap (ACU body_a carPaint
+    # 0.01-0.98, bumpers their own square); FH4's DynamicRainDropRenderer draws the drops into a texture through
+    # TexCoord2. Ours was zero outside the cabin, and the car never got rain or splash drops (owner, visual-43).
+    # Same unwrap as the cabin AO maps (fh4_part_ao.unwrap), no map baked. EXPANDED_GARAGE_EXTERIOR_UV2=off.
+    exterior_sides = {}
+    if os.environ.get("EXPANDED_GARAGE_EXTERIOR_UV2") != "off":
+        from . import fh4_part_ao
+        for key in sorted(grouped["exterior"]):
+            draws, side = fh4_part_ao.unwrap(grouped["exterior"][key])
+            if side:
+                grouped["exterior"][key] = draws
+                exterior_sides[key] = side
+    # Per-vertex COLOR0 (dirt by height, exposure) on the opaque exterior, like native carPaint meshes.
+    # EXPANDED_GARAGE_DIRT=off keeps one median colour per material (visual-42).
+    if os.environ.get("EXPANDED_GARAGE_DIRT") != "off" and corners:
+        wheels = [(np.asarray(c["origin_m"], float), c["radius_m"], c["width_m"]) for c in corners.values()]
+        ground = min(c[1] - r for c, r, _ in wheels)
+        from .fh4_material_contract import COCKPIT_EXTERIOR_PARTS
+        cabin = {name.casefold() for name in grouped["cockpit"]   # cabin parts also drawn in the exterior view
+                 if not name.casefold().startswith(COCKPIT_EXTERIOR_PARTS)}
+        for section, draws in grouped["exterior"].items():
+            if section.casefold() in cabin:
+                continue
+            draws[:] = [d if d.transparent or fh4_model.glass_family(d.target_material)
+                        or d.target_material.startswith("interior_") else
+                        replace(d, color=fh4_dirt.vertex_colors(d.positions, d.normals, wheels, ground))
+                        for d in draws]
+    # FM4 source textures (car/lamp/wheel atlases per LOD, shared grille tiles) on native shaders.
+    from . import fh4_source_atlas
+    source_parameters, component_parameters, source_payloads = fh4_source_atlas.parameters(
+        root, ir, identity["media_name"], library, grouped)
+    car_parameters.update(source_parameters)
+    texture_payloads.update(source_payloads)
+    needle_key = ("gauge_needle", NEEDLE_MATERIAL)
+    if needle_key in car_parameters:
+        glow = needle_glow(root, ir, [d for draws in grouped["cockpit"].values() for d in draws
+                                      if d.source_material.casefold() == "gauge_needle"])
+        from . import fh4_mtpr
+        version, block = car_parameters[needle_key]
+        car_parameters[needle_key] = (version, fh4_mtpr.patch(block, {"EmissiveColorColorParam": (*glow, 1.0)}, version))
+    ao_paths, ao_payloads = part_ao(identity["media_name"], grouped,
+                                    {n.casefold() for part in contract.parts if not part.stock for n in part.components},
+                                    exterior_sides)
     aliases = identity["media_name"].lower()
     attachments, animation_payloads, motion = native_rig.bind_motion(aliases,ir,bones,points,grouped)
     driver_side = driver_side_from(grouped)
@@ -592,6 +941,7 @@ def make_models(root, ir, identity, library):
         wheel_mask = [0]
         exterior_finest = {k.casefold(): min(d.lod for d in v) for k, v in grouped["exterior"].items()}
         cockpit_keys = {k.casefold() for k in grouped["cockpit"]}
+        exterior_near = exterior_surface_keys([d for v in grouped["exterior"].values() for d in v if d.lod == 0])
 
         def view_split(kind, key):
             """Native split of near and far geometry between the exterior and cockpit views.
@@ -605,12 +955,32 @@ def make_models(root, ir, identity, library):
             if kind == "exterior" and glass and exterior_finest.get(name, 0) > 0 and name in cockpit_keys:
                 return "fill"
             if kind == "cockpit" and not glass and exterior_finest.get(name, 99) > 0:
+                # FM4 cockpit parts that are the body seen from inside (a_pillar: the B-pillar applique and
+                # roof edge) repeat exterior LOD0 triangles; drawn in both views they z-fight with the body
+                # (owner, visual-29). Those stay cockpit-only. EXPANDED_GARAGE_COCKPIT_OVERLAP=keep: old rule.
+                if (os.environ.get("EXPANDED_GARAGE_COCKPIT_OVERLAP") != "keep"
+                        and exterior_overlap(grouped["cockpit"][key], exterior_near) >= 0.5):
+                    return None
                 return "both_views"
             return None
 
+        def view_mask(kind, key, near):
+            """Carbin draw mask by camera (bits over 40 native carbins: 1|4 exterior, 2 shadow/reflection,
+            8 bonnet camera, 16 driver camera, 32 cockpit/dashboard cameras). Steering wheels are 23 on 30 of 30
+            sampled cars (no 32: hidden in the dashboard camera; ours drew in every view, owner); bonnets 47
+            (+8: drawn in the bonnet camera; FM4 keeps hood LOD0 in the cockpit set, our both-view copy, so
+            the bonnet camera showed no hood, owner). EXPANDED_GARAGE_VIEW_MASKS=off: the visual-49 masks."""
+            name = key.casefold()
+            if os.environ.get("EXPANDED_GARAGE_VIEW_MASKS") == "off":
+                return 39 if near == "both_views" else 0
+            if kind == "cockpit" and name.startswith("steering"):
+                return 23 if near == "both_views" else 22
+            if name.startswith("hood"):
+                return 47 if near == "both_views" else (13 if kind == "exterior" else 0)
+            return 39 if near == "both_views" else 0
+
         def emit(kind, key, draws, bone=0, translation=(0.0, 0.0, 0.0), attachment=None, component=None,
-                 path=None, rig=None, mesh_bone=False):
-            rotation = (0.,0.,0.,1.)
+                 path=None, rig=None, mesh_bone=False, rotation=(0.,0.,0.,1.)):
             if attachment:
                 bone, translation, rotation = attachment.index, attachment.point, attachment.rotation
                 axes = fh4_model.transform(translation,rotation)[:3,:3]
@@ -636,7 +1006,8 @@ def make_models(root, ir, identity, library):
                     raise ValueError(f"Duplicate output model name {path}")
                 # EXPANDED_GARAGE_WHEEL_MORPH=off drops the morph targets and the wheel mesh role (bisection switch).
                 morph = os.environ.get("EXPANDED_GARAGE_WHEEL_MORPH") != "off"
-                payloads[path], wheel_mask[0] = fh4_model.assemble(draws, rig, 0, shadows=True, wheel=morph)
+                payloads[path], wheel_mask[0] = fh4_model.assemble(draws, rig, 0, shadows=True, wheel=morph,
+                                                                   parameters=car_parameters)
                 return
             local = re.sub(r"[^a-z0-9_]+", "_", key.lower()).strip("_")
             path = f"scene/{kind}/{local}.modelbin"
@@ -652,10 +1023,11 @@ def make_models(root, ir, identity, library):
                 component_rig, rigid_bone = bones, attachment.index
                 bone, translation, rotation = 0, (0.0, 0.0, 0.0), (0., 0., 0., 1.)
             near = view_split(kind, key)
+            parameters = {**car_parameters, **component_parameters.get((kind, key.casefold()), {})}
             payloads[path], mask = fh4_model.assemble(draws, component_rig, rigid_bone, shadows=kind != "cockpit",
-                                                      fill_near=near == "fill", parameters=car_parameters)
+                                                      fill_near=near == "fill", parameters=parameters)
             models.append(Model(path, kind, mask, bone, translation, component or key.casefold(), rotation,
-                                draw=39 if near == "both_views" else 0))
+                                draw=view_mask(kind, key, near), ao=ao_paths.get((kind, key), "")))
 
         for kind in ("exterior", "cockpit"):
             for key, draws in sorted(grouped[kind].items()):
@@ -710,8 +1082,35 @@ def make_models(root, ir, identity, library):
             corner = key[-2:].upper()
             if corner in corners:
                 bone = corners[corner]["hub" if key.lower().startswith("caliper") else "spindle"]
-                emit("brake", key, draws, bone, corners[corner]["origin_m"])
+                # Native right-side brakes (FOR_FiestaST_14, ACU_RSXTypeS_02) are placed turned 180 degrees about Y,
+                # like the right wheels, with the model in that turned frame. Ours sat unturned and the right discs
+                # showed their hub hat outboard (owner, visual-51 RUF). EXPANDED_GARAGE_BRAKE_TURN=off: unturned.
+                if corner.startswith("R") and os.environ.get("EXPANDED_GARAGE_BRAKE_TURN") != "off":
+                    turned = [replace(d, positions=np.asarray(d.positions * (-1, 1, -1), dtype=np.float32),
+                                      normals=np.asarray(d.normals * (-1, 1, -1), dtype=np.float32)) for d in draws]
+                    emit("brake", key, turned, bone, corners[corner]["origin_m"], rotation=(0.0, 1.0, 0.0, 0.0))
+                else:
+                    emit("brake", key, draws, bone, corners[corner]["origin_m"])
     nonstock = {name for part in contract.parts if not part.stock for name in part.components}
+    # Native licence plate and plate lamp in the FM4 plate recess (fh4_plate; EXPANDED_GARAGE_PLATE=off).
+    from . import fh4_plate
+    plate_payloads, driver_rig["plate"] = fh4_plate.plate_models(
+        Path(library).parents[1], fh4_plate.plate_draws(grouped["exterior"], nonstock))
+    with ZipFile(library) as archive:
+        available = {name.casefold(): name for name in archive.namelist()}
+        for member, data in sorted(plate_payloads.items()):
+            payloads[member] = data
+            component = Path(member).stem.casefold()
+            models.append(Model(member, "exterior", PLATE_LOD_MASK, 0, (0.0, 0.0, 0.0), component, draw=PLATE_DRAW))
+            for mati, library_member in modelbin_materials(data):
+                if library_member not in available:
+                    raise ValueError(f"Missing shared FH4 material {library_member}")
+                item = archive.getinfo(available[library_member])
+                references[library_member] = {"member": item.filename, "crc32": f"{item.CRC:08x}"}
+                materials[("exterior", component, mati)] = {
+                    "role": "exterior", "component": component, "source": mati, "member": library_member,
+                    "category": MaterialUse.FIDELITY.value, "drive_resolved": True,
+                    "fidelity": "native_plate_model", "trial_compatibility": "native_shared_binding"}
     surface_geometry = [d.positions for component, draws in grouped["exterior"].items()
                         if component.casefold() not in nonstock
                         for d in draws if d.lod == min(x.lod for x in draws)]
@@ -721,6 +1120,9 @@ def make_models(root, ir, identity, library):
                                           {m.member: modelbin_box(payloads[m.member]) for m in models},
                                           {m.member: modelbin_materials(payloads[m.member]) for m in models})
     payloads.update(texture_payloads)
+    payloads.update(ao_payloads)
+    # Vinyl/decal editor projection masks (native LiveryMasks/, carried over from FM4 liverymasks/).
+    payloads.update(fh4_livery.livery_members(livery_sources(root, ir)))
     # EXPANDED_GARAGE_LIGHT_RIG=off leaves the car without light sources (bisection switch).
     if os.environ.get("EXPANDED_GARAGE_LIGHT_RIG") != "off":
         rig_files = light_rig(aliases, models, payloads)
@@ -737,16 +1139,47 @@ def make_models(root, ir, identity, library):
         occluders = [d.positions.astype(np.float64)[d.indices] for d in proxy_draws]
         occluders += [fh4_ao_volume.tyre(np.asarray(c["origin_m"], float), c["radius_m"], c["width_m"])
                       for c in corners.values()]
-        payloads[AO_VOLUME] = fh4_ao_volume.build(np.concatenate(occluders))
-        payloads[fh4_ao_volume.GROUND_MEMBER] = fh4_ao_volume.ground_texture(
-            np.concatenate(occluders), json.loads(files(__package__).joinpath("fh4-ground-ao-v1.json").read_text(encoding="utf-8")))
+        from . import fh4_cache
+        triangles = np.concatenate(occluders)
+        template = json.loads(files(__package__).joinpath("fh4-ground-ao-v1.json").read_text(encoding="utf-8"))
+        modules = (fh4_ao_volume.__name__,)
+        payloads[AO_VOLUME] = fh4_cache.cached_bytes("ao-volume", modules, (triangles,),
+                                                     lambda: fh4_ao_volume.build(triangles))
+        payloads[fh4_ao_volume.GROUND_MEMBER] = fh4_cache.cached_bytes(
+            "ao-ground", modules, (triangles, template), lambda: fh4_ao_volume.ground_texture(triangles, template))
+    # Dirt mask and wiper ramps (native Textures/Damage, Textures/Wiper; convention-loaded, fh4_dirt).
+    stock_exterior = {component: draws for component, draws in grouped["exterior"].items()
+                      if component.casefold() not in nonstock}
+    dirt_draws = [d for draws in stock_exterior.values() for d in draws
+                  if d.lod == min(x.lod for x in draws) and not d.transparent
+                  and not fh4_model.glass_family(d.target_material)]
+    panes = [d for component, draws in stock_exterior.items() if component.casefold() == "glassf"
+             for d in draws if d.lod == min(x.lod for x in draws) and d.transparent]
+    windscreen = [max(panes, key=lambda d: len(d.indices))] if panes else []
+    payloads.update(fh4_dirt.members(
+        dirt_draws, windscreen,
+        [(c["origin_m"], c["radius_m"], c["width_m"]) for c in corners.values()], driver_side))
     if points:
         authored = {"carLocator_" + point.name for point in points.values()}
         extra, driver_rig["locators"] = fh4_driver_rig.transferred_locators(
             points, authored, driver_side, spindle=fh4_driver_rig.steering_spindle(bones))
+        # Backfire flames at the FM4 tail pipes, not at the donor's (EXPANDED_GARAGE_EXHAUST_LOCATORS=donor).
+        if os.environ.get("EXPANDED_GARAGE_EXHAUST_LOCATORS") != "donor":
+            tips = systems.exhaust_tips(stock_exterior)
+            extra, driver_rig["exhaust"] = systems.exhaust_locators(extra, tips)
+            driver_rig["exhaust_tips_m"] = tips
+        bonnet = [d.positions for component, draws in [*stock_exterior.items(), *grouped["cockpit"].items()]
+                  if component.casefold().startswith(("hood", "body")) for d in draws
+                  if not d.transparent and not fh4_model.glass_family(d.target_material)]
+        extra, driver_rig["hood_locator"] = systems.hood_locator(
+            extra, np.concatenate(bonnet) if bonnet else np.zeros((0, 3)))
         payloads["Locators.xml"] = systems.locator_xml(aliases, points, extra)
         locator_names = authored | {item["name"] for item in extra}
         avpins, driver_rig["autovista"] = fh4_driver_rig.autovista(points, locator_names, driver_side)
+        # Bisection (visual-48): the Integra, which gets no .avpins (right-hand drive), shows rain drops; the
+        # SX4 and RUF, which do, never did. EXPANDED_GARAGE_AUTOVISTA=off ships none.
+        if os.environ.get("EXPANDED_GARAGE_AUTOVISTA") == "off":
+            avpins = None
         if avpins is not None:
             payloads[f"{aliases}.avpins"] = avpins
     payloads["IKAnchorBones.xml"] = fh4_driver_rig.ik_anchor_xml()
@@ -921,6 +1354,8 @@ def validate_zip(blob, name, car_id, *, trial=None):
                     mesh_bound.add(local_bones[mesh["bone"]])
                     raw = original[mesh["start"]:mesh["start"] + mesh["indices"] * 4]
                     maximum = int(np.frombuffer(raw, dtype="<u4").max())
+                    if key.startswith(NATIVE_COPY_FOLDERS):
+                        continue   # native models byte for byte (base-vertex offsets the check does not model)
                     layout, slots = struct.unpack_from("<ii", original, b["offset"] + 55)
                     if not 0 <= layout < len(layouts) or slots not in (1, 2):
                         raise ValueError(f"Invalid mesh layout in {key}")
@@ -959,8 +1394,12 @@ def validate_zip(blob, name, car_id, *, trial=None):
             for path, (bone, label) in bindings.items():
                 if path == virtual(aliases, fh4_wheel_model.wheel_path(aliases)):
                     continue   # native wheel entries sit at the outer rim face, not at the spindle
+                # Right-side brakes sit at their bone turned 180 degrees about Y, like native right brakes.
+                turned = fh4_model.transform((0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0)) @ world[bone]
+                right_brake = "\\scene\\brake\\" in path and label.endswith(("RF", "RR"))
                 if label.startswith(("hub","spindle","boneSteeringWheel","boneFuel","boneTach","boneSpeed")) and not (
-                        np.allclose(placements[path],world[bone],rtol=0,atol=2e-6)):
+                        np.allclose(placements[path],world[bone],rtol=0,atol=2e-6)
+                        or right_brake and np.allclose(placements[path],turned,rtol=0,atol=2e-6)):
                     raise ValueError(f"Component placement disagrees with its Granny bind point: {path}")
             used.add(gr2)
             gsf = f"animations/{aliases}.gsf"
@@ -990,8 +1429,20 @@ def validate_zip(blob, name, car_id, *, trial=None):
             if len(archive.read(names[ground])) != 248 + 349525:
                 raise ValueError("Unexpected ground_AO.swatchbin size")
             used.add(ground)
+        carbin_bytes = archive.read(names[f"{aliases}.carbin"]).lower()
         for name in names:
-            if name.startswith((GAUGE_FOLDER, EXTERIOR_FOLDER)) and name.endswith(".swatchbin"):
+            if name.startswith(AO_FOLDER.casefold()) and name.endswith("_ao.swatchbin") and name != ground:
+                data = archive.read(names[name])
+                _, _, _, _, meta, _, _, _ = fh4_model.BLOB.unpack_from(data, fh4_model.HEADER.size)
+                _, flags, relative = struct.unpack_from("<IHH", data, meta)
+                fields = struct.unpack_from("<17I", data, meta + relative)
+                if fields[16] != 19 or fields[6] != fields[7] or fields[9] >> 16 < 2:
+                    raise ValueError(f"Unexpected model AO map layout {name}")
+                stem = name.rsplit("/", 1)[-1]
+                if ("\\textures\\ao\\" + stem).encode() not in carbin_bytes:
+                    raise ValueError(f"Model AO map without a Carbin AO record: {name}")
+                used.add(name)
+            if name.startswith((GAUGE_FOLDER, EXTERIOR_FOLDER, LAMP_FOLDER)) and name.endswith(".swatchbin"):
                 if len(archive.read(names[name])) <= 140:
                     raise ValueError(f"Empty gauge texture {name}")
                 used.add(name)
@@ -1008,6 +1459,8 @@ def validate_zip(blob, name, car_id, *, trial=None):
             if any(light["attachment"] >= len(attachments) or light["id"] >= count for light in lights):
                 raise ValueError("Lights.bin references a missing attachment or preset")
             used.update({"lights.bin", "lightpresets.bin"})
+        used.update(fh4_livery.verify(lambda n: archive.read(n), names))
+        used.update(fh4_dirt.verify(lambda n: archive.read(n), names))
         if "manufacturercolors.bin" in names:
             if not fh4_paint.read_manufacturer_colors(archive.read(names["manufacturercolors.bin"])):
                 raise ValueError("Empty ManufacturerColors.bin")
