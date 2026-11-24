@@ -25,7 +25,11 @@ LENS_TINT_PEAK = 0.305
 STICKER_GLOSS = 0.9
 GRILLE_SOURCES = {"grille1": "/shared/grille1_alpha.xds", "grille2": "/shared/grille2_alpha.xds"}
 ATLASES = {"body": ("/nodamage_lod0.xds", "/nodamage.xds"), "lights": ("/lights_lod0.xds", "/lights.xds"),
-           "wheel": ("/wheel_lod0.xds", "/wheel.xds")}
+           "wheel": ("/wheel_lod0.xds", "/wheel.xds"), "cabin_badge": ("/interior_lod0.xds", "/interior.xds")}
+# Inner rim of a cabin badge's alpha that stays opaque, in texels of the 512 cockpit atlas (~1 mm each on the
+# RUF horn pad, logo strokes 8-12 texels wide).
+BADGE_EDGE_TEXELS = 2
+CABIN_BADGE_GLOSS = 0.7
 
 
 def far_name(label):
@@ -67,6 +71,11 @@ class Textures:
         image = pixels.copy()
         if role == "opac":
             image[..., :3] = pixels[..., 3:4]
+        elif role == "rim":
+            # Edge texels blend the logo with the pad behind it; spread the logo colour over the rim.
+            image[..., :3] = grey_dilate(pixels[..., :3], BADGE_EDGE_TEXELS)
+        elif role == "edge":
+            image[..., :3] = badge_edge(pixels[..., 3])[..., None]
         elif scale != 1.0:
             linear = (pixels[..., :3].astype(np.float32) / 255) ** 2.2 * scale
             image[..., :3] = np.round(255 * np.clip(linear, 0, 1) ** (1 / 2.2)).astype(np.uint8)
@@ -79,6 +88,27 @@ class Textures:
         path = "\\".join(("Game:", "Media", "cars", self.alias, *FOLDER.strip("/").split("/"), "")) + name + ".swatchbin"
         self.paths[key] = path
         return path
+
+
+def grey_dilate(rgb, steps):
+    """Per-channel 3x3 maximum, `steps` times."""
+    out = rgb
+    for _ in range(steps):
+        padded = np.pad(out, ((1, 1), (1, 1), (0, 0)), mode="edge")
+        out = np.max([padded[1 + dy:padded.shape[0] - 1 + dy, 1 + dx:padded.shape[1] - 1 + dx]
+                      for dy in (-1, 0, 1) for dx in (-1, 0, 1)], axis=0)
+    return out
+
+
+def badge_edge(alpha, width=BADGE_EDGE_TEXELS):
+    """Opaque (255) on the texels of the alpha shape within `width` of its boundary, 0 elsewhere."""
+    solid = alpha >= 128
+    inner = solid.copy()
+    for _ in range(width):
+        padded = np.pad(inner, 1, mode="edge")
+        inner = (padded[1:-1, 1:-1] & padded[:-2, 1:-1] & padded[2:, 1:-1]
+                 & padded[1:-1, :-2] & padded[1:-1, 2:])
+    return np.where(solid & ~inner, 255, 0).astype(np.uint8)
 
 
 def _block(library, member, values, textures):
@@ -167,7 +197,7 @@ def parameters(root, ir, alias, library, grouped):
         else:
             suffix = GRILLE_SOURCES[source]
         scale = wheel_scales.get(name, 1.0) if source == "wheel" else 1.0
-        diffuse = textures.swatch(suffix, "diff", scale)
+        diffuse = textures.swatch(suffix, "rim" if source == "cabin_badge" else "diff", scale)
         if diffuse is None:
             continue
         key = (far_name(label) if far else label, member)
@@ -177,10 +207,12 @@ def parameters(root, ir, alias, library, grouped):
                 "CH1DiffColTextureSwitchBool": 1, "CH1NormalMapSwitchBool": 0, "CH1LocalAOSwitchBool": 0,
                 "DiffuseColorGroupColorParam": (1.0, 1.0, 1.0, 1.0), "GlossA_floatVal": gloss}, {DIFFUSE: diffuse})
         elif library_member == EXTERIOR_STICKER:
+            cabin = source == "cabin_badge"
             out[key] = _block(library, library_member, {
                 "CH1DiffColTextureSwitchBool": 1, "CH1OpacityMaskSwitchBool": 1,
-                "DiffuseColorGroupColorParam": (1.0, 1.0, 1.0, 1.0), "GlossA_floatVal": STICKER_GLOSS},
-                {DIFFUSE: diffuse, OPACITY: textures.swatch(suffix, "opac")})
+                "DiffuseColorGroupColorParam": (1.0, 1.0, 1.0, 1.0),
+                "GlossA_floatVal": CABIN_BADGE_GLOSS if cabin else STICKER_GLOSS},
+                {DIFFUSE: diffuse, OPACITY: textures.swatch(suffix, "edge" if cabin else "opac")})
         elif library_member == GRILLE_MESH:
             out[key] = _block(library, library_member, {"CH1OpacityMaskSwitchBool": 1},
                               {OPACITY: textures.swatch(suffix, "opac")})

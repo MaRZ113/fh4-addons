@@ -96,6 +96,9 @@ def atlas_source(label, component_kind="", component=""):
     name = label.casefold()
     if component_kind == "brake" and name in BRAKE_ATLAS_GLOSS:
         return "body"
+    if (component_kind == "cockpit" and name == "badge" and not component.casefold().startswith(COCKPIT_EXTERIOR_PARTS)
+            and os.environ.get("EXPANDED_GARAGE_CABIN_BADGE") != "atlas"):
+        return "cabin_badge"
     if component_kind == "wheel" and name in WHEEL_ATLAS_SURFACES:
         return "wheel"
     if not exterior_like(component_kind, component):
@@ -120,6 +123,13 @@ def surface_binding(label, component_kind="", component=""):
     def bind(member, purpose=MaterialUse.VISIBILITY, alpha=False, fidelity="shared_base", resolved=True,
              compatibility="native_shared_binding"):
         return SurfaceBinding(member+".materialbin", purpose, alpha, resolved, fidelity, compatibility)
+    if atlas_source(label, component_kind, component) == "cabin_badge":
+        # FM4 cabin `badge` (base x env, no normal map) reads as a raised outline: the RUF horn-pad logo is
+        # the pad colour with a light rim (owner, visual-53: a solid grey decal with the opaque atlas shader).
+        # Alpha-tested sticker whose mask is only the inner rim of the atlas alpha (fh4_source_atlas, role
+        # 'edge'); thin script (SX4/Integra console) is narrower than the rim and stays whole.
+        # EXPANDED_GARAGE_CABIN_BADGE=atlas: the visual-53 opaque binding.
+        return bind(EXTERIOR_STICKER, MaterialUse.FIDELITY, True, fidelity="source_cockpit_badge_edge")
     if cockpit_atlas_surface(label, component_kind, component):
         return bind(COCKPIT_ATLAS_MATERIAL, fidelity="source_cockpit_atlas")
     source = atlas_source(label, component_kind, component)

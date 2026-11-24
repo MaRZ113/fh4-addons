@@ -1112,7 +1112,8 @@ def make_models(root, ir, identity, library):
                 local = [reflected(d) for d in wheel] if corner.startswith("R") else wheel
                 emit("wheel", f"wheel{corner}", local, binding["spindle"], binding["origin_m"])
         elif wheel:
-            normalised, wheel_bones, wheel_model = fh4_wheel_model.normalise(wheel)
+            mount = brake_mounts(grouped["brake"])
+            normalised, wheel_bones, wheel_model = fh4_wheel_model.normalise(wheel, mount.get("LF"))
             wheel_model["member"] = fh4_wheel_model.wheel_path(identity["media_name"])
             emit("wheel", "wheelLF", normalised, path=wheel_model["member"], rig=wheel_bones)
             # Native carbins reference that one model four times in part group 43 (785 of 785 sampled):
@@ -1134,15 +1135,16 @@ def make_models(root, ir, identity, library):
             corner = key[-2:].upper()
             if corner in corners:
                 bone = corners[corner]["hub" if key.lower().startswith("caliper") else "spindle"]
+                origin = corners[corner]["origin_m"]
                 # Native right-side brakes (FOR_FiestaST_14, ACU_RSXTypeS_02) are placed turned 180 degrees about Y,
                 # like the right wheels, with the model in that turned frame. Ours sat unturned and the right discs
                 # showed their hub hat outboard (owner, visual-51 RUF). EXPANDED_GARAGE_BRAKE_TURN=off: unturned.
                 if corner.startswith("R") and os.environ.get("EXPANDED_GARAGE_BRAKE_TURN") != "off":
                     turned = [replace(d, positions=np.asarray(d.positions * (-1, 1, -1), dtype=np.float32),
                                       normals=np.asarray(d.normals * (-1, 1, -1), dtype=np.float32)) for d in draws]
-                    emit("brake", key, turned, bone, corners[corner]["origin_m"], rotation=(0.0, 1.0, 0.0, 0.0))
+                    emit("brake", key, turned, bone, origin, rotation=(0.0, 1.0, 0.0, 0.0))
                 else:
-                    emit("brake", key, draws, bone, corners[corner]["origin_m"])
+                    emit("brake", key, draws, bone, origin)
     nonstock = {name for part in contract.parts if not part.stock for name in part.components}
     # Native licence plate and plate lamp in the FM4 plate recess (fh4_plate; EXPANDED_GARAGE_PLATE=off).
     from . import fh4_plate
@@ -1281,6 +1283,25 @@ def make_models(root, ir, identity, library):
         "authored_hardpoints": [vars(point) for point in points.values()],
         "wheel_rest_frame": "Chassis-space placement and bone rest are serialized separately as in stock scenes. Runtime composition is unverified.",
     }, analysis
+
+
+def brake_mounts(brakes):
+    """Hub-frame X of each corner's brake mounting plane: the outboard face of its rotor (hat), LOD0.
+
+    Left corners face outward along -X, right corners along +X (FM4 hub frames). Empty with
+    EXPANDED_GARAGE_BRAKE_MOUNT=hub (pre-visual-54: spindle at the hub centre, rotors on the hub).
+    """
+    if os.environ.get("EXPANDED_GARAGE_BRAKE_MOUNT") == "hub":
+        return {}
+    mounts = {}
+    for key, draws in brakes.items():
+        if not key.lower().startswith("rotor"):
+            continue
+        finest = min(d.lod for d in draws)
+        xs = np.concatenate([d.positions[:, 0] for d in draws if d.lod == finest])
+        corner = key[-2:].upper()
+        mounts[corner] = float(xs.max() if corner.startswith("R") else xs.min())
+    return mounts
 
 
 def previous_readers():

@@ -78,8 +78,15 @@ def rim_only(draw, limit):
                    uv1=draw.uv1[used], indices=remap.reshape(-1, 3).astype(draw.indices.dtype))
 
 
-def normalise(draws):
-    """Return (normalised LF draws, bones, receipt). Input draws are LF in the hub frame (outward = -X)."""
+def normalise(draws, mount_x=None):
+    """Return (normalised LF draws, bones, receipt). Input draws are LF in the hub frame (outward = -X).
+
+    mount_x: hub-frame X of the brake mounting plane (outer face of the LF rotor hat). Native wheels put the
+    `spindle` bone there: ACU_RSXTypeS_02 spindle 0.092 and rotor face 0.092 behind the rim face, Fiesta
+    0.074/0.084, 911 GT2 0.087. The FM4 hub origin is the wheel centre, not that plane; on a wide rim
+    (RUF CTR2, 0.25 m) the centre lies past the metric face zone and stretched to 0.263, and the discs showed
+    that deep inside the wheel (owner, visual-53). Without rotors the hub centre is kept.
+    """
     radius = rim_radii(draws)
     kept = [d for d in (rim_only(d, radius[d.lod] * TYRE_MARGIN) for d in draws if d.lod in radius) if d is not None]
     if not kept:
@@ -104,6 +111,8 @@ def normalise(draws):
         normals /= np.linalg.norm(normals, axis=1, keepdims=True)
         result.append(replace(draw, name=mesh_name(draw), positions=positions, normals=normals.astype(np.float32)))
     spindle = float(-outer)
+    if mount_x is not None and outer < mount_x < inner:
+        spindle = float(mount_x - outer)
     if spindle > WHEEL_FACE_DEPTH:
         spindle = WHEEL_FACE_DEPTH + (spindle - WHEEL_FACE_DEPTH) * barrel_scale
     bones = [Bone("<root>", -1), Bone("spindle", 0, (spindle, 0.0, 0.0)), Bone("root", 0)]

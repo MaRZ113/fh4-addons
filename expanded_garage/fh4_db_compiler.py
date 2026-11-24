@@ -4,6 +4,7 @@ from collections import Counter, defaultdict
 from contextlib import closing, nullcontext
 from dataclasses import dataclass
 from pathlib import Path
+import os
 import sqlite3
 from zipfile import ZipFile
 
@@ -35,6 +36,22 @@ TUNED_SOURCE = {
     "AeroPhysicsID": "List_AeroPhysics",
     "TorqueCurveFullThrottleID": "List_TorqueCurve",
 }
+
+
+# Performance upgrades with no model of their own (the stock brake models stay, as on native cars, whose
+# brake rows all carry RequiresGraphics=1 over fixed brake models). FM4 ships these levels per car; only the
+# stock rows were converted and the cars could not be upgraded beyond tyres, rims and aero (owner, visual-53).
+# Body kits, roll cage (ChassisStiffness), engine/drivetrain swaps and rim sizes need models: still stock only.
+# EXPANDED_GARAGE_UPGRADES=stock: stock rows only.
+PERFORMANCE_UPGRADES = frozenset({
+    *(f"List_UpgradeEngine{part}" for part in (
+        "Camshaft", "CSC", "DSC", "Displacement", "Exhaust", "Flywheel", "FuelSystem", "Ignition", "Intake",
+        "Intercooler", "Manifold", "OilCooling", "PistonsCompression", "RestrictorPlate", "TurboSingle",
+        "TurboTwin", "TurboQuad", "Valves")),
+    *(f"List_UpgradeDrivetrain{part}" for part in ("Clutch", "Differential", "Driveline", "Transmission")),
+    "List_UpgradeCarBodyWeight", "List_UpgradeAntiSwayFront", "List_UpgradeAntiSwayRear",
+    "List_UpgradeSpringDamper", "List_UpgradeBrakes",
+})
 
 
 class Source:
@@ -338,7 +355,8 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
             for entry in entries:
                 row = entry["record"]
                 if (row["IsStock"] or (table, row["Id"]) in variant_keys or table in WIDTH_TABLES
-                        or table == "List_UpgradeTireCompound"):
+                        or table == "List_UpgradeTireCompound"
+                        or table in PERFORMANCE_UPGRADES and os.environ.get("EXPANDED_GARAGE_UPGRADES") != "stock"):
                     yield table, entry
 
     for table, entry in selected_upgrades():
@@ -347,6 +365,10 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
             continue
         row = entry["record"]
         if table == "List_UpgradeDrivetrainTransmission":
+            if not row["IsStock"] and type(row.get("NumGears")) is int:
+                # FM4 race gearboxes pad unused slots with -0.95 (stock rows use -1, as FH4 does).
+                row = {**row, **{f"GearRatio{i}": -1.0 for i in range(row["NumGears"], 9)
+                                 if isinstance(row.get(f"GearRatio{i}"), float) and row[f"GearRatio{i}"] < 0}}
             ratios(row, original["NumGears"] if row["IsStock"] else None)
         _, cols = graph.schema(table)
         lookup = {col.casefold(): col for col in cols}
@@ -387,6 +409,11 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
                     typ, = graph.db.execute("SELECT SuspensionPhysicsTypeID FROM List_SuspensionPhysicsType WHERE Name=?",
                                             (raw_type["record"]["Name"],)).fetchall()
                     out["SuspensionPhysicsTypeID"] = typ[0]
+                    if not data["MinRideHeight"] > 0 < data["DefRideHeight"]:
+                        # FM4 race springs leave the lower limit at 0; native level-3 springs sit at 0.933 of the
+                        # default height (median of 679 FH4 rows).
+                        out["MinRideHeight"] = round(0.933 * data["DefRideHeight"], 4)
+                        data = {**data, "MinRideHeight": out["MinRideHeight"]}
                     out.update(dynamics.spring(data))
                     axle = field.removesuffix("SpringDamperPhysicsID")
                     if row["IsStock"] and old == spring_sources.get(axle):
@@ -427,7 +454,9 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
                 links.append(borrow("List_DamageModDef", row[field]))
         if table == "List_UpgradeBrakes":
             overrides.update({axle+"BrakeSizeMM":row[axle+"BrakeSize"]*25.4 for axle in ("Front","Rear")})
-            brake_fields, brake_proof, brake_types = dynamics.brakes(src,row)
+            brake_fields, row_proof, brake_types = dynamics.brakes(src,row)
+            if row["IsStock"]:
+                brake_proof = row_proof   # the readback checks the stock brakes
             physical_unmapped = [item for item in physical_unmapped if not (
                 item["table"]==table and item["field"] in brake_fields)]
             links.extend(borrow("List_BrakeType",x) for x in brake_types)
