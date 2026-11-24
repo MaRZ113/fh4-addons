@@ -35,14 +35,52 @@ def finish(member):
     return None
 
 
+PAINT_FOLDERS = ("carcolors/", "carcolors_pbc/")
+NOT_PAINT = ("carbon", "liver", "matt")
+
+
+def paint(member):
+    """A plain paint of the colour folders (carcolors/ also holds carbon fibre and livery materials)."""
+    return member.startswith(PAINT_FOLDERS) and not any(word in member.rsplit("/", 1)[-1] for word in NOT_PAINT)
+
+
+@lru_cache(maxsize=1)
+def paint_map():
+    """fm4-fh4-paint-map-v1.json (research/extract_paint_map.py): FM4 colour -> FH4 materials of the same paint
+    on the 195 cars present in both games, and the colour calibration for unseen colours."""
+    return json.loads(files(__package__).joinpath("fm4-fh4-paint-map-v1.json").read_text(encoding="utf-8"))
+
+
+def calibrated(rgb):
+    """FM4 swatch RGB as the matching FH4 swatch would be (FM4 stores saturated paints brighter: Ferrari giallo
+    modena 254,215,50 in FM4 is 217,183,0 in FH4; fit fh4 = 255 * k * (fm4/255) ** g over 1,120 pairs)."""
+    fit = paint_map()["calibration"]
+    return tuple(255 * fit["scale"] * (c / 255) ** fit["gamma"] for c in rgb)
+
+
 def nearest_material(rgb, metallic, available):
-    """Closest palette material by RGB distance; same finish first, any finish otherwise."""
-    wanted = "metallic" if metallic else "solid"
-    candidates = [(m, e) for m, e in palette().items() if m in available]
+    """The FH4 material native cars use for this FM4 colour; otherwise the closest paint (calibrated colour) in
+    the paint folders, never one of the opposite finish first.
+
+    visual-52 matched the raw FM4 RGB against the whole palette and required a "_solid" name for solid paints:
+    the Integra's Phoenix yellow (FM4 ffe200) became Koenigsegg yolk yellow and then a brighter "yellow",
+    while FH4's own ACU_IntegraR_01 uses carcolors/ctr2yellow (owner: paints too bright); liveries and carbon
+    fibre were candidates too. EXPANDED_GARAGE_PAINT_MATCH=raw: the visual-52 raw-RGB nearest match."""
+    import os
+    raw = os.environ.get("EXPANDED_GARAGE_PAINT_MATCH") == "raw"
+    known = paint_map()["colors"].get("%02x%02x%02x" % tuple(rgb), {}) if not raw else {}
+    for member, _ in sorted(known.items(), key=lambda item: (-item[1], item[0])):
+        if member in available and member in palette() and paint(member):
+            return member
+    target = rgb if raw else calibrated(rgb)
+    opposite = "solid" if metallic else "metallic"
+    candidates = [(m, e) for m, e in palette().items() if m in available
+                  and (raw or paint(m))]
     if not candidates:
         raise ValueError("No native paint material from the palette exists in the shared library")
-    ranked = sorted(candidates, key=lambda item: (finish(item[0]) != wanted,
-                                                  sum((a - b) ** 2 for a, b in zip(item[1]["rgb"], rgb)),
+    # Only the opposite finish is pushed back: most carcolors/ names carry no finish word.
+    ranked = sorted(candidates, key=lambda item: (finish(item[0]) == opposite,
+                                                  sum((a - b) ** 2 for a, b in zip(item[1]["rgb"], target)),
                                                   -item[1]["cars"], item[0]))
     return ranked[0][0]
 

@@ -182,7 +182,7 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
     def borrow(table, number):
         return graph.key(table, number)
 
-    def insert(table, key, source, overrides, rule, links=(), trial_fields=(), evidence=None):
+    def insert(table, key, source, overrides, rule, links=(), trial_fields=(), evidence=None, keep=()):
         pk, columns = graph.schema(table)
         lookup = {k.casefold(): v for k, v in source.items()}
         projected = {c: lookup[c.casefold()] for c in columns if c != pk and c.casefold() in lookup}
@@ -195,7 +195,7 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
             unresolved(table, {"target_columns_unmapped": sorted(missing)})
         if trial_fields:
             trial_proof.append({"table":table,"pk":pk,"id":key,"fields":dict(trial_fields),"evidence":evidence})
-        return graph.add(table, key, alias, projected, rule, links)
+        return graph.add(table, key, alias, projected, rule, links, keep)
 
     original = src.record("Data_Car")
     layout = src.record("Data_CarBody")
@@ -311,8 +311,10 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
     owners = {"ordinal": car, "carbodyid": body, "engineid": own_engine, "drivetrainid": own_drive}
 
     if src.entries("CameraOverrides"):
-        insert("CameraOverrides", car_id, src.record("CameraOverrides"), {},
-               "FM4 camera offsets, native camera behavior pending", (car,))
+        # Cockpit camera offsets derived from the car's own seating (fh4.cockpit_camera_offsets).
+        camera = dict(vehicle.identity.get("cockpit_camera") or {})
+        insert("CameraOverrides", car_id, src.record("CameraOverrides"), camera,
+               "FM4 camera offsets; cockpit offsets from the converted seating", (car,), keep=tuple(camera))
     if "Combo_Colors" in src.tables:
         for item in sorted(src.raw_records("Combo_Colors", "Ordinal", src.id), key=lambda i: i["record"]["Sequence"]):
             row = item["record"]

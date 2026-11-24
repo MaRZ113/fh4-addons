@@ -36,6 +36,9 @@ COCKPIT_ATLAS_GLOSS = {
     "plastic": 0.35, "bump_plastic": 0.3, "bump_plastic2": 0.3, "interior": 0.35, "solid": 0.3,
     "black": 0.3, "frame": 0.3, "mottled": 0.3, "leather": 0.45, "bump_leather": 0.45,
     "bump_stitching": 0.2, "cloth": 0.1, "headliner": 0.1, "rubber": 0.2, "metal": 0.6, "reflector": 0.55,
+    # Cabin badges (RUF horn-pad logo, SX4/Integra console script) are drawn in the cockpit atlas; bound to
+    # satin chrome the RUF wheel showed a blank chrome plate (owner, visual-52).
+    "badge": 0.7,
 }
 # Cockpit components that are the exterior seen from inside sample the body textures, not the atlas.
 COCKPIT_EXTERIOR_PARTS = ("hood", "mirror", "a_pillar", "glass", "cage")
@@ -75,6 +78,8 @@ WHEEL_ATLAS_SURFACES = {"rim", "outer_rim", "wheel_emblem"}
 # amber indicators, red tail lenses (RUF rear bar, Integra side repeater were clear).
 TINTED_LENSES = {"detail_glass_red", "detail_glass_amber", "lights_glass"}
 COCKPIT_BODY_PARTS = ("hood", "mirror", "a_pillar", "cage")
+MIRROR_SURFACES = {"mirrorleft": "specificuse/mirrorleft", "mirrorright": "specificuse/mirrorright",
+                   "mirrormiddle": "specificuse/mirrorcenter", "mirrorcenter": "specificuse/mirrorcenter"}
 
 
 def exterior_like(component_kind, component):
@@ -232,6 +237,11 @@ def surface_binding(label, component_kind="", component=""):
         return bind("interior_misc/int_gauges",MaterialUse.EFFECT,fidelity="source_dial_texture")
     if name == "digital_gauge":
         return bind("interior_misc/int_symbols_emissive",MaterialUse.EFFECT,fidelity="missing_instrument_emissive_texture")
+    if name in MIRROR_SURFACES and os.environ.get("EXPANDED_GARAGE_MIRRORS") != "chrome":
+        # FM4 mirrorLeft/Right/Middle are the mirror glass. Bound to chrome they showed the blurred environment
+        # cube, not the view behind (owner, visual-52). Native mirror materials draw the rear-view render target
+        # through UV0 spread 0..1 over the glass (fh4.mirror_uv).
+        return bind(MIRROR_SURFACES[name], MaterialUse.EFFECT, fidelity="native_mirror_target")
     if "chrome" in name or name.startswith("mirror") or "reflector" in name:
         return bind("exterior_metal/chrome")
     if "leather" in name:

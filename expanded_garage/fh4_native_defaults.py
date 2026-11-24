@@ -76,11 +76,14 @@ class NativeDefaults:
         _, mode, mid = self.stats(table)[column]
         return mid if STRATEGY.get((table, column), "mode") == "median" else mode
 
-    def complete(self, table, pk, values):
-        """Fill required columns; return (values, {column: (reason, value)})."""
+    def complete(self, table, pk, values, keep=()):
+        """Fill required columns; return (values, {column: (reason, value)}). `keep`: re-authored columns the
+        compiler derived for this car (not the FM4 value), which stay as given."""
         filled = {}
         out = dict(values)
         for column in REAUTHORED.get(table, ()):
+            if column in keep:
+                continue
             if column in self.stats(table):
                 native = self.value(table, column)
                 if out.get(column) != native:

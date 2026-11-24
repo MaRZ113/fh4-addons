@@ -72,7 +72,7 @@ class DatabaseGraph:
         return self.db.execute(f"SELECT 1 FROM {ident(key.table)} WHERE {ident(key.field)}=?",
                                (key.value,)).fetchone() is not None
 
-    def add(self, table, value, owner, fields, rule, links=()):
+    def add(self, table, value, owner, fields, rule, links=(), keep=()):
         key = self.key(table, value)
         pk, columns = self.schema(table)
         if key in self.rows or self.exists(key):
@@ -81,7 +81,7 @@ class DatabaseGraph:
         if unknown:
             raise ValueError(f"Unknown native fields in {table}: {sorted(unknown)}")
         values = {column: fields[column] for column in columns if column in fields and column != pk}
-        values, filled = self.defaults.complete(table, pk, values)
+        values, filled = self.defaults.complete(table, pk, values, keep)
         values = {column: values[column] for column in columns if column in values}
         values[pk] = value
         self.rows[key] = Row(key, owner, values, rule, tuple(dict.fromkeys(links)), filled)

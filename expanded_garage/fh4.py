@@ -435,6 +435,56 @@ def uv(data, transform):
     return data * np.asarray(transform[1::2], dtype="<f4") + np.asarray(transform[::2], dtype="<f4")
 
 
+# Native seating over 706 cars (seat camera locator + CamCockpitOffset, relative to anchor_butt): the first-person
+# camera sits 0.693 m over the hips and 0.167 m behind them; the wheel spindle 0.336 m ahead of the hips.
+# CamCockpitOffsetY/Z correlate -0.63/-0.62 with the locator's own offset (they compensate it).
+NATIVE_EYE = (0.693, -0.167)
+NATIVE_WHEEL_REACH = 0.336
+COCKPIT_OFFSET_LIMITS = {"CamCockpitOffsetY": (-0.03, 0.08), "CamCockpitOffsetZ": (-0.14, 0.15)}
+
+
+def bone_world(bones, name):
+    index = next(i for i, b in enumerate(bones) if b.name == name)
+    matrix = np.eye(4)
+    while index >= 0:
+        matrix = matrix @ fh4_model.transform(bones[index].translation, bones[index].rotation)
+        index = bones[index].parent
+    return matrix[3, :3]
+
+
+def cockpit_camera_offsets(bones, locators, driver_side):
+    """({CameraOverrides column: value}, receipt): first-person camera offsets for this car's seating.
+
+    With the native median offsets the camera sat where natives put it relative to the hips, but FM4 places the
+    wheel 3-4 cm further ahead than native cars (0.373 vs 0.336 m), so the driver's IK pose leans forward and the
+    collar rose into the view at the widest FOV (owner, visual-52). The camera moves forward by that extra reach
+    and up to the native eye height, within the native 10-90 % range. EXPANDED_GARAGE_COCKPIT_CAMERA=native: medians."""
+    if os.environ.get("EXPANDED_GARAGE_COCKPIT_CAMERA") == "native":
+        return {}, None
+    names = {b.name for b in bones}
+    seat = next((item for item in locators if item["name"] == f"carLocator_seatCam{driver_side}F"), None)
+    if seat is None or not {"anchor_butt", "boneSteeringWheelSpindle"} <= names:
+        return {}, None
+    hips = bone_world(bones, "anchor_butt")
+    wheel = bone_world(bones, "boneSteeringWheelSpindle")
+    camera = np.asarray(seat["matrix"][12:15], dtype=float) - hips
+    reach = float(wheel[2] - hips[2])
+    raw = {"CamCockpitOffsetY": NATIVE_EYE[0] - camera[1],
+           "CamCockpitOffsetZ": (reach - NATIVE_WHEEL_REACH) + (NATIVE_EYE[1] - camera[2])}
+    out = {k: round(float(min(max(v, COCKPIT_OFFSET_LIMITS[k][0]), COCKPIT_OFFSET_LIMITS[k][1])), 3)
+           for k, v in raw.items()}
+    return out, {"seat_camera_from_hips_m": camera.tolist(), "wheel_reach_m": reach, "offsets": out}
+
+
+def mirror_uv(positions):
+    """UV0 of a mirror glass as native mirrors lay it (ACU_RSXTypeS_02, FOR_FiestaST_14 wing and rear-view
+    mirrors): u from car left to right (+X), v from top to bottom, 0..1 over the glass."""
+    low, high = positions.min(axis=0), positions.max(axis=0)
+    span = np.where(high - low < 1e-6, 1.0, high - low)
+    return np.stack(((positions[:, 0] - low[0]) / span[0], (high[1] - positions[:, 1]) / span[1]),
+                    axis=1).astype(np.float32)
+
+
 def load_draws(root, src):
     arrays = root / src["arrays"]
     if src["arrays"] != f'geometry/{src["raw"]}.npz' or sha256(arrays) != src["arrays_sha256"]:
@@ -451,6 +501,8 @@ def load_draws(root, src):
                 kind = "exterior" if role.startswith("exterior") else "brake" if role in ("caliper", "rotor") else role
                 binding = surface_binding(draw["material"],kind,section["name"])
                 uv0 = uv(vertices[p["uv0"]][ids], draw["uv_transform"][:4])
+                if binding.member.startswith("specificuse/mirror"):
+                    uv0 = mirror_uv(positions)
                 uv1 = uv(vertices[p["uv1"]][ids], draw["uv_transform"][4:])
                 indices = compact.reshape(-1, 3)
                 if binding.member.endswith("defrostlines.materialbin") and np.ptp(uv0, axis=0).max() < 0.01:
@@ -1174,6 +1226,7 @@ def make_models(root, ir, identity, library):
         extra, driver_rig["hood_locator"] = systems.hood_locator(
             extra, np.concatenate(bonnet) if bonnet else np.zeros((0, 3)))
         payloads["Locators.xml"] = systems.locator_xml(aliases, points, extra)
+        identity["cockpit_camera"], driver_rig["cockpit_camera"] = cockpit_camera_offsets(bones, extra, driver_side)
         locator_names = authored | {item["name"] for item in extra}
         avpins, driver_rig["autovista"] = fh4_driver_rig.autovista(points, locator_names, driver_side)
         # Bisection (visual-48): the Integra, which gets no .avpins (right-hand drive), shows rain drops; the

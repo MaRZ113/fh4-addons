@@ -296,6 +296,13 @@ def pack_streams(draw):
         # the pane in 0..1 and a small atlas window. The livery atlas there smeared dirt over the frit and
         # made it look matte (owner, visual-35).
         channels = [draw.uv0, *glass_channels(p, draw.uv1)]
+        if (draw.target_material.casefold() == GAUGE_COVER
+                and os.environ.get("EXPANDED_GARAGE_GAUGE_GLASS_UV") != "pane"):
+            # Native gauge covers (ACU_RSXTypeS_02 glassGaugePod: TEXCOORD2 only, 0.52-0.62 x 0.39-0.42) keep the
+            # glass masks' coordinates in a small window. Spread over 0..1, the whole dirt/drop mask showed on the
+            # small cover as a smeared texture over the dials (owner, visual-52).
+            unit = (channels[2] - 0.03) / 0.94
+            channels[2] = GAUGE_COVER_WINDOW[0] + unit * GAUGE_COVER_WINDOW[1]
     elif os.environ.get("EXPANDED_GARAGE_LIVERY_UV") != "off":
         # Native TEXCOORD3 is the livery/dirt atlas (left and right doors apart, matching LiveryMasks and
         # Textures/Damage). FM4's UV0 on paint is that atlas (92% of side triangles inside their FM4 mask).
@@ -413,6 +420,10 @@ def detail_uv(positions, normals, uv1, material):
         rows = axis == dominant
         projected[rows] = positions[rows][:, (u, v)]
     return projected * detail_density(material)
+
+
+GAUGE_COVER = "interior_glass/gls_clear.materialbin"
+GAUGE_COVER_WINDOW = (np.array([0.52, 0.39]), np.array([0.10, 0.03]))
 
 
 def glass_channels(positions, uv1):
