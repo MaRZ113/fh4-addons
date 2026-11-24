@@ -29,7 +29,9 @@ ATLASES = {"body": ("/nodamage_lod0.xds", "/nodamage.xds"), "lights": ("/lights_
 # Inner rim of a cabin badge's alpha that stays opaque, in texels of the 512 cockpit atlas (~1 mm each on the
 # RUF horn pad, logo strokes 8-12 texels wide).
 BADGE_EDGE_TEXELS = 2
-CABIN_BADGE_GLOSS = 0.7
+# Matte: at 0.7 the slightly tilted horn-pad quad caught the windscreen in its upper strokes only and the outline
+# read in two tones (owner, visual-55).
+CABIN_BADGE_GLOSS = 0.15
 
 
 def far_name(label):

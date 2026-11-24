@@ -341,8 +341,9 @@ AO_FOLDER = "Textures/AO/"
 AO_SKIP_PARTS = ("hood", "mirror", "glass", "cage")
 EXTERIOR_AO_SIDE = 128
 # Response of the exterior bake: linear visibility put our paint at a median of 210-219 against 149-173 under
-# native paint (ACU, Fiesta); v ** 2.6 lands the median, p25 and p75 on the native ones. Applied after the cache.
-EXTERIOR_AO_GAMMA = 2.6
+# native paint (ACU, Fiesta); v ** 2.6 matched those numbers but read too dark and patchy in game (owner,
+# visual-55). 1.5: paint median ~0.77. Applied after the cache.
+EXTERIOR_AO_GAMMA = 1.5
 AO_UNSHADED = set(GAUGE_FACES) | {"gauge_backing", "gauge_needle"}
 
 

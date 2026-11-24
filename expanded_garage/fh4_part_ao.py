@@ -453,7 +453,7 @@ def occluder_triangles(groups, glass=False):
 # cell (both sides of a panel apart), the cell values are smoothed in 3D across all models, and each texel reads
 # its cell: neighbouring charts and neighbouring models read the same field, so there are no seams.
 EXTERIOR_CELL = 0.02
-EXTERIOR_SMOOTH = 0.05      # metres, Gaussian sigma of the cell smoothing
+EXTERIOR_SMOOTH = 0.03      # metres, Gaussian sigma of the cell smoothing along the surface
 EXTERIOR_FLOOR = 5          # native maps bottom out at 5
 EXTERIOR_MAX_SIDE = 512
 
@@ -471,39 +471,52 @@ def ground_tiles(low, high, y, step=0.5):
 
 
 def _cell_keys(points, normals, cell):
-    index = np.floor(points / cell).astype(np.int64) + 2 ** 15
+    """Surface cells: `cell` across the surface, a quarter of it along the dominant normal axis, so a skin and
+    the parts 1-2 cm behind it (lamp housings, arch liners) never share a cell (owner, visual-55: their shadow
+    showed through the panels as blotches)."""
     axis = np.argmax(np.abs(normals), axis=1)
     sign = np.take_along_axis(normals, axis[:, None], axis=1)[:, 0] > 0
+    size = np.full(points.shape, cell)
+    size[np.arange(len(points)), axis] = cell / 4
+    index = np.floor(points / size).astype(np.int64) + 2 ** 17
     bucket = axis * 2 + sign
-    return ((index[:, 0] << 40) | (index[:, 1] << 24) | (index[:, 2] << 8) | bucket), index, bucket
+    return ((index[:, 0] << 44) | (index[:, 1] << 26) | (index[:, 2] << 8) | bucket), index, bucket
 
 
-def _smooth_cells(centres, normals, values, index, bucket, sigma):
-    """Gaussian average of the cell values over the 3x3x3 neighbourhood, all six normal buckets, weighted by
-    normal agreement (curved panels cross bucket borders without a step; the two faces of a sheet stay apart)."""
-    keys = (index[:, 0] << 40) | (index[:, 1] << 24) | (index[:, 2] << 8)
-    order = np.argsort(keys * 8 + bucket)
-    sorted_keys = (keys * 8 + bucket)[order]
-    total = np.zeros(len(values))
-    weight = np.zeros(len(values))
+def _neighbour_pairs(centres, reach):
+    """(i, j) of every pair of points in neighbouring hash cells of size `reach`, one 3x3x3 offset at a time."""
+    h = np.floor(centres / reach).astype(np.int64) + 2 ** 20
+    key = (h[:, 0] << 42) | (h[:, 1] << 21) | h[:, 2]
+    order = np.argsort(key, kind="stable")
+    unique, starts, counts = np.unique(key[order], return_index=True, return_counts=True)
     for dx in (-1, 0, 1):
         for dy in (-1, 0, 1):
             for dz in (-1, 0, 1):
-                shifted = keys + ((dx << 40) + (dy << 24) + (dz << 8))
-                for b in range(6):
-                    probe = shifted * 8 + b
-                    at = np.searchsorted(sorted_keys, probe)
-                    at = np.minimum(at, len(sorted_keys) - 1)
-                    hit = sorted_keys[at] == probe
-                    if not hit.any():
-                        continue
-                    j = order[at[hit]]
-                    i = np.nonzero(hit)[0]
-                    agree = np.clip(np.sum(normals[i] * normals[j], axis=1), 0, 1) ** 2
-                    d2 = np.sum((centres[i] - centres[j]) ** 2, axis=1)
-                    w = agree * np.exp(-d2 / (2 * sigma * sigma))
-                    np.add.at(total, i, w * values[j])
-                    np.add.at(weight, i, w)
+                target = key + ((dx << 42) + (dy << 21) + dz)
+                pos = np.minimum(np.searchsorted(unique, target), len(unique) - 1)
+                i = np.nonzero(unique[pos] == target)[0]
+                if not len(i):
+                    continue
+                n = counts[pos[i]]
+                ii = np.repeat(i, n)
+                first = np.repeat(starts[pos[i]], n)
+                within = np.arange(len(ii)) - np.repeat(np.cumsum(n) - n, n)
+                yield ii, order[first + within]
+
+
+def _smooth_cells(centres, normals, values, sigma, depth=0.004):
+    """Gaussian average of cell values along the surface: weight by normal agreement, tangential distance
+    (sigma) and distance off the cell's own plane (depth), so hidden parts behind a panel do not bleed in."""
+    total = np.zeros(len(values))
+    weight = np.zeros(len(values))
+    for i, j in _neighbour_pairs(centres, 2 * sigma):
+        agree = np.clip(np.sum(normals[i] * normals[j], axis=1), 0, 1) ** 2
+        d = centres[j] - centres[i]
+        dn = np.sum(d * normals[i], axis=1)
+        dt2 = np.maximum(np.sum(d * d, axis=1) - dn * dn, 0)
+        w = agree * np.exp(-dt2 / (2 * sigma * sigma) - dn * dn / (2 * depth * depth))
+        total += np.bincount(i, w * values[j], len(values))
+        weight += np.bincount(i, w, len(values))
     return np.where(weight > 0, total / np.maximum(weight, 1e-12), values)
 
 
@@ -522,10 +535,8 @@ def bake_exterior(models, occluders):
     centres = np.stack([np.bincount(inverse, points[:, k]) for k in range(3)], 1) / count[:, None]
     mean_n = np.stack([np.bincount(inverse, normals[:, k]) for k in range(3)], 1)
     mean_n /= np.maximum(np.linalg.norm(mean_n, axis=1, keepdims=True), 1e-9)
-    first = np.zeros(len(unique), int)
-    first[inverse[::-1]] = np.arange(len(inverse))[::-1]
     visibility = np.clip(occluders.visibility(centres, mean_n), 0, 1)
-    smooth = _smooth_cells(centres, mean_n, visibility, index[first], bucket[first], EXTERIOR_SMOOTH)
+    smooth = _smooth_cells(centres, mean_n, visibility, EXTERIOR_SMOOTH)
     texel = np.clip(255.0 * smooth[inverse], EXTERIOR_FLOOR, 255)
     out, at = [], 0
     for size, covered, pts, _ in rasters:
