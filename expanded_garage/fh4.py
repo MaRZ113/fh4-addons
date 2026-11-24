@@ -340,6 +340,9 @@ AO_FOLDER = "Textures/AO/"
 # (draw 38) since visual-30 and is shaded with the cabin it borders.
 AO_SKIP_PARTS = ("hood", "mirror", "glass", "cage")
 EXTERIOR_AO_SIDE = 128
+# Response of the exterior bake: linear visibility put our paint at a median of 210-219 against 149-173 under
+# native paint (ACU, Fiesta); v ** 2.6 lands the median, p25 and p75 on the native ones. Applied after the cache.
+EXTERIOR_AO_GAMMA = 2.6
 AO_UNSHADED = set(GAUGE_FACES) | {"gauge_backing", "gauge_needle"}
 
 
@@ -367,7 +370,7 @@ def unshaded_triangles(draw, exterior):
     return out
 
 
-def part_ao(alias, grouped, nonstock=frozenset(), exterior_sides=None):
+def part_ao(alias, grouped, nonstock=frozenset(), exterior_sides=None, corners=None):
     """Per-model AO maps for the cabin (fh4_part_ao): unwraps the cockpit components in place (TEXCOORD2)
     and returns ({(kind, key): Carbin AO path}, {member: swatchbin}). EXPANDED_GARAGE_PART_AO=off skips it."""
     if os.environ.get("EXPANDED_GARAGE_PART_AO") == "off":
@@ -403,22 +406,31 @@ def part_ao(alias, grouped, nonstock=frozenset(), exterior_sides=None):
         paths[("cockpit", key)] = folder + name + ".swatchbin"
     # Exterior models: native cars carry an AO map on every exterior model (ACU_RSXTypeS_02: bumperf_a_ao,
     # hood_*_ao, doorjambs_a_ao ...; panes none), read through the model's TEXCOORD2 unwrap (make_models).
-    # EXPANDED_GARAGE_EXTERIOR_AO=off keeps the empty Carbin AO record outside the cabin.
-    # Off by default since visual-48: the 128^2 chart maps showed seams and blotches on the panels (owner) and
-    # did not bring the rain drops. EXPANDED_GARAGE_EXTERIOR_AO=on bakes them.
-    if os.environ.get("EXPANDED_GARAGE_EXTERIOR_AO") == "on":
-        for key, side in sorted((exterior_sides or {}).items()):
-            if key.casefold() in nonstock or key.casefold().startswith("glass"):
-                continue
-            # Exterior occlusion is low-frequency (gaps, wells, the underside): 128^2 at most bakes 4x faster
-            # than the cabin's 256^2 (~25 models per car); the unwrap is resolution-free, only the padding narrows.
-            side = min(side, EXTERIOR_AO_SIDE)
-            draws = grouped["exterior"][key]
+    # Under native paint the map reads ~150 of 255 (ACU, Fiesta): without it our bodies took full indirect light
+    # and looked brighter than natives in the same paint (owner, visual-53). One bake for the whole car with the
+    # ground as occluder, smoothed in 3D across models (fh4_part_ao.bake_exterior; the visual-47 per-model chart
+    # maps showed seams). EXPANDED_GARAGE_EXTERIOR_AO=off keeps the empty Carbin AO record outside the cabin.
+    if os.environ.get("EXPANDED_GARAGE_EXTERIOR_AO") != "off" and exterior_sides and corners:
+        keys = [key for key in sorted(exterior_sides)
+                if key.casefold() not in nonstock and not key.casefold().startswith("glass")]
+        models = [(grouped["exterior"][key], exterior_sides[key]) for key in keys]
+        points = np.concatenate([d.positions for draws, _ in models for d in draws])
+        ground_y = min(c["origin_m"][1] - c["radius_m"] for c in corners.values())
+        pad = fh4_part_ao.FAR_REACH
+        ground = fh4_part_ao.ground_tiles(points[:, [0, 2]].min(0) - pad, points[:, [0, 2]].max(0) + pad, ground_y)
+        inputs = ("exterior-v1", opaque, glass, ground,
+                  [(side, [(d.lod, d.positions, d.normals, d.indices, d.uv2) for d in draws]) for draws, side in models])
+        flat = fh4_cache.cached_array(
+            "exterior-ao", (fh4_part_ao.__name__,), inputs,
+            lambda: fh4_part_ao.bake_exterior(models, fh4_part_ao.Occluders(np.concatenate([opaque, ground]), glass)))
+        at = 0
+        for key, (draws, side) in zip(keys, models):
+            size = min(side, fh4_part_ao.EXTERIOR_MAX_SIDE)
+            image = flat[at:at + size * size].reshape(size, size)
+            at += size * size
+            if (gamma := float(os.environ.get("EXPANDED_GARAGE_EXTERIOR_AO_GAMMA", EXTERIOR_AO_GAMMA))) != 1.0:
+                image = np.clip(np.rint(255.0 * (image / 255.0) ** gamma), fh4_part_ao.EXTERIOR_FLOOR, 255).astype(np.uint8)
             name = "ext_" + re.sub(r"[^a-z0-9_]+", "_", key.lower()).strip("_") + "_ao"
-            inputs = (opaque, glass, side, [(d.lod, d.positions, d.normals, d.indices, d.uv2, None)
-                                            for d in draws])
-            image = fh4_cache.cached_array("part-ao", (fh4_part_ao.__name__,), inputs,
-                                           lambda: fh4_part_ao.bake(draws, occluders(), side, None))
             payloads[AO_FOLDER + name + ".swatchbin"] = fh4_part_ao.texture(name, image)
             paths[("exterior", key)] = folder + name + ".swatchbin"
     return paths, payloads
@@ -977,7 +989,7 @@ def make_models(root, ir, identity, library):
         car_parameters[needle_key] = (version, fh4_mtpr.patch(block, {"EmissiveColorColorParam": (*glow, 1.0)}, version))
     ao_paths, ao_payloads = part_ao(identity["media_name"], grouped,
                                     {n.casefold() for part in contract.parts if not part.stock for n in part.components},
-                                    exterior_sides)
+                                    exterior_sides, corners)
     aliases = identity["media_name"].lower()
     attachments, animation_payloads, motion = native_rig.bind_motion(aliases,ir,bones,points,grouped)
     driver_side = driver_side_from(grouped)

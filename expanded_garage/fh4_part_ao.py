@@ -442,3 +442,100 @@ def occluder_triangles(groups, glass=False):
         finest = min(d.lod for d in opaque)
         out += [d.positions[d.indices].astype(np.float64) for d in opaque if d.lod == finest]
     return np.concatenate(out) if out else np.zeros((0, 3, 3))
+
+
+# --- exterior -----------------------------------------------------------------------------------------------
+# Native exterior maps are a full-range bake: under ACU/Fiesta paint (28 / 5 m2) p25 ~100, median 149-173, p90
+# ~255 (scratchpad native_ao.py, TEXCOORD2 of the native meshes into their own maps). Open roofs stay white, doors
+# see the ground (~150-170), sills and wells go dark. Our per-model chart bake (visual-47) showed seams and
+# blotches: 128^2 maps left the 4-texel padding at under one texel, and every texel carried its own ray noise.
+# Here every exterior model of the car is rasterised at up to 512^2, the rays are cast once per 2 cm surface
+# cell (both sides of a panel apart), the cell values are smoothed in 3D across all models, and each texel reads
+# its cell: neighbouring charts and neighbouring models read the same field, so there are no seams.
+EXTERIOR_CELL = 0.02
+EXTERIOR_SMOOTH = 0.05      # metres, Gaussian sigma of the cell smoothing
+EXTERIOR_FLOOR = 5          # native maps bottom out at 5
+EXTERIOR_MAX_SIDE = 512
+
+
+def ground_tiles(low, high, y, step=0.5):
+    """Triangles of the ground plane y under the car (x/z bounds low..high), in tiles small enough to voxelise."""
+    xs = np.arange(low[0], high[0] + step, step)
+    zs = np.arange(low[1], high[1] + step, step)
+    out = []
+    for x in xs[:-1]:
+        for z in zs[:-1]:
+            a, b, c, d = (x, y, z), (x + step, y, z), (x + step, y, z + step), (x, y, z + step)
+            out += [(a, b, c), (a, c, d)]
+    return np.asarray(out, dtype=np.float64)
+
+
+def _cell_keys(points, normals, cell):
+    index = np.floor(points / cell).astype(np.int64) + 2 ** 15
+    axis = np.argmax(np.abs(normals), axis=1)
+    sign = np.take_along_axis(normals, axis[:, None], axis=1)[:, 0] > 0
+    bucket = axis * 2 + sign
+    return ((index[:, 0] << 40) | (index[:, 1] << 24) | (index[:, 2] << 8) | bucket), index, bucket
+
+
+def _smooth_cells(centres, normals, values, index, bucket, sigma):
+    """Gaussian average of the cell values over the 3x3x3 neighbourhood, all six normal buckets, weighted by
+    normal agreement (curved panels cross bucket borders without a step; the two faces of a sheet stay apart)."""
+    keys = (index[:, 0] << 40) | (index[:, 1] << 24) | (index[:, 2] << 8)
+    order = np.argsort(keys * 8 + bucket)
+    sorted_keys = (keys * 8 + bucket)[order]
+    total = np.zeros(len(values))
+    weight = np.zeros(len(values))
+    for dx in (-1, 0, 1):
+        for dy in (-1, 0, 1):
+            for dz in (-1, 0, 1):
+                shifted = keys + ((dx << 40) + (dy << 24) + (dz << 8))
+                for b in range(6):
+                    probe = shifted * 8 + b
+                    at = np.searchsorted(sorted_keys, probe)
+                    at = np.minimum(at, len(sorted_keys) - 1)
+                    hit = sorted_keys[at] == probe
+                    if not hit.any():
+                        continue
+                    j = order[at[hit]]
+                    i = np.nonzero(hit)[0]
+                    agree = np.clip(np.sum(normals[i] * normals[j], axis=1), 0, 1) ** 2
+                    d2 = np.sum((centres[i] - centres[j]) ** 2, axis=1)
+                    w = agree * np.exp(-d2 / (2 * sigma * sigma))
+                    np.add.at(total, i, w * values[j])
+                    np.add.at(weight, i, w)
+    return np.where(weight > 0, total / np.maximum(weight, 1e-12), values)
+
+
+def bake_exterior(models, occluders):
+    """models: [(draws, side)] -> one flat uint8 array of every model's side x side map, in order."""
+    rasters = []
+    for draws, side in models:
+        size = min(side, EXTERIOR_MAX_SIDE)
+        covered, points, normals, _ = rasterise(draws, size)
+        rasters.append((size, covered, points, normals))
+    points = np.concatenate([r[2] for r in rasters if len(r[2])])
+    normals = np.concatenate([r[3] for r in rasters if len(r[3])])
+    keys, index, bucket = _cell_keys(points, normals, EXTERIOR_CELL)
+    unique, inverse = np.unique(keys, return_inverse=True)
+    count = np.bincount(inverse).astype(np.float64)
+    centres = np.stack([np.bincount(inverse, points[:, k]) for k in range(3)], 1) / count[:, None]
+    mean_n = np.stack([np.bincount(inverse, normals[:, k]) for k in range(3)], 1)
+    mean_n /= np.maximum(np.linalg.norm(mean_n, axis=1, keepdims=True), 1e-9)
+    first = np.zeros(len(unique), int)
+    first[inverse[::-1]] = np.arange(len(inverse))[::-1]
+    visibility = np.clip(occluders.visibility(centres, mean_n), 0, 1)
+    smooth = _smooth_cells(centres, mean_n, visibility, index[first], bucket[first], EXTERIOR_SMOOTH)
+    texel = np.clip(255.0 * smooth[inverse], EXTERIOR_FLOOR, 255)
+    out, at = [], 0
+    for size, covered, pts, _ in rasters:
+        image = np.full((size, size), 255.0)
+        image[covered] = texel[at:at + len(pts)]
+        at += len(pts)
+        # One 3x3 box pass inside the charts softens the 2 cm cell steps; padding then copies chart edges.
+        total = sum(np.roll(np.roll(np.where(covered, image, 0), dy, 0), dx, 1) for dy in (-1, 0, 1) for dx in (-1, 0, 1))
+        n = sum(np.roll(np.roll(covered, dy, 0), dx, 1) for dy in (-1, 0, 1) for dx in (-1, 0, 1))
+        image = np.where(covered, total / np.maximum(n, 1), image)
+        image, _ = dilate(image, covered, PADDING + 4)
+        out.append(np.clip(np.rint(image), 0, 255).astype(np.uint8).ravel())
+    return np.concatenate(out) if out else np.zeros(0, np.uint8)
