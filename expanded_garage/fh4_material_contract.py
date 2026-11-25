@@ -177,11 +177,11 @@ def surface_binding(label, component_kind="", component=""):
         return bind("wheelmaterials/paint_matteblack",MaterialUse.RUNTIME)
     if name == "wheel_black":
         return bind("specificuse/backfacinggeo",MaterialUse.RUNTIME)
-    if name == "blur_lip":
+    if name in ("blur_lip", "chrome_blur_lip"):
         return bind("specificuse/wheel_blurlip",MaterialUse.RUNTIME,True)
     if name in {"rim","outer_rim"}:
         return bind("wheelmaterials/aluminum_machined_satin",MaterialUse.RUNTIME)
-    if name == "blur_rim":
+    if name in ("blur_rim", "chrome_blur_rim"):
         # Native blurRim meshes: specificuse/wheel_blur, translucent (bucket 28), shown by the game at speed.
         return bind("specificuse/wheel_blur",MaterialUse.RUNTIME,True)
     if name in {"caliper","brake","rotor","hub","metal"}:
@@ -258,6 +258,12 @@ def surface_binding(label, component_kind="", component=""):
         # Dial faces: native int_gauges with the car's own dial texture (fh4.gauge_texture_parameters).
         return bind("interior_misc/int_gauges",MaterialUse.EFFECT,fidelity="source_dial_texture")
     if name == "digital_gauge":
+        # int_symbols_emissive without a texture showed the game's Forza-logo placeholder (owner, visual-61: Prius,
+        # Leaf, PTG BMW). FM4 digital dashes are not in the cabin atlas: digitalgauge/dash_<car>.bgf/.bsg/.fbf is a
+        # vector scene composed at runtime from sprite .xds pieces into the screen's own 0..1 UV space. Until that is
+        # converted the screen is an unlit dark display. EXPANDED_GARAGE_DIGITAL_GAUGE=symbols: the old binding.
+        if os.environ.get("EXPANDED_GARAGE_DIGITAL_GAUGE") != "symbols":
+            return bind("interior_plastic/plastic",fidelity="digital_dash_unlit_pending_bgf")
         return bind("interior_misc/int_symbols_emissive",MaterialUse.EFFECT,fidelity="missing_instrument_emissive_texture")
     if name in MIRROR_SURFACES and os.environ.get("EXPANDED_GARAGE_MIRRORS") != "chrome":
         # FM4 mirrorLeft/Right/Middle are the mirror glass. Bound to chrome they showed the blurred environment

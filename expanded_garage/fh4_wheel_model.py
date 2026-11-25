@@ -58,7 +58,8 @@ def rim_radii(draws):
 
 # FM4 speed-blur meshes map to the native blur meshes the game shows in motion instead of wheel_*:
 # blurRim (specificuse/wheel_blur) and blurLip (specificuse/wheel_blurlip), both translucent.
-BLUR_NAMES = {"blur_rim": "blurRim", "blur_lip": "blurLip"}
+# Chrome wheels name them chrome_blur_* (SAL_S281_06: drawn as solid chrome discs, owner visual-61).
+BLUR_NAMES = {"blur_rim": "blurRim", "blur_lip": "blurLip", "chrome_blur_rim": "blurRim", "chrome_blur_lip": "blurLip"}
 
 
 def mesh_name(draw):

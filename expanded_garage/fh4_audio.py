@@ -305,6 +305,10 @@ def donor(mapping_text, db, cylinders_id, aspiration_id, power, excluded=frozens
     return min(candidates)[1]
 
 
+EV_SOUND = "RIM_Concept2_19"
+CRLF = "\r\n"
+
+
 def mapping_entry(media, engine, bank, assets, packs):
     lines = [f'    <Engine mediaName="{media}" engineName="{engine}">',
              f'        <GranularEngine granularBank="{bank}" granularAssets="{assets}" rpmScalar="1">']
@@ -343,15 +347,21 @@ def compile_fleet(build, vehicles, baseline_db, compiled_db, mapping_path, vgmst
         for vehicle in vehicles:
             media = vehicle.identity["media_name"]
             tunings = fm4_tunings(vehicle.root, vehicle.ir)
-            if not tunings:
-                continue
             engine_row = compiled.execute(
                 "SELECT CylinderID, AspirationID_Stock, EngineGraphingMaxPower FROM Data_Engine WHERE MediaName=?",
                 (media,)).fetchone()
             if engine_row is None:
-                # Electric car: no cylinder/aspiration to match a granular donor; the game's fallback sound for now.
+                # Electric car: the native EVs borrow the Rimac's sound (JAG_IPACE_18, VW_94_IDR_18 -> RIM_Concept2_19).
+                entries.append(f'    <Engine mediaName="{media}" engineName="{EV_SOUND}" />' + CRLF)
+                cars.append({"media_name": media, "engine_donor": EV_SOUND, "electric": True, "packs": {}})
                 continue
             engine, bank, assets = donor(mapping_text, base, *engine_row, excluded=excluded)
+            if not tunings:
+                # No FM4 engine tuning for this car (SAL_S281_06 played no engine at all): the donor's own sound.
+                entries.append(f'    <Engine mediaName="{media}" engineName="{engine}" />' + CRLF)
+                cars.append({"media_name": media, "engine_donor": engine, "granular_bank": bank,
+                             "granular_assets": assets, "packs": {}, "source_tuning": None})
+                continue
             packs = {}
             for emitter, emission in EMITTERS:
                 source = tunings.get(emission) or next(iter(tunings.values()))
