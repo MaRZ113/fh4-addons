@@ -1,0 +1,52 @@
+{
+ "format": "fh4-material-parameters-v1",
+ "donor": "FOR_FiestaST_14",
+ "donor_sha256": "149d8668b9a287e203ff677713090a5ee8dea2bac2c1d1c50cbd22b579dd8565",
+ "parameters": {
+  "exterior_glass/gls_colored.materialbin": {
+   "donor_material": "gls_red",
+   "donor_member": "scene/Exterior/SecondaryLights/glassLTL_a.modelbin",
+   "mtpr": "010300bfd925190193ccb26f78b7ee4a867e14089db8e5744d279c3e61eb463bb4221f3a0000803f4fb014dd0000000000000000"
+  },
+  "exterior_glass/gls_rearglass.materialbin": {
+   "donor_material": "gls_window",
+   "donor_member": "scene/Exterior/Windows/glassR_a.modelbin",
+   "mtpr": "00000000000000000000000000"
+  },
+  "exterior_glass/gls_window.materialbin": {
+   "donor_material": "gls_window",
+   "donor_member": "scene/Exterior/Windows/glassLFSmall_a.modelbin",
+   "mtpr": "010300bfd92519011b5ef9cce3c55547ac003f2c9a05738f6fa5c03e9365f83e9365f83e0000803f7e3bf39d0000000000000000"
+  },
+  "exterior_glass/gls_windsheild.materialbin": {
+   "donor_material": "gls_window",
+   "donor_member": "scene/Exterior/Windows/glassF_a.modelbin",
+   "mtpr": "00000000000000000000000000"
+  },
+  "exterior_misc/defrostlines.materialbin": {
+   "donor_material": "defrostlines_001",
+   "donor_member": "scene/Exterior/Windows/glassR_a.modelbin",
+   "mtpr": "010300be3916f50160897639ac2de04081ca18fd5925f2889018783ed683a83d282d793c0000000095a360cc0000000000000000"
+  },
+  "interior_glass/gls_window_interior.materialbin": {
+   "donor_material": "gls_window",
+   "donor_member": "scene/interior/InteriorWindows/glassLFInt_a.modelbin",
+   "mtpr": "01030077f7301f01144d0a2c7cbd674c8e4ca4596dfdbba6d2c0403fd2c0403fd2c0403f0000803fc5eea8a00000000000000000"
+  },
+  "interior_glass/gls_windsheild_interior.materialbin": {
+   "donor_material": "gls_window",
+   "donor_member": "scene/interior/InteriorWindows/glassFInt_a.modelbin",
+   "mtpr": "01030077f7301f011790f30fda95174187544f58de1fa678d2c0403fd2c0403fd2c0403f0000803f93171a880000000000000000"
+  },
+  "interior_misc/defrostlines.materialbin": {
+   "donor_material": "defrostlines_001",
+   "donor_member": "scene/interior/InteriorWindows/glassRInt_a.modelbin",
+   "mtpr": "010300be3916f50160897639ac2de04081ca18fd5925f2889018783ed683a83d282d793c0000000095a360cc0000000000000000"
+  },
+  "specificuse/blackglass.materialbin": {
+   "donor_material": "blackGlass",
+   "donor_member": "scene/Exterior/Windows/glassF_a.modelbin",
+   "mtpr": "00000000000000000000000000"
+  }
+ }
+}

@@ -8,6 +8,7 @@ from .vehicle_ir import media_name
 
 
 ID_MIN, ID_MAX = 12000, 19999
+FH1_PILOT_ID_MIN = 12040
 
 
 def snapshot(path):
@@ -48,7 +49,8 @@ def reserve(registry, target, vehicle):
             alias = prior_alias
         else:
             occupied.update(r[0] for r in db.execute("SELECT car_id FROM identity"))
-            ordinal = next((i for i in range(ID_MIN, ID_MAX + 1) if i not in occupied and i * 1000 not in body_ids), None)
+            start = FH1_PILOT_ID_MIN if vehicle["source_game"] == "fh1" else ID_MIN
+            ordinal = next((i for i in range(start, ID_MAX + 1) if i not in occupied and i * 1000 not in body_ids), None)
             if ordinal is None:
                 raise ValueError("Expanded Garage ID range exhausted")
             db.execute("INSERT INTO identity VALUES (?, ?, ?, ?)", (key, vehicle["source_id"], ordinal, alias))

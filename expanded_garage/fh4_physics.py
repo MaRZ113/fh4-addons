@@ -119,6 +119,12 @@ def stock_mechanical(rows):
     camshaft = next((r for r in rows_for(rows, "List_UpgradeEngineCamshaft") if r["IsStock"] == 1), None)
     curve = next((r for r in rows_for(rows, "List_TorqueCurve")
                   if camshaft and r["TorqueCurveID"] == camshaft["TorqueCurveFullThrottleID"]), None)
+    motor = next(iter(rows_for(rows, "Data_Motor")), None)
+    if camshaft is None and motor is not None:
+        # Electric car (NIS_Leaf_11): the motor's own curve over 0..RedlineRPM.
+        camshaft = {"TorqueCurveMaxRPM": motor["RedlineRPM"], "RedlineRPM": motor["RedlineRPM"]}
+        curve = next((r for r in rows_for(rows, "List_TorqueCurve")
+                      if r["TorqueCurveID"] == motor["TorqueCurveFullThrottleID"]), None)
     result = {}
     if weight:
         result["curb_mass_kg"] = weight["Mass"]

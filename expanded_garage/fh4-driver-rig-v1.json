@@ -1,0 +1,1906 @@
+{
+ "format": "fh4-driver-rig-v1",
+ "donor": "FOR_FiestaST_14",
+ "donor_sha256": "149d8668b9a287e203ff677713090a5ee8dea2bac2c1d1c50cbd22b579dd8565",
+ "driver_side": "L",
+ "steering_spindle_m": [
+  -0.342113,
+  0.774632,
+  0.269915
+ ],
+ "bones": [
+  {
+   "name": "anchor_butt",
+   "parent": "root",
+   "rotation": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "offset_from_steering_m": [
+    -0.001968,
+    -0.436621,
+    -0.372561
+   ]
+  },
+  {
+   "name": "boneBrake",
+   "parent": "root",
+   "rotation": [
+    -0.49999999999999334,
+    0.49999999999999334,
+    0.5000000814603425,
+    0.49999991853965753
+   ],
+   "offset_from_steering_m": [
+    0.014447,
+    -0.163253,
+    0.541087
+   ]
+  },
+  {
+   "name": "anchor_brake",
+   "parent": "boneBrake",
+   "rotation": [
+    0.5000000372529371,
+    -0.5000000372528661,
+    -0.4999998096139954,
+    0.5000001158801489
+   ],
+   "local_m": [
+    0.038053,
+    0.014806,
+    -0.289538
+   ]
+  },
+  {
+   "name": "boneClutch",
+   "parent": "root",
+   "rotation": [
+    -0.49999999999999334,
+    0.49999999999999334,
+    0.5000000814603425,
+    0.49999991853965753
+   ],
+   "offset_from_steering_m": [
+    -0.154536,
+    -0.224092,
+    0.642975
+   ]
+  },
+  {
+   "name": "anchor_clutch",
+   "parent": "boneClutch",
+   "rotation": [
+    0.5000000372529371,
+    -0.5000000372528661,
+    -0.4999998096139954,
+    0.5000001158801489
+   ],
+   "local_m": [
+    0.154963,
+    -0.032392,
+    -0.228632
+   ]
+  },
+  {
+   "name": "boneGas",
+   "parent": "root",
+   "rotation": [
+    -0.49999999999999334,
+    0.49999999999999334,
+    0.5000000814603425,
+    0.49999991853965753
+   ],
+   "offset_from_steering_m": [
+    0.057548,
+    -0.217436,
+    0.650722
+   ]
+  },
+  {
+   "name": "anchor_gas",
+   "parent": "boneGas",
+   "rotation": [
+    0.5000000372529371,
+    -0.5000000372528661,
+    -0.4999998096139954,
+    0.5000001158801489
+   ],
+   "local_m": [
+    0.1397,
+    -0.031353,
+    -0.248708
+   ]
+  },
+  {
+   "name": "anchor_shifter",
+   "parent": "root",
+   "rotation": [
+    0.00017263349150062197,
+    -0.0,
+    -0.0,
+    0.9999999850988387
+   ],
+   "offset_from_steering_m": [
+    0.355314,
+    -0.209508,
+    0.067995
+   ]
+  },
+  {
+   "name": "anchor_lefthand",
+   "parent": "boneSteeringWheelSpindle",
+   "rotation": [
+    -0.00017263348892818253,
+    -0.00017263348892818253,
+    -0.0,
+    0.999999970197678
+   ],
+   "local_m": [
+    -0.169364,
+    1e-06,
+    -0.0
+   ]
+  },
+  {
+   "name": "anchor_righthand",
+   "parent": "boneSteeringWheelSpindle",
+   "rotation": [
+    -0.00017263348892818253,
+    -0.00017263348892818253,
+    -0.0,
+    0.999999970197678
+   ],
+   "local_m": [
+    0.173195,
+    1e-06,
+    -0.0
+   ]
+  }
+ ],
+ "ik_anchor_xml": "\r\n<IKAnchorBones Version=\"2\" HandGripAmount=\"0.267000\">\r\n  <Bone Version=\"2\" Name=\"anchor_gas\" OffsetX=\"0.000000\" OffsetY=\"-0.025000\" OffsetZ=\"0.080000\"/>\r\n  <Bone Version=\"2\" Name=\"anchor_clutch\" OffsetX=\"0.000000\" OffsetY=\"-0.062000\" OffsetZ=\"0.100000\"/>\r\n  <Bone Version=\"2\" Name=\"anchor_shifter\" OffsetX=\"-0.020000\" OffsetY=\"0.000000\" OffsetZ=\"-0.080000\"/>\r\n  <Bone Version=\"2\" Name=\"anchor_righthand\" OffsetX=\"0.004000\" OffsetY=\"-0.004000\" OffsetZ=\"0.004000\"/>\r\n  <Bone Version=\"2\" Name=\"anchor_lefthand\" OffsetX=\"-0.007000\" OffsetY=\"-0.008000\" OffsetZ=\"0.008000\"/>\r\n  <Bone Version=\"2\" Name=\"anchor_butt\" OffsetX=\"0.000000\" OffsetY=\"0.015000\" OffsetZ=\"0.044000\"/>\r\n</IKAnchorBones>",
+ "locators": [
+  {
+   "name": "Audio_Engine",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.56771,
+    1.47882,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "Audio_Exhaust",
+   "donor_bone": "<root>",
+   "matrix": [
+    -1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.347633,
+    0.113275,
+    -1.918197,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "Audio_Intake",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.56771,
+    1.47882,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_bumperF",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.254271,
+    2.123708,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_bumperR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.276072,
+    -2.017825,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_dashboard",
+   "donor_bone": "<root>",
+   "matrix": [
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    0.761888,
+    0.398734,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_doorHandleIntLF",
+   "donor_bone": "boneDoorLF",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.638255,
+    0.738305,
+    0.3756,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_doorHandleIntLR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.658144,
+    0.790567,
+    -0.496201,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_doorHandleIntRF",
+   "donor_bone": "boneDoorRF",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.63826,
+    0.738305,
+    0.3756,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_doorHandleIntRR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.65814,
+    0.790567,
+    -0.496081,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_doorHandleLF",
+   "donor_bone": "boneDoorLF",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.885551,
+    0.693039,
+    -0.062683,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_doorHandleLR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.846553,
+    0.767487,
+    -1.047803,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_doorHandleRF",
+   "donor_bone": "boneDoorRF",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.88555,
+    0.693039,
+    -0.062683,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_doorHandleRR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.84655,
+    0.767487,
+    -1.047803,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_doorLF",
+   "donor_bone": "boneDoorLF",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.870091,
+    0.560805,
+    0.215591,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_doorLR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.857473,
+    0.560805,
+    -0.656119,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_doorRF",
+   "donor_bone": "boneDoorRF",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.87009,
+    0.560805,
+    0.215591,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_doorRR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.85747,
+    0.560805,
+    -0.656119,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_drivetrain",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    -0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    -0.0,
+    0.0,
+    0.00891,
+    0.583259,
+    0.333101,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_Engine",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.567714,
+    1.478823,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_engineSmoke",
+   "donor_bone": "<root>",
+   "matrix": [
+    -1e-06,
+    0.0,
+    -0.999998,
+    0.0,
+    0.999998,
+    0.0,
+    -1e-06,
+    0.0,
+    0.0,
+    0.999998,
+    0.0,
+    0.0,
+    1e-06,
+    -0.008298,
+    -1.288313,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_engineStartStop",
+   "donor_bone": "<root>",
+   "matrix": [
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.186455,
+    0.755987,
+    0.507329,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_entryDoorLF",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.709175,
+    1.019535,
+    -0.266212,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_entryDoorLR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.811944,
+    0.988467,
+    -1.127404,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_entryDoorRF",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.70918,
+    1.022557,
+    -0.264652,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_entryDoorRR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.792832,
+    0.981152,
+    -1.126677,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_Exhaust_001",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.999997,
+    0.0,
+    0.002232,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -0.002232,
+    0.0,
+    -0.999997,
+    0.0,
+    0.305037,
+    0.114024,
+    -1.932193,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_Exhaust_002",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.99877,
+    0.0,
+    0.049592,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -0.049592,
+    0.0,
+    -0.99877,
+    0.0,
+    0.388368,
+    0.114024,
+    -1.932193,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_gauges",
+   "donor_bone": "<root>",
+   "matrix": [
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.340937,
+    0.810218,
+    0.551391,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_headlightL",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.58358,
+    0.572317,
+    1.872009,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_headlightR",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.583576,
+    0.572317,
+    1.872009,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_hood",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.671872,
+    1.589039,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_lookCloseCenter",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.757127,
+    1.469468,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_lookCloseLeft",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.407391,
+    0.757127,
+    1.469468,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_lookCloseRight",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.384563,
+    0.757126,
+    1.469468,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_lookLeft",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.407391,
+    0.720032,
+    1.705579,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_lookRight",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.384563,
+    0.720032,
+    1.705642,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_quarterPanelLF",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.86727,
+    0.576003,
+    1.260031,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_quarterPanelLR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.866264,
+    0.608603,
+    -1.262072,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_quarterPanelRR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.86626,
+    0.608603,
+    -1.262072,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_quarterPaneRF",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.86727,
+    0.576003,
+    1.260031,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_seatCamLF",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.352773,
+    0.992123,
+    -0.266511,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_seatCamLR",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.33729,
+    0.998284,
+    -1.078551,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_seatCamRF",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.35277,
+    0.992123,
+    -0.266511,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_seatCamRR",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.337286,
+    0.998284,
+    -1.078551,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_skirtL",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.870265,
+    0.0799,
+    0.0,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_skirtR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.87026,
+    0.0799,
+    0.0,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_steeringWheel",
+   "donor_bone": "<root>",
+   "matrix": [
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.340016,
+    0.777328,
+    0.238329,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_taillightL",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.999961,
+    0.0,
+    0.008796,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -0.008796,
+    0.0,
+    -0.999961,
+    0.0,
+    -0.618534,
+    0.852404,
+    -1.768736,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_taillightR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.999944,
+    0.0,
+    0.010604,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -0.010604,
+    0.0,
+    -0.999944,
+    0.0,
+    0.61853,
+    0.852404,
+    -1.768736,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_trunk",
+   "donor_bone": "<root>",
+   "matrix": [
+    -1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    1.072417,
+    -1.686469,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_trunkHandle",
+   "donor_bone": "<root>",
+   "matrix": [
+    -1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.528089,
+    -1.923629,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_wheelLF",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.879762,
+    0.123,
+    1.260922,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_wheelLR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.859592,
+    0.122217,
+    -1.261585,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_wheelRF",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.87976,
+    0.123,
+    1.263034,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_wheelRR",
+   "donor_bone": "<root>",
+   "matrix": [
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.85959,
+    0.122217,
+    -1.261585,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "carLocator_wing",
+   "donor_bone": "<root>",
+   "matrix": [
+    -1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -0.0,
+    0.0,
+    -1.0,
+    0.0,
+    -0.0,
+    1.232878,
+    -1.853239,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "Handbrake",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.040451,
+    0.443321,
+    0.158829,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "root",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  },
+  {
+   "name": "stickShift",
+   "donor_bone": "<root>",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.00891,
+    0.58326,
+    0.331,
+    1.0
+   ],
+   "upgrade": {
+    "IsUpgradable": "1",
+    "PartType": "CarBody",
+    "UpgradeLevel": "4294967295",
+    "PartId": "-1",
+    "ParentUpgradeId": "-1"
+   }
+  }
+ ]
+}

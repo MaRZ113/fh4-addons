@@ -1,0 +1,10479 @@
+{
+ "format": "fh4-render-buckets-v1",
+ "cars": 197,
+ "step": 4,
+ "materials": {
+  "ambrake/chrome_satin.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "ambrake/metalpainted_metalic_001.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "ambrake/rotor_solidcarbonceramic_001.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "amw_badges/52_badge_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "amw_badges/5zi_emblem_003.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "amw_badges/adv_badge_003.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "amw_badges/apracing_emblem_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "amw_badges/bbs_emblem_001.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "amw_badges/cen_badge_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "amw_badges/com_badge_001.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "amw_badges/com_emblem_007.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "amw_badges/cra_badge_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "amw_badges/enk_badge_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "amw_badges/enk_badge_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "amw_badges/esm_badge_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "amw_badges/hon_badge_008.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "amw_badges/hre_badge_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "amw_badges/int_emblem_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "amw_badges/john_cooper_works_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "amw_badges/rov_badge_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "brakes/chrome.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "brakes/gunmetal_rgh_001.materialbin": {
+   "counts": {
+    "17": 24
+   },
+   "translucent": 17
+  },
+  "brakes/metal.materialbin": {
+   "counts": {
+    "17": 64
+   },
+   "translucent": 17
+  },
+  "brakes/metal_rgh.materialbin": {
+   "counts": {
+    "17": 131
+   },
+   "translucent": 17
+  },
+  "brakes/metalpainted_metalic_001.materialbin": {
+   "counts": {
+    "17": 28
+   },
+   "translucent": 17
+  },
+  "brakes/plastic.materialbin": {
+   "counts": {
+    "17": 14
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_carbon_drilled_036.materialbin": {
+   "counts": {
+    "17": 24
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_001.materialbin": {
+   "counts": {
+    "17": 71
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_002.materialbin": {
+   "counts": {
+    "17": 26
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_004.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_005.materialbin": {
+   "counts": {
+    "17": 28
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_007.materialbin": {
+   "counts": {
+    "17": 68
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_008.materialbin": {
+   "counts": {
+    "17": 28
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_010.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_012.materialbin": {
+   "counts": {
+    "17": 44
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_015.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_016.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_021.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_022.materialbin": {
+   "counts": {
+    "17": 60
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_023.materialbin": {
+   "counts": {
+    "17": 32
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_026.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_027.materialbin": {
+   "counts": {
+    "17": 12
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_028.materialbin": {
+   "counts": {
+    "17": 20
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_029.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_030.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_035.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_037.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_058.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_141.materialbin": {
+   "counts": {
+    "17": 24
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilled_144.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilledcarbonceramic_001.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilledcarbonceramic_010.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilledcarbonceramic_matte_001.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilledcarbonceramic_matte_003.materialbin": {
+   "counts": {
+    "17": 40
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_drilledcarbonceramic_matte_004.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_edge_001.materialbin": {
+   "counts": {
+    "17": 1235
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_edge_002.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_edge_004.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_edge_005.materialbin": {
+   "counts": {
+    "17": 12
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_edge_011.materialbin": {
+   "counts": {
+    "17": 28
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_edgecarbonceramic_001.materialbin": {
+   "counts": {
+    "17": 32
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_edgecarbonceramic_021.materialbin": {
+   "counts": {
+    "17": 14
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_slotted_031.materialbin": {
+   "counts": {
+    "17": 28
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_solid_001.materialbin": {
+   "counts": {
+    "17": 691
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_solid_001_re_updated.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_solid_001_updated.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_solid_dull_001.materialbin": {
+   "counts": {
+    "17": 112
+   },
+   "translucent": 17
+  },
+  "brakes/rotor_solidcarbonceramic_001.materialbin": {
+   "counts": {
+    "17": 38
+   },
+   "translucent": 17
+  },
+  "carcolors/alpinewhite.materialbin": {
+   "counts": {
+    "17": 26
+   },
+   "translucent": 17
+  },
+  "carcolors/arcticaluminum.materialbin": {
+   "counts": {
+    "17": 37
+   },
+   "translucent": 17
+  },
+  "carcolors/atlasgreymetallic_porsche.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "carcolors/baroloblackmet.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "carcolors/black.materialbin": {
+   "counts": {
+    "17": 80
+   },
+   "translucent": 17
+  },
+  "carcolors/blacknis.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "carcolors/bladesilvermetallic.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "carcolors/canyonbeigemet.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "carcolors/cashmeresilvermet.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "carcolors/chromesilvermet.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "carcolors/darkgreymetallic.materialbin": {
+   "counts": {
+    "17": 24
+   },
+   "translucent": 17
+  },
+  "carcolors/fer599gtomatteblackroof.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "carcolors/hemiorange.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "carcolors/liquidorange.materialbin": {
+   "counts": {
+    "17": 7
+   },
+   "translucent": 17
+  },
+  "carcolors/mattegreymer.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "carcolors/mclarencaliperyellow.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "carcolors/neronemesis.materialbin": {
+   "counts": {
+    "17": 27
+   },
+   "translucent": 17
+  },
+  "carcolors/nostripe.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "carcolors/paintedmetal_black.materialbin": {
+   "counts": {
+    "17": 480
+   },
+   "translucent": 17
+  },
+  "carcolors/palladiumsilvermetallic.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "carcolors/polarsilver.materialbin": {
+   "counts": {
+    "17": 12
+   },
+   "translucent": 17
+  },
+  "carcolors/silvermicamet.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "carcolors/valenciaorange.materialbin": {
+   "counts": {
+    "17": 17
+   },
+   "translucent": 17
+  },
+  "carcolors/velocityyellow.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "carcolors/viperbrightsilvermet.materialbin": {
+   "counts": {
+    "17": 35
+   },
+   "translucent": 17
+  },
+  "carcolors/viperred.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "carcolors/white.materialbin": {
+   "counts": {
+    "17": 7
+   },
+   "translucent": 17
+  },
+  "carcolors_pbc/ferrari/bluestripe_met_fer.materialbin": {
+   "counts": {
+    "17": 24
+   },
+   "translucent": 17
+  },
+  "carcolors_pbc/ferrari/whitestripe_met_fer.materialbin": {
+   "counts": {
+    "17": 24
+   },
+   "translucent": 17
+  },
+  "carliveries/fer_f430scuderia_07_stripe.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "carliveries/for_55_capriturbo_81_liveries_001.materialbin": {
+   "counts": {
+    "56": 42
+   },
+   "translucent": 56
+  },
+  "carliveries/hotwheels_50th_logo_001.materialbin": {
+   "counts": {
+    "56": 16
+   },
+   "translucent": 56
+  },
+  "donotuse/chrome_satin001.materialbin": {
+   "counts": {
+    "17": 100
+   },
+   "translucent": 17
+  },
+  "donotuse/fabric_embossedch1_001.materialbin": {
+   "counts": {
+    "56": 14
+   },
+   "translucent": 56
+  },
+  "exterior_details/gascap_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "exterior_details/gascap_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "exterior_details/gascap_009.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "exterior_details/gascap_012.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "exterior_details/keyhole_001.materialbin": {
+   "counts": {
+    "56": 139
+   },
+   "translucent": 56
+  },
+  "exterior_details/keyhole_002.materialbin": {
+   "counts": {
+    "56": 130
+   },
+   "translucent": 56
+  },
+  "exterior_details/keyhole_003.materialbin": {
+   "counts": {
+    "56": 90
+   },
+   "translucent": 56
+  },
+  "exterior_details/keyhole_005.materialbin": {
+   "counts": {
+    "56": 248
+   },
+   "translucent": 56
+  },
+  "exterior_details/keyhole_006.materialbin": {
+   "counts": {
+    "56": 30
+   },
+   "translucent": 56
+  },
+  "exterior_details/keyhole_011.materialbin": {
+   "counts": {
+    "56": 44
+   },
+   "translucent": 56
+  },
+  "exterior_details/weatherstrip_001.materialbin": {
+   "counts": {
+    "17": 31
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/aluminum_clearcoat_rough_003.materialbin": {
+   "counts": {
+    "17": 33
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/aluminum_foil_001.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/anisotropic.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/blkleather_bump_hgl.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/blkleather_bump_lgl.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/blkleather_bump_mgl.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/blkleather_bump_mgl_003.materialbin": {
+   "counts": {
+    "17": 11
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/blkleather_lgl.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/blkleather_mgl.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/blkleather_smooth.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/blkleather_smooth_hgl.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/blkleather_smooth_lgl.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/blkleather_smooth_mgl.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/blkplastic_brushed_001.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/blkplastic_textured_005.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/brushed_rgh_lgl.materialbin": {
+   "counts": {
+    "17": 42
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/caliperpaint_gold.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/carbonfiber_003.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/carbonfiber_006.materialbin": {
+   "counts": {
+    "17": 11
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/carbonkevlar_004.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/carpet_001.materialbin": {
+   "counts": {
+    "17": 29
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/carpet_002.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/carpet_004.materialbin": {
+   "counts": {
+    "17": 7
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/ch1_plasticgrillecustom.materialbin": {
+   "counts": {
+    "56": 21
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/chrome_alpha_diffusecolor.materialbin": {
+   "counts": {
+    "56": 39
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/chrome_divets_005.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/enginepaint_crimson.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/fabric_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/fabric_003.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/fabric_008.materialbin": {
+   "counts": {
+    "17": 20
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/fabric_020.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/fabrichoodliner_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/gls_maskededge_001.materialbin": {
+   "counts": {
+    "60": 51
+   },
+   "translucent": 60
+  },
+  "exterior_donotuse/gls_maskededge_002.materialbin": {
+   "counts": {
+    "60": 10
+   },
+   "translucent": 60
+  },
+  "exterior_donotuse/gls_maskededge_003.materialbin": {
+   "counts": {
+    "60": 56
+   },
+   "translucent": 60
+  },
+  "exterior_donotuse/gls_patternch1_lit_009.materialbin": {
+   "counts": {
+    "60": 2
+   },
+   "translucent": 60
+  },
+  "exterior_donotuse/gls_sealedbeam_016.materialbin": {
+   "counts": {
+    "60": 2
+   },
+   "translucent": 60
+  },
+  "exterior_donotuse/grillchromefilled_001.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grillchromefilled_002.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grillchromefilled_003.materialbin": {
+   "counts": {
+    "17": 79
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grillchromefilled_005.materialbin": {
+   "counts": {
+    "17": 85
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grillchromefilled_006.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grillechrome_005.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/grillechrome_006.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/grillechrome_007.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/grillemetalfilled_002.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grilleplastic_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/grilleplastic_002.materialbin": {
+   "counts": {
+    "56": 28
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/grilleplastic_005.materialbin": {
+   "counts": {
+    "56": 29
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/grilleplastic_006.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grilleplastic_010.materialbin": {
+   "counts": {
+    "56": 27
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/grilleplastic_016.materialbin": {
+   "counts": {
+    "17": 29
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grilleplasticfilled_001.materialbin": {
+   "counts": {
+    "17": 99
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grilleplasticfilled_002.materialbin": {
+   "counts": {
+    "17": 55
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grilleplasticfilled_003.materialbin": {
+   "counts": {
+    "17": 29
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grilleplasticfilled_004.materialbin": {
+   "counts": {
+    "17": 21
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grilleplasticfilled_005.materialbin": {
+   "counts": {
+    "17": 74
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grilleplasticfilled_007.materialbin": {
+   "counts": {
+    "17": 15
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grilleplasticfilled_010.materialbin": {
+   "counts": {
+    "17": 90
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grilleplasticfilled_015.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grilleplasticfilled_016.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grillmetalfilled_001.materialbin": {
+   "counts": {
+    "17": 42
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grillmetalfilled_005.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grillmetalpainted_013.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/grillpasticfilled_005.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grillplastic_012.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/grillplasticfilled_003.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grillplasticfilled_006.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/grillplasticfilled_007.materialbin": {
+   "counts": {
+    "17": 11
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/gunmetal_rgh_001.materialbin": {
+   "counts": {
+    "17": 48
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/heatsheild_gold_ch2_001.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/int_strdsymbols_007.materialbin": {
+   "counts": {
+    "17": 6,
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/int_symbolscustom_001.materialbin": {
+   "counts": {
+    "17": 2,
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/interior_lod1.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/lbk_ch1_custom.materialbin": {
+   "counts": {
+    "17": 25
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/lbk_ch1_reflectmap_006.materialbin": {
+   "counts": {
+    "17": 145
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/lbk_ch2_custom.materialbin": {
+   "counts": {
+    "17": 41
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/lbk_custom_ch1illuminationmap.materialbin": {
+   "counts": {
+    "17": 11
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/lbk_custom_ch1illuminationmap_ch2normal.materialbin": {
+   "counts": {
+    "17": 22
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/lbk_custom_ch3illuminationmap_ch1normal.materialbin": {
+   "counts": {
+    "17": 20
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/lbk_nonmetalcustom_ch2normch1light.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/lbk_plastic_ch3litech2norm.materialbin": {
+   "counts": {
+    "17": 12
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/lbk_plasticch1_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/lbk_smooth_metal.materialbin": {
+   "counts": {
+    "17": 1090
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/lbk_standardch2_002.materialbin": {
+   "counts": {
+    "17": 38
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/leather_embossedch1_001.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/leather_lgl.materialbin": {
+   "counts": {
+    "17": 11
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/leather_mgl.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/leather_smooth_lgl.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/metal_rgh_embossed_lgl.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/metal_rgh_embossed_mgl.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/plastic_brushed_001.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/seat_belt_001.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/seat_belt_001_updated.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/sensor_plastic_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/steel_embossed.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/steel_polished.materialbin": {
+   "counts": {
+    "17": 7
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/steel_tarnished_001.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/stitch_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/stitch_003.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/suede_002.materialbin": {
+   "counts": {
+    "17": 15
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/titanium_brushed_001.materialbin": {
+   "counts": {
+    "17": 14
+   },
+   "translucent": 17
+  },
+  "exterior_donotuse/vents_001.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/vents_002.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "exterior_donotuse/vents_005.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "exterior_glass/gls_ch1_custom.materialbin": {
+   "counts": {
+    "60": 3231,
+    "1025": 125
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_ch1alphacutout.materialbin": {
+   "counts": {
+    "56": 22
+   },
+   "translucent": 56
+  },
+  "exterior_glass/gls_ch1maskwithch3lightmask.materialbin": {
+   "counts": {
+    "60": 10
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_ch1norm_alphacutout.materialbin": {
+   "counts": {
+    "60": 62
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_ch2_custom.materialbin": {
+   "counts": {
+    "60": 338
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_ch2_pattern_001.materialbin": {
+   "counts": {
+    "60": 79
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_clear.materialbin": {
+   "counts": {
+    "60": 2956,
+    "1025": 7
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_colored.materialbin": {
+   "counts": {
+    "60": 2685
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_edge.materialbin": {
+   "counts": {
+    "60": 376
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_frosted.materialbin": {
+   "counts": {
+    "60": 63
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_limotint.materialbin": {
+   "counts": {
+    "17": 260
+   },
+   "translucent": 17
+  },
+  "exterior_glass/gls_ml_2ch2patterns_ch1mask.materialbin": {
+   "counts": {
+    "60": 100
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_ml_ch11withch1mask.materialbin": {
+   "counts": {
+    "60": 2091
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_ml_ch1_circular_001.materialbin": {
+   "counts": {
+    "60": 989
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_ml_ch1_custom.materialbin": {
+   "counts": {
+    "60": 294
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_ml_ch1_honeycomb_001.materialbin": {
+   "counts": {
+    "60": 272
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_ml_ch1_honeycomb_002.materialbin": {
+   "counts": {
+    "60": 247
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_ml_ch1_ridges_001.materialbin": {
+   "counts": {
+    "60": 157
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_ml_ch1_ridges_002.materialbin": {
+   "counts": {
+    "60": 1160
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_ml_ch1_squares_002.materialbin": {
+   "counts": {
+    "60": 425
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_opaque.materialbin": {
+   "counts": {
+    "60": 45
+   },
+   "translucent": 60
+  },
+  "exterior_glass/gls_rearglass.materialbin": {
+   "counts": {
+    "28": 216
+   },
+   "translucent": 28
+  },
+  "exterior_glass/gls_rearglass_updated.materialbin": {
+   "counts": {
+    "28": 48
+   },
+   "translucent": 28
+  },
+  "exterior_glass/gls_window.materialbin": {
+   "counts": {
+    "28": 4846
+   },
+   "translucent": 28
+  },
+  "exterior_glass/gls_windsheild.materialbin": {
+   "counts": {
+    "28": 1099
+   },
+   "translucent": 28
+  },
+  "exterior_glass/gls_windsheild_colored.materialbin": {
+   "counts": {
+    "28": 37
+   },
+   "translucent": 28
+  },
+  "exterior_glass/gls_windshield.materialbin": {
+   "counts": {
+    "28": 12
+   },
+   "translucent": 28
+  },
+  "exterior_grilles/grille_001.materialbin": {
+   "counts": {
+    "17": 156,
+    "56": 27
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_002.materialbin": {
+   "counts": {
+    "17": 45,
+    "56": 28
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_003.materialbin": {
+   "counts": {
+    "17": 31,
+    "56": 37
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_004.materialbin": {
+   "counts": {
+    "17": 32,
+    "56": 37
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_005.materialbin": {
+   "counts": {
+    "17": 32,
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_006.materialbin": {
+   "counts": {
+    "17": 24,
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_007.materialbin": {
+   "counts": {
+    "17": 61,
+    "56": 15
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_011.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "exterior_grilles/grille_012.materialbin": {
+   "counts": {
+    "17": 178,
+    "56": 147
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_013.materialbin": {
+   "counts": {
+    "17": 96,
+    "56": 34
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_014.materialbin": {
+   "counts": {
+    "17": 74,
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_016.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_017.materialbin": {
+   "counts": {
+    "17": 13,
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_018.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "exterior_grilles/grille_020.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "exterior_grilles/grille_022.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "exterior_grilles/grille_024.materialbin": {
+   "counts": {
+    "17": 7
+   },
+   "translucent": 17
+  },
+  "exterior_grilles/grille_025.materialbin": {
+   "counts": {
+    "17": 29,
+    "56": 22
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_027.materialbin": {
+   "counts": {
+    "17": 6,
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_028.materialbin": {
+   "counts": {
+    "17": 20,
+    "56": 17
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_031.materialbin": {
+   "counts": {
+    "17": 6,
+    "56": 14
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_033.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "exterior_grilles/grille_035.materialbin": {
+   "counts": {
+    "17": 4,
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grille_custom.materialbin": {
+   "counts": {
+    "17": 52,
+    "56": 75
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/grilleplasticfilled_030.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "exterior_grilles/kangaroo_grill_001.materialbin": {
+   "counts": {
+    "17": 1,
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/speaker_001.materialbin": {
+   "counts": {
+    "17": 14,
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "exterior_grilles/speaker_002.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "exterior_lights/lbk_ch1_custom.materialbin": {
+   "counts": {
+    "17": 1604,
+    "56": 16
+   },
+   "translucent": 56
+  },
+  "exterior_lights/lbk_ch1_dynamic_ch3lite.materialbin": {
+   "counts": {
+    "17": 69,
+    "56": 14
+   },
+   "translucent": 56
+  },
+  "exterior_lights/lbk_ch1_dynamicmaps.materialbin": {
+   "counts": {
+    "17": 684,
+    "56": 296
+   },
+   "translucent": 56
+  },
+  "exterior_lights/lbk_ch3litech2norm.materialbin": {
+   "counts": {
+    "17": 42
+   },
+   "translucent": 17
+  },
+  "exterior_lights/lights_bump_ch1.materialbin": {
+   "counts": {
+    "17": 348
+   },
+   "translucent": 17
+  },
+  "exterior_lights/lights_ch1bump_ch1lmask.materialbin": {
+   "counts": {
+    "17": 9238
+   },
+   "translucent": 17
+  },
+  "exterior_lights/lights_ch1bump_ch1lmask_ch1opacity.materialbin": {
+   "counts": {
+    "56": 94
+   },
+   "translucent": 56
+  },
+  "exterior_lights/lights_ch1bump_ch1lmask_ch1opacityexposed.materialbin": {
+   "counts": {
+    "56": 50
+   },
+   "translucent": 56
+  },
+  "exterior_lights/lights_ch2bump_ch1lmask.materialbin": {
+   "counts": {
+    "17": 226
+   },
+   "translucent": 17
+  },
+  "exterior_lights/lights_smooth_ch1.materialbin": {
+   "counts": {
+    "17": 2048
+   },
+   "translucent": 17
+  },
+  "exterior_lights/lights_smooth_solidlight.materialbin": {
+   "counts": {
+    "17": 50
+   },
+   "translucent": 17
+  },
+  "exterior_lights/rain_light.materialbin": {
+   "counts": {
+    "17": 12
+   },
+   "translucent": 17
+  },
+  "exterior_lights/rain_light_nofade.materialbin": {
+   "counts": {
+    "17": 42
+   },
+   "translucent": 17
+  },
+  "exterior_litglass/glm_2ch2_ch1lerpmask.materialbin": {
+   "counts": {
+    "60": 24
+   },
+   "translucent": 60
+  },
+  "exterior_litglass/gls_ch1_custom.materialbin": {
+   "counts": {
+    "60": 1847
+   },
+   "translucent": 60
+  },
+  "exterior_litglass/gls_ch1_flat.materialbin": {
+   "counts": {
+    "60": 772
+   },
+   "translucent": 60
+  },
+  "exterior_litglass/gls_ch1diffusemasklite_ch2normalpha.materialbin": {
+   "counts": {
+    "60": 24
+   },
+   "translucent": 60
+  },
+  "exterior_litglass/gls_ch2norm_ch1patternmask.materialbin": {
+   "counts": {
+    "60": 78
+   },
+   "translucent": 60
+  },
+  "exterior_litglass/gls_lightbulb.materialbin": {
+   "counts": {
+    "60": 5709
+   },
+   "translucent": 60
+  },
+  "exterior_litglass/gls_ml_ch1_custom.materialbin": {
+   "counts": {
+    "60": 1295
+   },
+   "translucent": 60
+  },
+  "exterior_litglass/gls_ml_ch1withch1mask.materialbin": {
+   "counts": {
+    "60": 886
+   },
+   "translucent": 60
+  },
+  "exterior_litglass/gls_ml_ch2withch1mask.materialbin": {
+   "counts": {
+    "60": 275
+   },
+   "translucent": 60
+  },
+  "exterior_litglass/gls_rainlight.materialbin": {
+   "counts": {
+    "28": 1
+   },
+   "translucent": 28
+  },
+  "exterior_litglass/gls_rainlight_nofade.materialbin": {
+   "counts": {
+    "60": 7
+   },
+   "translucent": 60
+  },
+  "exterior_metal/blackchrome_ch1_custom.materialbin": {
+   "counts": {
+    "17": 48,
+    "56": 84
+   },
+   "translucent": 56
+  },
+  "exterior_metal/cadmium_tarnished.materialbin": {
+   "counts": {
+    "17": 62
+   },
+   "translucent": 17
+  },
+  "exterior_metal/chrome.materialbin": {
+   "counts": {
+    "17": 9383
+   },
+   "translucent": 17
+  },
+  "exterior_metal/copper_tarnished.materialbin": {
+   "counts": {
+    "17": 34
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_anodized.materialbin": {
+   "counts": {
+    "17": 1374
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_brushed.materialbin": {
+   "counts": {
+    "17": 2026
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_cast.materialbin": {
+   "counts": {
+    "17": 698
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_ch1_alphanormcolor.materialbin": {
+   "counts": {
+    "17": 68,
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "exterior_metal/metal_ch1_custom.materialbin": {
+   "counts": {
+    "17": 1524,
+    "56": 2387
+   },
+   "translucent": 56
+  },
+  "exterior_metal/metal_ch1_custom_updated.materialbin": {
+   "counts": {
+    "56": 22
+   },
+   "translucent": 56
+  },
+  "exterior_metal/metal_ch2_custom.materialbin": {
+   "counts": {
+    "17": 129
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_circleindent_001.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "exterior_metal/metal_clearcoat_ch2custom.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_clearcoat_rough.materialbin": {
+   "counts": {
+    "17": 57
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_clearcoat_woven_001.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_diamondplate_002.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_dirty_001.materialbin": {
+   "counts": {
+    "17": 253
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_machined.materialbin": {
+   "counts": {
+    "17": 414
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_painted_rust_001.materialbin": {
+   "counts": {
+    "17": 243
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_radiator.materialbin": {
+   "counts": {
+    "17": 87
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_rgh_001.materialbin": {
+   "counts": {
+    "17": 2540
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_rgh_002.materialbin": {
+   "counts": {
+    "17": 121
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_rgh_003.materialbin": {
+   "counts": {
+    "17": 109
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_rgh_dirty.materialbin": {
+   "counts": {
+    "17": 1743
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_rgh_embossed_001.materialbin": {
+   "counts": {
+    "17": 23
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_rust_001.materialbin": {
+   "counts": {
+    "17": 82
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_satin.materialbin": {
+   "counts": {
+    "17": 410
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_satin_dark.materialbin": {
+   "counts": {
+    "17": 1554
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_smooth.materialbin": {
+   "counts": {
+    "17": 3357
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_tailpipe.materialbin": {
+   "counts": {
+    "17": 141
+   },
+   "translucent": 17
+  },
+  "exterior_metal/metal_woven_001.materialbin": {
+   "counts": {
+    "17": 61
+   },
+   "translucent": 17
+  },
+  "exterior_metal/painted_metal_cast.materialbin": {
+   "counts": {
+    "17": 20
+   },
+   "translucent": 17
+  },
+  "exterior_metal/painted_metal_ch1.materialbin": {
+   "counts": {
+    "17": 161,
+    "56": 942
+   },
+   "translucent": 56
+  },
+  "exterior_metal/painted_metal_metallic_cast.materialbin": {
+   "counts": {
+    "17": 165
+   },
+   "translucent": 17
+  },
+  "exterior_metal/painted_metal_metallic_rgh.materialbin": {
+   "counts": {
+    "17": 361
+   },
+   "translucent": 17
+  },
+  "exterior_metal/painted_metal_metallic_rgh_updated.materialbin": {
+   "counts": {
+    "17": 67
+   },
+   "translucent": 17
+  },
+  "exterior_metal/painted_metal_rgh.materialbin": {
+   "counts": {
+    "17": 4410
+   },
+   "translucent": 17
+  },
+  "exterior_metal/painted_metal_smooth.materialbin": {
+   "counts": {
+    "17": 4550
+   },
+   "translucent": 17
+  },
+  "exterior_metal/titanium_tarnished.materialbin": {
+   "counts": {
+    "17": 135
+   },
+   "translucent": 17
+  },
+  "exterior_misc/animated_fan.materialbin": {
+   "counts": {
+    "56": 26
+   },
+   "translucent": 56
+  },
+  "exterior_misc/brake_emblem.materialbin": {
+   "counts": {
+    "56": 155
+   },
+   "translucent": 56
+  },
+  "exterior_misc/carbonfiber_001.materialbin": {
+   "counts": {
+    "17": 409
+   },
+   "translucent": 17
+  },
+  "exterior_misc/carbonfiber_002.materialbin": {
+   "counts": {
+    "17": 694
+   },
+   "translucent": 17
+  },
+  "exterior_misc/carbonfiber_003.materialbin": {
+   "counts": {
+    "17": 49
+   },
+   "translucent": 17
+  },
+  "exterior_misc/carbonfiber_005.materialbin": {
+   "counts": {
+    "17": 1347
+   },
+   "translucent": 17
+  },
+  "exterior_misc/carbonfiber_005_flip.materialbin": {
+   "counts": {
+    "17": 760
+   },
+   "translucent": 17
+  },
+  "exterior_misc/carbonfiber_007.materialbin": {
+   "counts": {
+    "17": 19
+   },
+   "translucent": 17
+  },
+  "exterior_misc/carbonfiber_alpha_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "exterior_misc/carbonfiber_custom.materialbin": {
+   "counts": {
+    "17": 394
+   },
+   "translucent": 17
+  },
+  "exterior_misc/carbonfiber_diffuseoutline.materialbin": {
+   "counts": {
+    "56": 64
+   },
+   "translucent": 56
+  },
+  "exterior_misc/carbonfiber_embossed.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "exterior_misc/carbonfiber_flat.materialbin": {
+   "counts": {
+    "17": 72
+   },
+   "translucent": 17
+  },
+  "exterior_misc/carbonkevlar_001.materialbin": {
+   "counts": {
+    "17": 27
+   },
+   "translucent": 17
+  },
+  "exterior_misc/carbonkevlar_002.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "exterior_misc/carpaint.materialbin": {
+   "counts": {
+    "17": 15298,
+    "56": 305
+   },
+   "translucent": 56
+  },
+  "exterior_misc/carpaint_custom.materialbin": {
+   "counts": {
+    "17": 1,
+    "56": 34
+   },
+   "translucent": 56
+  },
+  "exterior_misc/carpaint_livery.materialbin": {
+   "counts": {
+    "17": 439,
+    "56": 1693
+   },
+   "translucent": 56
+  },
+  "exterior_misc/carpaint_livery_metallic_dualflakegloss.materialbin": {
+   "counts": {
+    "56": 35
+   },
+   "translucent": 56
+  },
+  "exterior_misc/carpaint_livery_updated.materialbin": {
+   "counts": {
+    "17": 20,
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "exterior_misc/carpaint_liverylerp.materialbin": {
+   "counts": {
+    "56": 35
+   },
+   "translucent": 56
+  },
+  "exterior_misc/carpaint_secondary.materialbin": {
+   "counts": {
+    "17": 893,
+    "56": 28
+   },
+   "translucent": 56
+  },
+  "exterior_misc/defrostlines.materialbin": {
+   "counts": {
+    "28": 125
+   },
+   "translucent": 28
+  },
+  "exterior_misc/exhausthole.materialbin": {
+   "counts": {
+    "17": 278
+   },
+   "translucent": 17
+  },
+  "exterior_misc/exhausthole_gradient.materialbin": {
+   "counts": {
+    "17": 58
+   },
+   "translucent": 17
+  },
+  "exterior_misc/exhausthole_updated.materialbin": {
+   "counts": {
+    "17": 194
+   },
+   "translucent": 17
+  },
+  "exterior_misc/fabricstrap_custom.materialbin": {
+   "counts": {
+    "17": 17
+   },
+   "translucent": 17
+  },
+  "exterior_misc/grillebackground_acradiator_001.materialbin": {
+   "counts": {
+    "17": 37
+   },
+   "translucent": 17
+  },
+  "exterior_misc/grillebackground_innercooler_001.materialbin": {
+   "counts": {
+    "17": 39
+   },
+   "translucent": 17
+  },
+  "exterior_misc/metalplastic_mix_ch1.materialbin": {
+   "counts": {
+    "17": 25,
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "exterior_misc/paint_metallic.materialbin": {
+   "counts": {
+    "17": 168
+   },
+   "translucent": 17
+  },
+  "exterior_misc/reflector_001.materialbin": {
+   "counts": {
+    "17": 121
+   },
+   "translucent": 17
+  },
+  "exterior_misc/rubber_painted.materialbin": {
+   "counts": {
+    "17": 26
+   },
+   "translucent": 17
+  },
+  "exterior_misc/rubber_rough.materialbin": {
+   "counts": {
+    "17": 39
+   },
+   "translucent": 17
+  },
+  "exterior_misc/rubber_smooth.materialbin": {
+   "counts": {
+    "17": 1366
+   },
+   "translucent": 17
+  },
+  "exterior_misc/rubberch1normal.materialbin": {
+   "counts": {
+    "17": 39
+   },
+   "translucent": 17
+  },
+  "exterior_misc/rubbertrim.materialbin": {
+   "counts": {
+    "17": 5336
+   },
+   "translucent": 17
+  },
+  "exterior_misc/sparetiretread.materialbin": {
+   "counts": {
+    "17": 115
+   },
+   "translucent": 17
+  },
+  "exterior_misc/sparetiretreadwall.materialbin": {
+   "counts": {
+    "17": 112
+   },
+   "translucent": 17
+  },
+  "exterior_misc/sticker_cutsom.materialbin": {
+   "counts": {
+    "17": 6,
+    "56": 137
+   },
+   "translucent": 56
+  },
+  "exterior_misc/sticker_mfr_custom_03.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "exterior_misc/sticker_mfr_cutsom.materialbin": {
+   "counts": {
+    "56": 50
+   },
+   "translucent": 56
+  },
+  "exterior_misc/tiresparech1.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "exterior_misc/weldseam.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "exterior_misc/weldseamalpha.materialbin": {
+   "counts": {
+    "56": 14
+   },
+   "translucent": 56
+  },
+  "exterior_misc/weldseampaintedalpha.materialbin": {
+   "counts": {
+    "56": 23
+   },
+   "translucent": 56
+  },
+  "exterior_plastic/exterior_leather_ch1_custom.materialbin": {
+   "counts": {
+    "17": 211,
+    "56": 124
+   },
+   "translucent": 56
+  },
+  "exterior_plastic/plastic_ch1_custom.materialbin": {
+   "counts": {
+    "17": 458,
+    "56": 461
+   },
+   "translucent": 56
+  },
+  "exterior_plastic/plastic_ch1_custom_001.materialbin": {
+   "counts": {
+    "17": 6,
+    "56": 17
+   },
+   "translucent": 56
+  },
+  "exterior_plastic/plastic_ch1_custom_diffusemap.materialbin": {
+   "counts": {
+    "17": 72,
+    "56": 20
+   },
+   "translucent": 56
+  },
+  "exterior_plastic/plastic_ch1_custom_diffusemap_updated.materialbin": {
+   "counts": {
+    "17": 32,
+    "56": 30
+   },
+   "translucent": 56
+  },
+  "exterior_plastic/plastic_ch2_custom_livery.materialbin": {
+   "counts": {
+    "17": 168
+   },
+   "translucent": 17
+  },
+  "exterior_plastic/plastic_ch2texture_ch1emboss.materialbin": {
+   "counts": {
+    "17": 50
+   },
+   "translucent": 17
+  },
+  "exterior_plastic/plastic_dirty_001.materialbin": {
+   "counts": {
+    "17": 42
+   },
+   "translucent": 17
+  },
+  "exterior_plastic/plastic_mgl.materialbin": {
+   "counts": {
+    "17": 5954,
+    "1025": 283
+   },
+   "translucent": 1025
+  },
+  "exterior_plastic/plastic_perforated_002.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "exterior_plastic/plastic_rgh.materialbin": {
+   "counts": {
+    "17": 3649
+   },
+   "translucent": 17
+  },
+  "exterior_plastic/plastic_smooth.materialbin": {
+   "counts": {
+    "17": 8508,
+    "1025": 8
+   },
+   "translucent": 1025
+  },
+  "exterior_plastic/plastic_textured_001.materialbin": {
+   "counts": {
+    "17": 99
+   },
+   "translucent": 17
+  },
+  "exterior_plastic/plastic_textured_002.materialbin": {
+   "counts": {
+    "17": 70
+   },
+   "translucent": 17
+  },
+  "exterior_plastic/plastic_textured_004.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "exterior_plastic/plastic_textured_007.materialbin": {
+   "counts": {
+    "17": 22
+   },
+   "translucent": 17
+  },
+  "exterior_plastic/plastic_textured_custom.materialbin": {
+   "counts": {
+    "17": 94
+   },
+   "translucent": 17
+  },
+  "exterior_plastic/plasticridges_001.materialbin": {
+   "counts": {
+    "17": 150
+   },
+   "translucent": 17
+  },
+  "exterior_plastic/plasticridges_002.materialbin": {
+   "counts": {
+    "17": 82
+   },
+   "translucent": 17
+  },
+  "genericassetmaterials/bumperframe_radiator.materialbin": {
+   "counts": {
+    "17": 446
+   },
+   "translucent": 17
+  },
+  "genericassetmaterials/bumperframe_rubberembossed.materialbin": {
+   "counts": {
+    "17": 120
+   },
+   "translucent": 17
+  },
+  "genericassetmaterials/bumperframe_steelembossed.materialbin": {
+   "counts": {
+    "17": 411
+   },
+   "translucent": 17
+  },
+  "genericassetmaterials/tintplanehack.materialbin": {
+   "counts": {
+    "60": 99
+   },
+   "translucent": 60
+  },
+  "genericassetmaterials/tiresidewall_a.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "genericassetmaterials/tiresidewall_c.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "genericassetmaterials/tiresidewall_h.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "genericassetmaterials/tiresidewall_vintage.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "genericassetmaterials/tiretread_a.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "genericassetmaterials/tiretread_f.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "genericassetmaterials/tiretread_vintage.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "genericassetmaterials/tiretread_vintagerace.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "genericassetmaterials/towhook.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/aluminum_alpha_gloss.materialbin": {
+   "counts": {
+    "17": 60,
+    "56": 59
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/aluminum_ch1_ptn_001.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/aluminum_ch1_ptn_002.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/aluminum_clearcoat_rough_003.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/aluminum_foil_001.materialbin": {
+   "counts": {
+    "17": 11
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/aluminum_pedal_001.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/aluminum_plasticmix.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/aluminum_ridgesnoise_001.materialbin": {
+   "counts": {
+    "17": 19
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/anisotropic_001.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/backfacinggeo.materialbin": {
+   "counts": {
+    "17": 75
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/bedliner.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/bedliner_002.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/blkleather_bump_mgl_003.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/blkleather_strap_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/blkleather_textured_002.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/blkplastic_brushed_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/blkplastic_ridges_002.materialbin": {
+   "counts": {
+    "17": 30
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/blkplastic_ridges_003.materialbin": {
+   "counts": {
+    "17": 7
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/blkplastic_rough.materialbin": {
+   "counts": {
+    "17": 84
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/blkplastic_textured_007.materialbin": {
+   "counts": {
+    "17": 37
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/blkplastic_textured_008.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/blkplastic_textured_011.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/blkplastic_textured_012.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/blkweatherstrip_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/brushed_rgh_lgl.materialbin": {
+   "counts": {
+    "17": 20
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/carbonfiber_003.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/carbonfiber_007.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/carbonfiber_colored_001.materialbin": {
+   "counts": {
+    "17": 13
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/carbonfiber_colored_002.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/carbonkevlar_004.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/carpet_007.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/chrome_alpha_gloss.materialbin": {
+   "counts": {
+    "17": 5,
+    "56": 25
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/chrome_divets_005.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/chrome_grill_001.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/chrome_ridgesch1_001.materialbin": {
+   "counts": {
+    "17": 20
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/chrome_ridgesch1_002.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/chrome_ridgesch1_003.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/chrome_ridgesch1_005.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/chrome_textured_002.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/chrome_textured_003.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/chrome_textured_004.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/defrostlines_003.materialbin": {
+   "counts": {
+    "28": 5
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/digitalgauge.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/fabric_007.materialbin": {
+   "counts": {
+    "17": 27
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/fabric_009.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/fabric_023.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/fabric_embossedch1_001.materialbin": {
+   "counts": {
+    "56": 119
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/floormatrubber_004.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/gascap_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/gauge_normf0_opacity_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/gls_2patternch1.materialbin": {
+   "counts": {
+    "28": 1
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_2patternch2_001.materialbin": {
+   "counts": {
+    "28": 1
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_bump_colored.materialbin": {
+   "counts": {
+    "28": 11
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_ch1custom_001.materialbin": {
+   "counts": {
+    "60": 47
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_ch1custom_002.materialbin": {
+   "counts": {
+    "60": 1
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_customlitch1_001.materialbin": {
+   "counts": {
+    "28": 3
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_customlitnormopach1_001.materialbin": {
+   "counts": {
+    "28": 4
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_lightbulb_002.materialbin": {
+   "counts": {
+    "28": 20
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_pattern_016.materialbin": {
+   "counts": {
+    "60": 4
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_patternch1_003.materialbin": {
+   "counts": {
+    "60": 32
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_patternch1_005.materialbin": {
+   "counts": {
+    "60": 18
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_patternch1_008.materialbin": {
+   "counts": {
+    "60": 1
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_patternch1_009.materialbin": {
+   "counts": {
+    "60": 59
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_patternch1_023.materialbin": {
+   "counts": {
+    "60": 12
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_patternch1_024.materialbin": {
+   "counts": {
+    "28": 1
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_patternch1_035.materialbin": {
+   "counts": {
+    "28": 3
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_patternch1_lit_009.materialbin": {
+   "counts": {
+    "60": 1
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_patternch2_001.materialbin": {
+   "counts": {
+    "60": 5
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_patternch2_003.materialbin": {
+   "counts": {
+    "60": 3
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_patternch2_007.materialbin": {
+   "counts": {
+    "60": 1
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_patternch2_008.materialbin": {
+   "counts": {
+    "60": 8
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_patternch2_011.materialbin": {
+   "counts": {
+    "60": 2
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_patternch2_14.materialbin": {
+   "counts": {
+    "60": 2
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_projector_002.materialbin": {
+   "counts": {
+    "28": 4
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_ridgesch1_002.materialbin": {
+   "counts": {
+    "60": 3
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_ridgesch1_003.materialbin": {
+   "counts": {
+    "60": 93
+   },
+   "translucent": 60
+  },
+  "interior_donotuse/gls_smoked_001.materialbin": {
+   "counts": {
+    "28": 1
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_tint_001.materialbin": {
+   "counts": {
+    "28": 11
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_tintlit_001.materialbin": {
+   "counts": {
+    "28": 2
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_twocolor_001.materialbin": {
+   "counts": {
+    "28": 1
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_window_interior.materialbin": {
+   "counts": {
+    "28": 5
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/gls_windsheild_interior.materialbin": {
+   "counts": {
+    "28": 1
+   },
+   "translucent": 28
+  },
+  "interior_donotuse/greyfabric_carbonfibre_003.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/grillchromefilled_002.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/grillechrome_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/grillechrome_003.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/grilleplastic_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/grilleplastic_002.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/grilleplastic_005.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/grilleplastic_006.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/grilleplastic_010.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/grilleplastic_016.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/grilleplasticfilled_001.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/grilleplasticfilled_002.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/grilleplasticfilled_005.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/grilleplasticfilled_011.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/grilleplasticfilled_012.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/grilleplasticfilled_015.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/grilleplasticfilled_016.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/grillmetalfilled_001.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/grillmetalfilled_005.materialbin": {
+   "counts": {
+    "17": 1,
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/grillmetalpainted_013.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/grillpasticfilled_005.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/grillplastic_012.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/grillplasticfilled_007.materialbin": {
+   "counts": {
+    "17": 12
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/gunmetal_rgh_001.materialbin": {
+   "counts": {
+    "17": 29
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/heatsheild_aluminum.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/int_strdsymbols_007.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/int_symbolscustom_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/keyhole_005.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/lbk_custom_001.materialbin": {
+   "counts": {
+    "17": 59
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_custom_002.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_custom_ch1illuminationmap_ch1normal.materialbin": {
+   "counts": {
+    "17": 81
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_custom_ch1illuminationmap_ch2normal.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_custom_ch3illuminationmap_ch1normal.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_custom_ch3illuminationmap_ch2normal_002.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_led_001.materialbin": {
+   "counts": {
+    "17": 11
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_led_002.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_projector_001.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_smoothchrome.materialbin": {
+   "counts": {
+    "17": 66
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_standardch1_001.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_standardch1_003.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_standardch1_005.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_standardch1_006.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lbk_standardch1_032.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/lbk_standardch2_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/leather_bluegrey_mgl.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/leather_lgl.materialbin": {
+   "counts": {
+    "17": 22
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/leather_mgl.materialbin": {
+   "counts": {
+    "17": 41
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/leather_perforated.materialbin": {
+   "counts": {
+    "17": 23
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/leather_smooth_lgl.materialbin": {
+   "counts": {
+    "17": 30
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/leather_textured_005.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/lgt_led_005.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/metal_circleindent_002.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/metal_rgh.materialbin": {
+   "counts": {
+    "17": 14
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/metal_rgh_dirty.materialbin": {
+   "counts": {
+    "17": 73
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/metal_rgh_embossed_lgl.materialbin": {
+   "counts": {
+    "17": 1,
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/metal_rgh_mgl.materialbin": {
+   "counts": {
+    "17": 19
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/pedal_003.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/pedal_004.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/pedal_005.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/pedal_007.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/pedal_013.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/pedal_custom_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/plastic_brushed_001.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/plastic_clearcoat_textured_001.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/plastic_ridgescapsulesch1_001.materialbin": {
+   "counts": {
+    "17": 17
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/plastic_textured_004.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/plastic_textured_006.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/plastic_textured_007.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/ptn_net_001.materialbin": {
+   "counts": {
+    "56": 14
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/rivet_002.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/rubber_pedal_001.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/rubber_ridgesch1_001.materialbin": {
+   "counts": {
+    "17": 35
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/rubberstriped_001.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/screw_026.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/screw_cadmium_tarnished_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/screwpainted_001.materialbin": {
+   "counts": {
+    "56": 18
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/screwpainted_002.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/screwpainted_003.materialbin": {
+   "counts": {
+    "56": 19
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/speaker_metal_001.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/speaker_plastic_005.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/steel_embossed.materialbin": {
+   "counts": {
+    "17": 2,
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/steel_polished.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/steel_ridgesch1_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/suede_001.materialbin": {
+   "counts": {
+    "17": 34
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/suede_002.materialbin": {
+   "counts": {
+    "17": 46
+   },
+   "translucent": 17
+  },
+  "interior_donotuse/symbols_emissive.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/vents_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/vents_005.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/weldseampaintedalpha.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "interior_donotuse/wood_006.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_fabric/alcantara_001.materialbin": {
+   "counts": {
+    "17": 157
+   },
+   "translucent": 17
+  },
+  "interior_fabric/carpet_001.materialbin": {
+   "counts": {
+    "17": 175
+   },
+   "translucent": 17
+  },
+  "interior_fabric/carpet_002.materialbin": {
+   "counts": {
+    "17": 43
+   },
+   "translucent": 17
+  },
+  "interior_fabric/carpet_004.materialbin": {
+   "counts": {
+    "17": 83
+   },
+   "translucent": 17
+  },
+  "interior_fabric/carpet_006.materialbin": {
+   "counts": {
+    "17": 73
+   },
+   "translucent": 17
+  },
+  "interior_fabric/carpet_008.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_001.materialbin": {
+   "counts": {
+    "17": 59
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_002.materialbin": {
+   "counts": {
+    "17": 23
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_003.materialbin": {
+   "counts": {
+    "17": 40
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_005.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_006.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_008.materialbin": {
+   "counts": {
+    "17": 138
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_008_color.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_009.materialbin": {
+   "counts": {
+    "17": 14
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_012.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_016.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_017.materialbin": {
+   "counts": {
+    "17": 13
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_020.materialbin": {
+   "counts": {
+    "17": 113
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_021.materialbin": {
+   "counts": {
+    "17": 22
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_022.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_023.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_025.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_030.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_051.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_28.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_2color_ch1mask.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_ch1_custom.materialbin": {
+   "counts": {
+    "17": 16,
+    "56": 33
+   },
+   "translucent": 56
+  },
+  "interior_fabric/fabric_ch2diffusemap_custom.materialbin": {
+   "counts": {
+    "17": 29
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_color_custom.materialbin": {
+   "counts": {
+    "17": 53
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabric_embossed.materialbin": {
+   "counts": {
+    "17": 1,
+    "56": 14
+   },
+   "translucent": 56
+  },
+  "interior_fabric/fabricheadliner_001.materialbin": {
+   "counts": {
+    "17": 37
+   },
+   "translucent": 17
+  },
+  "interior_fabric/fabrichoodliner_001.materialbin": {
+   "counts": {
+    "17": 74
+   },
+   "translucent": 17
+  },
+  "interior_fabric/maz_ovalpattern_001.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_fabric/mfr_fabric_custom.materialbin": {
+   "counts": {
+    "17": 2,
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "interior_fabric/seat_belt_001.materialbin": {
+   "counts": {
+    "17": 158
+   },
+   "translucent": 17
+  },
+  "interior_fabric/seat_belt_002.materialbin": {
+   "counts": {
+    "17": 29
+   },
+   "translucent": 17
+  },
+  "interior_fabric/seat_belt_003.materialbin": {
+   "counts": {
+    "17": 35
+   },
+   "translucent": 17
+  },
+  "interior_fabric/suede_001.materialbin": {
+   "counts": {
+    "17": 93
+   },
+   "translucent": 17
+  },
+  "interior_fabric/suede_003.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_fabric/suede_custom.materialbin": {
+   "counts": {
+    "17": 50
+   },
+   "translucent": 17
+  },
+  "interior_fabric/suede_perforated_001.materialbin": {
+   "counts": {
+    "17": 14
+   },
+   "translucent": 17
+  },
+  "interior_fabric/velvet_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_glass/gls_amber.materialbin": {
+   "counts": {
+    "28": 21
+   },
+   "translucent": 28
+  },
+  "interior_glass/gls_ch1custom.materialbin": {
+   "counts": {
+    "28": 75
+   },
+   "translucent": 28
+  },
+  "interior_glass/gls_ch1custom_lit.materialbin": {
+   "counts": {
+    "28": 13
+   },
+   "translucent": 28
+  },
+  "interior_glass/gls_clear.materialbin": {
+   "counts": {
+    "28": 341
+   },
+   "translucent": 28
+  },
+  "interior_glass/gls_edge.materialbin": {
+   "counts": {
+    "28": 98
+   },
+   "translucent": 28
+  },
+  "interior_glass/gls_frosted.materialbin": {
+   "counts": {
+    "60": 10
+   },
+   "translucent": 60
+  },
+  "interior_glass/gls_lightbulb.materialbin": {
+   "counts": {
+    "28": 11
+   },
+   "translucent": 28
+  },
+  "interior_glass/gls_limotint.materialbin": {
+   "counts": {
+    "17": 49
+   },
+   "translucent": 17
+  },
+  "interior_glass/gls_opaque.materialbin": {
+   "counts": {
+    "28": 85
+   },
+   "translucent": 28
+  },
+  "interior_glass/gls_patternch1_009.materialbin": {
+   "counts": {
+    "60": 13
+   },
+   "translucent": 60
+  },
+  "interior_glass/gls_red.materialbin": {
+   "counts": {
+    "28": 61
+   },
+   "translucent": 28
+  },
+  "interior_glass/gls_window_interior.materialbin": {
+   "counts": {
+    "28": 959
+   },
+   "translucent": 28
+  },
+  "interior_glass/gls_windsheild_interior.materialbin": {
+   "counts": {
+    "28": 237
+   },
+   "translucent": 28
+  },
+  "interior_glass/gls_windsheild_interior_0f0.materialbin": {
+   "counts": {
+    "28": 55
+   },
+   "translucent": 28
+  },
+  "interior_glass/gls_windsheild_interior_banner.materialbin": {
+   "counts": {
+    "28": 2,
+    "60": 9
+   },
+   "translucent": 60
+  },
+  "interior_glass/gls_windshield_interior.materialbin": {
+   "counts": {
+    "28": 2
+   },
+   "translucent": 28
+  },
+  "interior_grilles/grille_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_grilles/grille_002.materialbin": {
+   "counts": {
+    "17": 3,
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_grilles/grille_003.materialbin": {
+   "counts": {
+    "17": 14
+   },
+   "translucent": 17
+  },
+  "interior_grilles/grille_004.materialbin": {
+   "counts": {
+    "17": 3,
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "interior_grilles/grille_005.materialbin": {
+   "counts": {
+    "17": 7,
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "interior_grilles/grille_006.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_grilles/grille_007.materialbin": {
+   "counts": {
+    "17": 5,
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_grilles/grille_010.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_grilles/grille_012.materialbin": {
+   "counts": {
+    "17": 58,
+    "56": 20
+   },
+   "translucent": 56
+  },
+  "interior_grilles/grille_013.materialbin": {
+   "counts": {
+    "17": 3,
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_grilles/grille_014.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_grilles/grille_015.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_grilles/grille_016.materialbin": {
+   "counts": {
+    "17": 2,
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "interior_grilles/grille_023.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_grilles/grille_024.materialbin": {
+   "counts": {
+    "17": 16,
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "interior_grilles/grille_025.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_grilles/grille_027.materialbin": {
+   "counts": {
+    "17": 7,
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_grilles/grille_028.materialbin": {
+   "counts": {
+    "17": 4,
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "interior_grilles/grille_029.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_grilles/grille_031.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_grilles/grille_033.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_grilles/grille_035.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_grilles/grille_custom.materialbin": {
+   "counts": {
+    "17": 13,
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "interior_grilles/speaker_001.materialbin": {
+   "counts": {
+    "17": 40,
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "interior_grilles/speaker_002.materialbin": {
+   "counts": {
+    "17": 69,
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "interior_leather/leather_coarse_dirty_001.materialbin": {
+   "counts": {
+    "17": 17
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_coarse_hgl.materialbin": {
+   "counts": {
+    "17": 71
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_coarse_lgl.materialbin": {
+   "counts": {
+    "17": 71
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_coarse_mgl.materialbin": {
+   "counts": {
+    "17": 157
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_diffusetextured_custom.materialbin": {
+   "counts": {
+    "17": 22
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_embossed_alpha.materialbin": {
+   "counts": {
+    "17": 20,
+    "56": 338
+   },
+   "translucent": 56
+  },
+  "interior_leather/leather_exposedgloss_001.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_hgl.materialbin": {
+   "counts": {
+    "17": 79
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_lgl.materialbin": {
+   "counts": {
+    "17": 317
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_mgl.materialbin": {
+   "counts": {
+    "17": 262
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_perforated_001.materialbin": {
+   "counts": {
+    "17": 61
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_perforated_002.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_perforated_004.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_smooth_hgl.materialbin": {
+   "counts": {
+    "17": 62
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_smooth_lgl.materialbin": {
+   "counts": {
+    "17": 193
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_smooth_mgl.materialbin": {
+   "counts": {
+    "17": 100
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_textured_002.materialbin": {
+   "counts": {
+    "17": 90
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_textured_003.materialbin": {
+   "counts": {
+    "17": 28
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_textured_custom.materialbin": {
+   "counts": {
+    "17": 379
+   },
+   "translucent": 17
+  },
+  "interior_leather/leather_textured_embossed.materialbin": {
+   "counts": {
+    "17": 96
+   },
+   "translucent": 17
+  },
+  "interior_locks/keyhole_001.materialbin": {
+   "counts": {
+    "56": 13
+   },
+   "translucent": 56
+  },
+  "interior_locks/keyhole_002.materialbin": {
+   "counts": {
+    "56": 70
+   },
+   "translucent": 56
+  },
+  "interior_locks/keyhole_003.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "interior_metal/2metals1nonmetal.materialbin": {
+   "counts": {
+    "17": 5,
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_metal/aluminium_offset_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_metal/aluminum_polished.materialbin": {
+   "counts": {
+    "17": 52
+   },
+   "translucent": 17
+  },
+  "interior_metal/aluminum_polishedsatin.materialbin": {
+   "counts": {
+    "17": 119
+   },
+   "translucent": 17
+  },
+  "interior_metal/aluminum_rgh.materialbin": {
+   "counts": {
+    "17": 334
+   },
+   "translucent": 17
+  },
+  "interior_metal/aluminum_satin.materialbin": {
+   "counts": {
+    "17": 549
+   },
+   "translucent": 17
+  },
+  "interior_metal/brass_matte.materialbin": {
+   "counts": {
+    "17": 111
+   },
+   "translucent": 17
+  },
+  "interior_metal/brass_satin.materialbin": {
+   "counts": {
+    "17": 68
+   },
+   "translucent": 17
+  },
+  "interior_metal/cadmium_tarnished_001.materialbin": {
+   "counts": {
+    "17": 38
+   },
+   "translucent": 17
+  },
+  "interior_metal/chrome.materialbin": {
+   "counts": {
+    "17": 869
+   },
+   "translucent": 17
+  },
+  "interior_metal/chrome_polishedsatin.materialbin": {
+   "counts": {
+    "17": 227
+   },
+   "translucent": 17
+  },
+  "interior_metal/chrome_satin.materialbin": {
+   "counts": {
+    "17": 545
+   },
+   "translucent": 17
+  },
+  "interior_metal/copper_coils.materialbin": {
+   "counts": {
+    "56": 13
+   },
+   "translucent": 56
+  },
+  "interior_metal/copper_tarnished_001.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "interior_metal/gunmetal_satin.materialbin": {
+   "counts": {
+    "17": 233
+   },
+   "translucent": 17
+  },
+  "interior_metal/heatsheild_001.materialbin": {
+   "counts": {
+    "17": 35
+   },
+   "translucent": 17
+  },
+  "interior_metal/heatsheild_002.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_alloy_ch1.materialbin": {
+   "counts": {
+    "17": 4,
+    "56": 44
+   },
+   "translucent": 56
+  },
+  "interior_metal/metal_anisotropic_circular.materialbin": {
+   "counts": {
+    "56": 19
+   },
+   "translucent": 56
+  },
+  "interior_metal/metal_anodized.materialbin": {
+   "counts": {
+    "17": 886
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_anodized_alloptions.materialbin": {
+   "counts": {
+    "17": 346,
+    "56": 738
+   },
+   "translucent": 56
+  },
+  "interior_metal/metal_anodized_ch1normrtint.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_anodized_texturemap.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_braided.materialbin": {
+   "counts": {
+    "17": 33
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_braided_002.materialbin": {
+   "counts": {
+    "17": 23
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_brushed.materialbin": {
+   "counts": {
+    "17": 327
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_brushed_black.materialbin": {
+   "counts": {
+    "17": 391
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_brushed_updated.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_cast.materialbin": {
+   "counts": {
+    "17": 121
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_clearcoat_custompattern.materialbin": {
+   "counts": {
+    "17": 17
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_clearcoat_rough.materialbin": {
+   "counts": {
+    "17": 131
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_diamondplate_001.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_dirty_001.materialbin": {
+   "counts": {
+    "17": 35
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_divets_001.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_embossed_alpha.materialbin": {
+   "counts": {
+    "17": 228,
+    "56": 398
+   },
+   "translucent": 56
+  },
+  "interior_metal/metal_machined.materialbin": {
+   "counts": {
+    "17": 129
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_nonmetalmix.materialbin": {
+   "counts": {
+    "17": 37,
+    "56": 74
+   },
+   "translucent": 56
+  },
+  "interior_metal/metal_nonmetalmix_ch2.materialbin": {
+   "counts": {
+    "17": 17
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_painted_rust_001.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_radiator.materialbin": {
+   "counts": {
+    "17": 13
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_rgh_dirty.materialbin": {
+   "counts": {
+    "17": 54
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_ridges_001.materialbin": {
+   "counts": {
+    "17": 76
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_ridgesnoise_001.materialbin": {
+   "counts": {
+    "17": 48
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_rough_001.materialbin": {
+   "counts": {
+    "17": 329
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_rough_002.materialbin": {
+   "counts": {
+    "17": 54
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_rust_001.materialbin": {
+   "counts": {
+    "17": 14
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_scratched_001.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_smooth.materialbin": {
+   "counts": {
+    "17": 296
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_smoth_black.materialbin": {
+   "counts": {
+    "17": 67
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_textured_custom.materialbin": {
+   "counts": {
+    "17": 180
+   },
+   "translucent": 17
+  },
+  "interior_metal/metal_triangles_001.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_metal/steel.materialbin": {
+   "counts": {
+    "17": 1217,
+    "1025": 11
+   },
+   "translucent": 1025
+  },
+  "interior_metal/titanium_tarnished.materialbin": {
+   "counts": {
+    "17": 40
+   },
+   "translucent": 17
+  },
+  "interior_misc/blackhole.materialbin": {
+   "counts": {
+    "56": 45
+   },
+   "translucent": 56
+  },
+  "interior_misc/blackhole_updated.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "interior_misc/carbonfiber_001.materialbin": {
+   "counts": {
+    "17": 191
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_002.materialbin": {
+   "counts": {
+    "17": 13
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_004.materialbin": {
+   "counts": {
+    "17": 37
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_005.materialbin": {
+   "counts": {
+    "17": 167
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_005_flip.materialbin": {
+   "counts": {
+    "17": 125
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_006.materialbin": {
+   "counts": {
+    "17": 17
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_007.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_alpha_embossed.materialbin": {
+   "counts": {
+    "17": 8,
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "interior_misc/carbonfiber_composite_001.materialbin": {
+   "counts": {
+    "17": 17
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_custom.materialbin": {
+   "counts": {
+    "17": 82
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_metal_001.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_metal_002.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_simple_001.materialbin": {
+   "counts": {
+    "17": 28
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_simple_fresnel_001.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_simpledry_custom.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonfiber_simpledry_custom_updated.materialbin": {
+   "counts": {
+    "17": 71
+   },
+   "translucent": 17
+  },
+  "interior_misc/carbonkevlar_001.materialbin": {
+   "counts": {
+    "17": 20
+   },
+   "translucent": 17
+  },
+  "interior_misc/carpaint.materialbin": {
+   "counts": {
+    "17": 969,
+    "56": 87
+   },
+   "translucent": 56
+  },
+  "interior_misc/carpaint_livery.materialbin": {
+   "counts": {
+    "17": 7,
+    "56": 93
+   },
+   "translucent": 56
+  },
+  "interior_misc/carpaint_secondary.materialbin": {
+   "counts": {
+    "17": 23,
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "interior_misc/defrostlines.materialbin": {
+   "counts": {
+    "28": 42
+   },
+   "translucent": 28
+  },
+  "interior_misc/dial_edge.materialbin": {
+   "counts": {
+    "17": 92
+   },
+   "translucent": 17
+  },
+  "interior_misc/engine_fluid.materialbin": {
+   "counts": {
+    "17": 91
+   },
+   "translucent": 17
+  },
+  "interior_misc/engine_fluid_container.materialbin": {
+   "counts": {
+    "28": 139
+   },
+   "translucent": 28
+  },
+  "interior_misc/engine_fluid_container_updated.materialbin": {
+   "counts": {
+    "28": 25
+   },
+   "translucent": 28
+  },
+  "interior_misc/engine_low.materialbin": {
+   "counts": {
+    "17": 705
+   },
+   "translucent": 17
+  },
+  "interior_misc/fiberglass_001.materialbin": {
+   "counts": {
+    "17": 15
+   },
+   "translucent": 17
+  },
+  "interior_misc/gauge_needle.materialbin": {
+   "counts": {
+    "17": 755
+   },
+   "translucent": 17
+  },
+  "interior_misc/grillebackground_acradiator_001.materialbin": {
+   "counts": {
+    "17": 119
+   },
+   "translucent": 17
+  },
+  "interior_misc/grillebackground_innercooler_001.materialbin": {
+   "counts": {
+    "17": 143
+   },
+   "translucent": 17
+  },
+  "interior_misc/grillebackground_radiator_001.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "interior_misc/grillebackground_radiator_003.materialbin": {
+   "counts": {
+    "17": 37
+   },
+   "translucent": 17
+  },
+  "interior_misc/int_doortags.materialbin": {
+   "counts": {
+    "56": 299
+   },
+   "translucent": 56
+  },
+  "interior_misc/int_gauges.materialbin": {
+   "counts": {
+    "56": 165
+   },
+   "translucent": 56
+  },
+  "interior_misc/int_symbols_emissive.materialbin": {
+   "counts": {
+    "56": 1546
+   },
+   "translucent": 56
+  },
+  "interior_misc/nav_screen.materialbin": {
+   "counts": {
+    "17": 54
+   },
+   "translucent": 17
+  },
+  "interior_misc/paint.materialbin": {
+   "counts": {
+    "17": 1734
+   },
+   "translucent": 17
+  },
+  "interior_misc/paint_embossed_alpha.materialbin": {
+   "counts": {
+    "56": 564
+   },
+   "translucent": 56
+  },
+  "interior_misc/paint_staticcolor.materialbin": {
+   "counts": {
+    "17": 29
+   },
+   "translucent": 17
+  },
+  "interior_misc/paintedmetal_metalic.materialbin": {
+   "counts": {
+    "17": 79
+   },
+   "translucent": 17
+  },
+  "interior_misc/reflector.materialbin": {
+   "counts": {
+    "17": 22
+   },
+   "translucent": 17
+  },
+  "interior_misc/ridgecapsulesch1_001.materialbin": {
+   "counts": {
+    "17": 49
+   },
+   "translucent": 17
+  },
+  "interior_misc/ridgecapsulesch1_002.materialbin": {
+   "counts": {
+    "17": 12
+   },
+   "translucent": 17
+  },
+  "interior_misc/ridgecapsulesch1_003.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "interior_misc/rubber_ch1custom.materialbin": {
+   "counts": {
+    "17": 8,
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "interior_misc/rubber_painted_001.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "interior_misc/rubber_rgh.materialbin": {
+   "counts": {
+    "17": 63
+   },
+   "translucent": 17
+  },
+  "interior_misc/rubber_ridges_001.materialbin": {
+   "counts": {
+    "17": 38
+   },
+   "translucent": 17
+  },
+  "interior_misc/rubber_smooth.materialbin": {
+   "counts": {
+    "17": 383
+   },
+   "translucent": 17
+  },
+  "interior_misc/rubber_textured_001.materialbin": {
+   "counts": {
+    "17": 14
+   },
+   "translucent": 17
+  },
+  "interior_misc/rubberstriped.materialbin": {
+   "counts": {
+    "17": 28
+   },
+   "translucent": 17
+  },
+  "interior_misc/rubberstriped_001.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "interior_misc/rubbertrim.materialbin": {
+   "counts": {
+    "17": 847
+   },
+   "translucent": 17
+  },
+  "interior_misc/sticker.materialbin": {
+   "counts": {
+    "17": 2,
+    "56": 30
+   },
+   "translucent": 56
+  },
+  "interior_misc/sticker_colorlookup.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "interior_misc/sticker_mfr.materialbin": {
+   "counts": {
+    "17": 4,
+    "56": 28
+   },
+   "translucent": 56
+  },
+  "interior_misc/surgicaltubing_001.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_misc/vents_001.materialbin": {
+   "counts": {
+    "56": 28
+   },
+   "translucent": 56
+  },
+  "interior_misc/weldseam.materialbin": {
+   "counts": {
+    "17": 24,
+    "56": 187
+   },
+   "translucent": 56
+  },
+  "interior_misc/zipper_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "interior_pedals/metal_capsuleindent_001.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_pedals/metal_circleindent_001.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "interior_pedals/metal_circleindent_006.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_pedals/metal_circleindent_011.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "interior_pedals/metal_circleindentshapes_001.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic.materialbin": {
+   "counts": {
+    "17": 3771
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_anisotropic_001.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_anisotropic_002.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_braided_001.materialbin": {
+   "counts": {
+    "17": 19
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_brushed_001.materialbin": {
+   "counts": {
+    "17": 30
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_dirty_001.materialbin": {
+   "counts": {
+    "17": 36
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_embossed.materialbin": {
+   "counts": {
+    "17": 468
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_embossed_alpha.materialbin": {
+   "counts": {
+    "17": 279,
+    "56": 1227
+   },
+   "translucent": 56
+  },
+  "interior_plastic/plastic_embossed_diffusemap.materialbin": {
+   "counts": {
+    "17": 34,
+    "56": 45
+   },
+   "translucent": 56
+  },
+  "interior_plastic/plastic_hgl.materialbin": {
+   "counts": {
+    "17": 154
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_lgl.materialbin": {
+   "counts": {
+    "17": 629
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_mgl.materialbin": {
+   "counts": {
+    "17": 85
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_ngl.materialbin": {
+   "counts": {
+    "17": 70
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_pattern_005.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_pattern_010.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_pattern_011.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_pattern_012.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_perforated_001.materialbin": {
+   "counts": {
+    "17": 21
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_perforated_003.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_perforated_004.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_rgh_001.materialbin": {
+   "counts": {
+    "17": 1137
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_rgh_002.materialbin": {
+   "counts": {
+    "17": 114
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_rgh_hgl.materialbin": {
+   "counts": {
+    "17": 103
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_rgh_lgl.materialbin": {
+   "counts": {
+    "17": 135
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_rgh_lmgl.materialbin": {
+   "counts": {
+    "17": 111
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_rgh_mgl.materialbin": {
+   "counts": {
+    "17": 115
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_ridges_001.materialbin": {
+   "counts": {
+    "17": 346
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_ridges_002.materialbin": {
+   "counts": {
+    "17": 19
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_rough_001.materialbin": {
+   "counts": {
+    "17": 50
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_sgl.materialbin": {
+   "counts": {
+    "17": 333
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_smooth.materialbin": {
+   "counts": {
+    "17": 1320
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_textured_001.materialbin": {
+   "counts": {
+    "17": 160
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_textured_003.materialbin": {
+   "counts": {
+    "17": 34
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_textured_004.materialbin": {
+   "counts": {
+    "17": 41
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_textured_custom.materialbin": {
+   "counts": {
+    "17": 250
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_textured_custom_updated.materialbin": {
+   "counts": {
+    "17": 163
+   },
+   "translucent": 17
+  },
+  "interior_plastic/plastic_textured_embossed.materialbin": {
+   "counts": {
+    "17": 95
+   },
+   "translucent": 17
+  },
+  "interior_plastic/seatbelt_press.materialbin": {
+   "counts": {
+    "17": 50
+   },
+   "translucent": 17
+  },
+  "interior_screws/rivet_001.materialbin": {
+   "counts": {
+    "56": 149
+   },
+   "translucent": 56
+  },
+  "interior_screws/rivet_003.materialbin": {
+   "counts": {
+    "56": 78
+   },
+   "translucent": 56
+  },
+  "interior_screws/rivet_004.materialbin": {
+   "counts": {
+    "56": 25
+   },
+   "translucent": 56
+  },
+  "interior_screws/rivet_005.materialbin": {
+   "counts": {
+    "56": 18
+   },
+   "translucent": 56
+  },
+  "interior_screws/rivet_006.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "interior_screws/rivet_007.materialbin": {
+   "counts": {
+    "56": 70
+   },
+   "translucent": 56
+  },
+  "interior_screws/rivetpainted_007.materialbin": {
+   "counts": {
+    "56": 39
+   },
+   "translucent": 56
+  },
+  "interior_screws/rubbernut_001.materialbin": {
+   "counts": {
+    "56": 19
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_001.materialbin": {
+   "counts": {
+    "56": 88
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_002.materialbin": {
+   "counts": {
+    "56": 182
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_003.materialbin": {
+   "counts": {
+    "56": 200
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_010.materialbin": {
+   "counts": {
+    "56": 104
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_011.materialbin": {
+   "counts": {
+    "56": 43
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_012.materialbin": {
+   "counts": {
+    "56": 15
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_015.materialbin": {
+   "counts": {
+    "56": 117
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_015_tarnished.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_017.materialbin": {
+   "counts": {
+    "56": 44
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_020.materialbin": {
+   "counts": {
+    "56": 21
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_027.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_036.materialbin": {
+   "counts": {
+    "56": 77
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_037.materialbin": {
+   "counts": {
+    "56": 70
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_044.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "interior_screws/screw_custom.materialbin": {
+   "counts": {
+    "17": 2,
+    "56": 78
+   },
+   "translucent": 56
+  },
+  "interior_screws/sensor_001.materialbin": {
+   "counts": {
+    "56": 24
+   },
+   "translucent": 56
+  },
+  "interior_speaker/speaker_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "interior_speaker/speaker_002.materialbin": {
+   "counts": {
+    "56": 23
+   },
+   "translucent": 56
+  },
+  "interior_speaker/speaker_003.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "interior_speaker/speaker_004.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_speaker/speaker_005.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_speaker/speaker_006_ch2.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "interior_speaker/speaker_custom_ch1.materialbin": {
+   "counts": {
+    "17": 10,
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_001.materialbin": {
+   "counts": {
+    "56": 227
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_002.materialbin": {
+   "counts": {
+    "56": 55
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_003.materialbin": {
+   "counts": {
+    "56": 153
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_004.materialbin": {
+   "counts": {
+    "56": 22
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_005.materialbin": {
+   "counts": {
+    "56": 50
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_006.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_007.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_008.materialbin": {
+   "counts": {
+    "56": 82
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_009.materialbin": {
+   "counts": {
+    "56": 82
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_010.materialbin": {
+   "counts": {
+    "56": 269
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_012.materialbin": {
+   "counts": {
+    "56": 46
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_ch1normal_colorlookup.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "interior_stitches/stitch_custom.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "interior_wood/wood_001.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "interior_wood/wood_002.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_wood/wood_004.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "interior_wood/wood_005.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "interior_wood/wood_007.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "interior_wood/wood_008.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "interior_wood/wood_009.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_wood/wood_016.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "interior_wood/wood_017.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "interior_wood/wood_custom.materialbin": {
+   "counts": {
+    "17": 37
+   },
+   "translucent": 17
+  },
+  "interior_wood/wood_custom_002.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "lego/alphafadelivery_normal.materialbin": {
+   "counts": {
+    "28": 1
+   },
+   "translucent": 28
+  },
+  "lego/carcolors/192_reddishbrown.materialbin": {
+   "counts": {
+    "17": 12,
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "lego/carcolors/194_medstonegrey.materialbin": {
+   "counts": {
+    "17": 45
+   },
+   "translucent": 17
+  },
+  "lego/carcolors/1_white.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "lego/carcolors/21_brightred.materialbin": {
+   "counts": {
+    "17": 13
+   },
+   "translucent": 17
+  },
+  "lego/carcolors/23_brightblue.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "lego/carcolors/24_brightyellow.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "lego/carcolors/26_black.materialbin": {
+   "counts": {
+    "17": 33
+   },
+   "translucent": 17
+  },
+  "lego/carcolors/316_titaniummetallic.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "lego/carcolors/5_brick_yellow.materialbin": {
+   "counts": {
+    "17": 15
+   },
+   "translucent": 17
+  },
+  "lego/carpaint_interior_lego.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "lego/carpaint_lego.materialbin": {
+   "counts": {
+    "17": 301,
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "lego/carpaint_secondary_lego.materialbin": {
+   "counts": {
+    "17": 280
+   },
+   "translucent": 17
+  },
+  "lego/gls_backface_totalinternalreflection.materialbin": {
+   "counts": {
+    "28": 65
+   },
+   "translucent": 28
+  },
+  "lego/gls_interior_lego.materialbin": {
+   "counts": {
+    "28": 7
+   },
+   "translucent": 28
+  },
+  "lego/gls_lightbulb_lego.materialbin": {
+   "counts": {
+    "28": 44
+   },
+   "translucent": 28
+  },
+  "lego/gls_manufacturersticker_lego.materialbin": {
+   "counts": {
+    "60": 94
+   },
+   "translucent": 60
+  },
+  "lego/gls_windsheild_interior_lego.materialbin": {
+   "counts": {
+    "28": 4
+   },
+   "translucent": 28
+  },
+  "lego/gls_windsheild_lego.materialbin": {
+   "counts": {
+    "28": 46
+   },
+   "translucent": 28
+  },
+  "mfr_badges/alf_badge_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/alf_badge_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/alf_badge_003.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/alf_badge_004.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/alf_badge_005.materialbin": {
+   "counts": {
+    "56": 24
+   },
+   "translucent": 56
+  },
+  "mfr_badges/alf_badge_007.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/amc_badge_003.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ari_badge_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ast_badge_002.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ast_badge_004.materialbin": {
+   "counts": {
+    "17": 1,
+    "56": 28
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ast_badge_005.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ast_badge_008.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ast_badge_014.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ast_badge_020.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ast_badge_046.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ast_badge_049.materialbin": {
+   "counts": {
+    "56": 24
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ats_badge_002.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ats_badge_004.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ats_badge_005.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ats_badge_006.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/aud_badge_001.materialbin": {
+   "counts": {
+    "56": 17
+   },
+   "translucent": 56
+  },
+  "mfr_badges/aud_badge_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/aud_badge_004.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "mfr_badges/aud_badge_014.materialbin": {
+   "counts": {
+    "56": 19
+   },
+   "translucent": 56
+  },
+  "mfr_badges/aud_badge_015.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/aud_badge_026.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/aud_bose_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/aus_badge_003.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/aus_badge_004.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/aus_badge_005.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/aus_badge_006.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_badges/aus_badge_007.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ben_badge_001.materialbin": {
+   "counts": {
+    "56": 20
+   },
+   "translucent": 56
+  },
+  "mfr_badges/bmw_badge_001.materialbin": {
+   "counts": {
+    "17": 10,
+    "56": 84
+   },
+   "translucent": 56
+  },
+  "mfr_badges/bmw_badge_003.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_badges/bmw_badge_005.materialbin": {
+   "counts": {
+    "56": 16
+   },
+   "translucent": 56
+  },
+  "mfr_badges/bmw_badge_008.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "mfr_badges/bmw_badges_006.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/bug_badge_001.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_badges/bug_badge_002.materialbin": {
+   "counts": {
+    "56": 17
+   },
+   "translucent": 56
+  },
+  "mfr_badges/bug_badge_003.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/bug_badge_010.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/cad_badge_007.materialbin": {
+   "counts": {
+    "56": 19
+   },
+   "translucent": 56
+  },
+  "mfr_badges/can_badge_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/can_badge_003.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/can_badge_004.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "mfr_badges/can_badge_005.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/can_badge_009.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/che_badge_012.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/che_badge_015.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/che_badge_016.materialbin": {
+   "counts": {
+    "56": 14
+   },
+   "translucent": 56
+  },
+  "mfr_badges/che_badge_017.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/che_badge_030.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "mfr_badges/che_badge_045.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/che_badge_121.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/cit_badge_001.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "mfr_badges/cit_badge_002.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/dod_badge_010.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/dod_badge_013.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/dod_badge_024.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_001.materialbin": {
+   "counts": {
+    "56": 13
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_002.materialbin": {
+   "counts": {
+    "56": 28
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_003.materialbin": {
+   "counts": {
+    "56": 21
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_004.materialbin": {
+   "counts": {
+    "56": 16
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_005.materialbin": {
+   "counts": {
+    "56": 22
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_007.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_009.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_010.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_012.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_024.materialbin": {
+   "counts": {
+    "56": 28
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_027.materialbin": {
+   "counts": {
+    "56": 25
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_030.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_031.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_032.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fer_badge_033.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fia_badge_012.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fia_badge_014.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fia_badge_015.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/fia_badge_016.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/for_003.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/for_badge_001.materialbin": {
+   "counts": {
+    "56": 116
+   },
+   "translucent": 56
+  },
+  "mfr_badges/for_badge_004.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/for_badge_005.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/for_badge_008.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_badges/for_badge_009.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_badges/for_badge_033.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/for_badge_034.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/for_badge_037.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/for_badge_05.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_badges/for_badge_066.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ford_002.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/gmc_badge_002.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/gta_badge_001.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/gta_badge_002.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_badges/gta_badge_003.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/gta_badge_004.materialbin": {
+   "counts": {
+    "56": 16
+   },
+   "translucent": 56
+  },
+  "mfr_badges/hol_badge_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/hol_badge_009.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/hol_badge_010.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/hol_badge_011.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/hol_badge_017.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/hon_badge_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/hon_badge_005.materialbin": {
+   "counts": {
+    "56": 24
+   },
+   "translucent": 56
+  },
+  "mfr_badges/hon_badge_009.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/hon_badge_010.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/hon_badge_011.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/hon_badge_012.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/hum_badge_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/int_badge_003.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jag_badge_003.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jag_badge_005.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jag_badge_007.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jag_badge_011.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jag_badge_012.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jag_badge_013.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jag_badge_014.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jag_badge_022.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jag_badge_025.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jag_badge_026.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jag_emblem_017.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jaguar_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jee_badge_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jee_badge_006.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jee_badge_010.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jee_badge_016.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "mfr_badges/jeep_badge_001.materialbin": {
+   "counts": {
+    "56": 17
+   },
+   "translucent": 56
+  },
+  "mfr_badges/koe_badge_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/koe_badge_002.materialbin": {
+   "counts": {
+    "17": 1,
+    "56": 16
+   },
+   "translucent": 56
+  },
+  "mfr_badges/koe_badge_008.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_badges/koe_badge_009.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_badges/koe_badge_011.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/koe_badge_012.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_badges/koe_badge_013.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/koe_badge_018.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lam_badge_001.materialbin": {
+   "counts": {
+    "56": 54
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lam_badge_002.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lam_badge_004.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lam_badge_005.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "mfr_badges/lam_badge_007.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lam_badge_008.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lam_badge_009.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lam_badge_010.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lam_badge_011.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lam_badge_016.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lan_badge_001.materialbin": {
+   "counts": {
+    "56": 18
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lan_badge_002.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "mfr_badges/lot_badge_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lot_badge_002.materialbin": {
+   "counts": {
+    "56": 29
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lot_badge_003.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lot_badge_004.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lr_badge_004.materialbin": {
+   "counts": {
+    "56": 13
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lr_badge_005.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lr_badge_007.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/lr_badge_008.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mas_badge_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mas_badge_0022.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mas_badge_012.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mas_badge_014.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mas_badge_023.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "mfr_badges/maz_badge_001.materialbin": {
+   "counts": {
+    "56": 15
+   },
+   "translucent": 56
+  },
+  "mfr_badges/maz_badge_005.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "mfr_badges/mcl_badge_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mcl_badge_004.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mcl_badge_007.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mcl_badge_008.materialbin": {
+   "counts": {
+    "56": 16
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mcl_badge_013.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mcl_badge_015.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mcl_badge_016.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mcl_badge_017.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mcl_badge_018.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mcl_badge_023.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mer_badge_002.materialbin": {
+   "counts": {
+    "56": 28
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mer_badge_005.materialbin": {
+   "counts": {
+    "56": 45
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mer_badge_010.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mer_badge_012.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mer_badge_015.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mer_emblem_007.materialbin": {
+   "counts": {
+    "17": 12
+   },
+   "translucent": 17
+  },
+  "mfr_badges/mg_badge_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/min_badge_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/min_badge_003.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "mfr_badges/min_badge_004.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mit_badge_001.materialbin": {
+   "counts": {
+    "56": 24
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mit_badge_002.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mor_badge_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mor_badge_003.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mrs_badge_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mrs_badge_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mrs_badge_003.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/mrs_badge_007.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "mfr_badges/mustang_badge_005.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/nis_badge_004.materialbin": {
+   "counts": {
+    "56": 42
+   },
+   "translucent": 56
+  },
+  "mfr_badges/nis_badge_009_silviak_92.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/nis_badge_018.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "mfr_badges/nis_badge_019.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/pag_badge_003.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/pag_badge_012.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_badges/pag_badge_017.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/pon_badge_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/pon_badge_006.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/pon_badge_015.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_badges/por_badge_001.materialbin": {
+   "counts": {
+    "56": 17
+   },
+   "translucent": 56
+  },
+  "mfr_badges/por_badge_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/por_badge_003.materialbin": {
+   "counts": {
+    "17": 1,
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_badges/por_badge_006.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/por_badge_009.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/por_badge_010.materialbin": {
+   "counts": {
+    "56": 21
+   },
+   "translucent": 56
+  },
+  "mfr_badges/por_badge_011.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/por_badge_014.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/por_badge_015.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/por_badge_017.materialbin": {
+   "counts": {
+    "17": 1,
+    "56": 19
+   },
+   "translucent": 56
+  },
+  "mfr_badges/por_badge_019.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/por_badge_021.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/qua_badge_001.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/qua_badge_002.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ram_badge_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ram_badge_003.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_badges/ren_badge_001.materialbin": {
+   "counts": {
+    "56": 15
+   },
+   "translucent": 56
+  },
+  "mfr_badges/rov_badge_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/rov_badge_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/sub_badge_001.materialbin": {
+   "counts": {
+    "56": 52
+   },
+   "translucent": 56
+  },
+  "mfr_badges/sub_badge_005.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/sub_badge_017.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/tat_badge_002.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_badges/toy_badge_001.materialbin": {
+   "counts": {
+    "56": 28
+   },
+   "translucent": 56
+  },
+  "mfr_badges/toy_badge_012.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/toy_badge_013.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/toy_badge_015.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/tr7_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/tri_badge_010.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/tri_badge_011.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/tri_badge_012.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/tvr_badge_001.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_badges/tvr_badge_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/vau_badge_003.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_badges/vau_badge_004.materialbin": {
+   "counts": {
+    "56": 14
+   },
+   "translucent": 56
+  },
+  "mfr_badges/vau_badge_009.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_badges/vip_badge_005.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/vol_badge_014.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/vol_badge_017.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/vw_badge_001.materialbin": {
+   "counts": {
+    "56": 24
+   },
+   "translucent": 56
+  },
+  "mfr_badges/vw_badge_003.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/vw_badge_005.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/vw_badge_008.materialbin": {
+   "counts": {
+    "56": 25
+   },
+   "translucent": 56
+  },
+  "mfr_badges/vw_badge_013.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_badges/zen_badge_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_badges/zen_badge_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_badges/zen_badge_003.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/1.5_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/1500_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/155_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/1600_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/1600_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/2-7_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/20_litre_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/280sl_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/3000_6_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/307_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/351_gt_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/38_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/430_scuderia_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/458_speciale_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/458_speciale_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/5.7_tuned_port_injector.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/50_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/510_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/6.2l_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/650s_001.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/6x6_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/720s_001.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/911carreras_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/928gts_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/abarth_004.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/alpha_001.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/amg_003.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/amg_006.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/amg_black_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/amg_black_003.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/amg_carbonceramic_blkchrome_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/amg_terbo_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/amg_turbo_003.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/amg_v8_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/ats_002.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/aventador_003.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/awd_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/awd_symmetrical_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/barracuda_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/bertone_001.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/bertone_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/bertone_003.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/bertone_004.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/biturbo_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/bmw_emblem_25.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/body_by_fisher_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/body_by_fisher_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/body_by_fisher_003.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/body_by_fisher_004.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/body_by_fisher_033.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/bosch_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/britishflag_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/c63_002.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/california_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/capri_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/caprigt_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/charger_006.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/charger_007.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/chevelle_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/chevelle_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/citroen_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/civic_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/clio_002.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/cobra_003.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/cobra_005.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/corolla_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/corolla_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/corsa_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/corvette_001.materialbin": {
+   "counts": {
+    "56": 18
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/corvette_006.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/corvette_007.materialbin": {
+   "counts": {
+    "56": 14
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/corvette_012.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/corvette_013.materialbin": {
+   "counts": {
+    "56": 17
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/corvette_031.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/corvette_085.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/cosworth_001.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "mfr_emblems/ctis_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/cts_002.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/cuda_001.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/currieenterprses_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/defender_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/diablo_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/dino2400_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/dino_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/dino_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/dino_gt_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/disc_brakes_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/disegno_di_bertone_001.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "mfr_emblems/disegno_marcello_gandini_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/duramax_diesel_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/ecoboost_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/edrive_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/escortrs_001.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/etcs-i_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/f150_003.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/f5_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/fiat_131.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/flex_fuel_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/focus_004.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/fpace_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/g63_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/g65_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/giulia_sprint_gta_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/grand_cherokee_002.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gsl-se_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gt0001_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gt_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gt_003.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gt_009.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gt_010.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gt_012.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gt_014.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gt_017.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gt_ho_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gtr_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gtr_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gtr_003.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gtr_008.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gtr_009.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gtr_010.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gts_002.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/gts_008.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/h1_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/hdt_004.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/hemi_6_4_liter_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/hemicuda_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/hol_emblem_008.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/horaciopagani_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/hornet_002.materialbin": {
+   "counts": {
+    "56": 15
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/hornet_003.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/hsv_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/i8_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/international_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/international_002.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/iroc-z_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/iroc-z_002.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/ishift_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/jee_emblem_003.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/john_cooper_works_005.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/john_cooper_works_006.materialbin": {
+   "counts": {
+    "56": 17
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/johncooperworks_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/ks_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/laferrari_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/lan_hf_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/lancer_evolution_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/ledintelligentlightsystem_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/limited_edition_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/lm_sang_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/loadstar_001.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m235i_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m3_001.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m3_002.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "mfr_emblems/m4_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m4_002.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m5_001.materialbin": {
+   "counts": {
+    "56": 17
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m5_002.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m5_003.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m_001.materialbin": {
+   "counts": {
+    "17": 27,
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m_003.materialbin": {
+   "counts": {
+    "56": 15
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m_004.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m_005.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m_006.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/m_007.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/macanturbo_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/maloo_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/mas_emblem_015.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/mastercraft_004.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/maz_emblem_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/maz_emblem_004.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/mazdaspeed_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/mazdaspeed_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/megane_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/miniminor_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/minor1000_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/minor1000_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/mirafiori_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/miura_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/mk2_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/momo_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/momo_056.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/mono_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/monsoon_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/motorsports_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/mugen_power_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/mustang_013.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/mx5_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/nova_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/one1_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/one1titanium_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/os_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/os_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/peu_emblem_032.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/pininfarina_003.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/pininfarina_004.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/pininfarina_122.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/police_interceptor_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/powerwagon_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/qua_emblem_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/qua_emblem_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/qua_emblem_003.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/r32_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/r32_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/r390gti_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/r50_001.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/ram2500_001.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/ram_002.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rambox_001.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/ranger_004.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/raptorsvt_002.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/ren_renaultsport_004.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/renaultsport_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/renaultsport_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/renaultsport_003.materialbin": {
+   "counts": {
+    "56": 17
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rs2_001.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rs4_001.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rs4_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rs6_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rs6_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rs_002.materialbin": {
+   "counts": {
+    "56": 20
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rs_005.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rs_010.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rs_011.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rs_063.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rs_069.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rs_renaultsport_002.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/rx-8_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/s800_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/s_004.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/sagaris_001.materialbin": {
+   "counts": {
+    "60": 1
+   },
+   "translucent": 60
+  },
+  "mfr_emblems/sagaris_002.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/senna_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/senna_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/senna_s_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/shamrock_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/silvia_007.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/six_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/skyline_003.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/sls_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/sparco_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/sparco_002.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/speed_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/sr5_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/srt_002.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/srt_003.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/ss_425_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/st_001.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/sti_002.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/sti_003.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/sti_006.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/sti_007.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/sti_008.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/superleggera_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/supra_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/sv_001.materialbin": {
+   "counts": {
+    "56": 13
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/svt_001.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "mfr_emblems/titan_002.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/toranaemblem_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/toy_circlestar_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/toy_circlestar_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/toy_circlestar_003.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/toy_emblem_038.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/trailrated4x4_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/trailrated_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/transit_001.materialbin": {
+   "counts": {
+    "56": 13
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/typer_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/u5023_001.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/undo_left_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "mfr_emblems/undo_right_001.materialbin": {
+   "counts": {
+    "17": 3
+   },
+   "translucent": 17
+  },
+  "mfr_emblems/unimog_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/v12_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/v12_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/v12_003.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/v12_dc_strait_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/v8_005.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/v8_biturbo_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/v8biturbo_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/v_001.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/v_002.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/vau_emblem_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/vitesse_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/vx220turbo_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/vxr_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/w12_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/w16_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/wilwood_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/wrx_impreza_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/x2halogen_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/xjs_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/z06_021.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/z06_042.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/z28_002.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/z28_005.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "mfr_emblems/z28_iroc-z_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/z4_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/z4_002.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/z_005.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/zondar_002.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_emblems/zondar_005.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/001_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/3eleven_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/599xx_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/amg_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/ast_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/ats_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/borla_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/chiron_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/cobra_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/cobra_004.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/driftcave_002.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/driven_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/driven_004.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/evo2_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/exomotive_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/falken_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/ferrari_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/ferrari_002.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/focus_015.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/gt12_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/gt3rs_002.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/gta_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/heatwave_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/lamborghini_003.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/max_002.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/mf777_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/mfr_fabric_custom.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/nsx_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/pagani_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/porsche_002.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/powerwagon_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/pull_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/recaro_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/recaro_002.materialbin": {
+   "counts": {
+    "56": 14
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/recaro_003.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/rs_065.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/sabelt_002.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/schroth_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/schroth_005.materialbin": {
+   "counts": {
+    "56": 9
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/schroth_007.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/sparco_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/sparco_002.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/sparco_003.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/sparco_005.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/srt_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/toora_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/toora_competizione_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/typer_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/vettywap_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/vx220_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/wish_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/x_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_fabric/zondar_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_plates/por_engineplaque_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_plates/por_engineplaque_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_plates/por_engineplaque_003.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/3eleven_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/audi_ceramic_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/brembo_001.materialbin": {
+   "counts": {
+    "56": 72
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/brembocarbonceramic_001.materialbin": {
+   "counts": {
+    "56": 4
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/chargerrt_001.materialbin": {
+   "counts": {
+    "56": 15
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/daytona_001.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/evolutionvi_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/hdt_001.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/hsv_002.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/king_001.materialbin": {
+   "counts": {
+    "56": 16
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/king_002.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/m_002.materialbin": {
+   "counts": {
+    "56": 11
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/pagani_001.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/rs_005.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "mfr_stickers/titan_001.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/torana_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/wheeldonut_001.materialbin": {
+   "counts": {
+    "56": 8
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/zondar_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_stickers/zondar_002.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "mfr_templates/mfr_mulitcolorsticker.materialbin": {
+   "counts": {
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "mfr_templates/mfr_singlecolorsticker.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "mfr_trimlevel/rtr_001.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "mfr_trimlevel/rtr_002.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "painttypes/prismacolor_black.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "pg_trafficvehicles/ambientvehicle_highfidelitydlm.materialbin": {
+   "counts": {
+    "17": 69
+   },
+   "translucent": 17
+  },
+  "pg_trafficvehicles/ambientvehicle_highfidelitydlm_alphablend.materialbin": {
+   "counts": {
+    "28": 6
+   },
+   "translucent": 28
+  },
+  "pg_trafficvehicles/ambientvehicle_highfidelitydlm_em_ab.materialbin": {
+   "counts": {
+    "28": 37
+   },
+   "translucent": 28
+  },
+  "pg_trafficvehicles/ambientvehicle_highfidelitydlm_emissive.materialbin": {
+   "counts": {
+    "17": 40
+   },
+   "translucent": 17
+  },
+  "pg_trafficvehicles/clear_glass.materialbin": {
+   "counts": {
+    "28": 15
+   },
+   "translucent": 28
+  },
+  "pg_trafficvehicles/colour_glass.materialbin": {
+   "counts": {
+    "28": 6
+   },
+   "translucent": 28
+  },
+  "pg_trafficvehicles/dark_glass.materialbin": {
+   "counts": {
+    "28": 45
+   },
+   "translucent": 28
+  },
+  "pg_trafficvehicles/detail_diffalphaglossnorm.materialbin": {
+   "counts": {
+    "56": 56
+   },
+   "translucent": 56
+  },
+  "pg_trafficvehicles/detail_glass.materialbin": {
+   "counts": {
+    "28": 95
+   },
+   "translucent": 28
+  },
+  "pg_trafficvehicles/led_scrolling.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "pg_trafficvehicles/multiswatch.materialbin": {
+   "counts": {
+    "17": 404
+   },
+   "translucent": 17
+  },
+  "pg_trafficvehicles/multiswatch_emissive.materialbin": {
+   "counts": {
+    "17": 30
+   },
+   "translucent": 17
+  },
+  "pg_trafficvehicles/retroreflectivepaint.materialbin": {
+   "counts": {
+    "17": 12
+   },
+   "translucent": 17
+  },
+  "pg_trafficvehicles/traffic_plateuk_atlas.materialbin": {
+   "counts": {
+    "56": 18
+   },
+   "translucent": 56
+  },
+  "pg_trafficvehicles/traffic_plateuk_base.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "pg_trafficvehicles/traffic_plateuk_front_atlas.materialbin": {
+   "counts": {
+    "56": 18
+   },
+   "translucent": 56
+  },
+  "pg_trafficvehicles/traffic_plateuk_front_base.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "pg_trafficvehicles/traffic_plateus_atlas.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "pg_trafficvehicles/traffic_plateus_base.materialbin": {
+   "counts": {
+    "17": 12
+   },
+   "translucent": 17
+  },
+  "pg_trafficvehicles/traffic_plateus_front_atlas.materialbin": {
+   "counts": {
+    "56": 12
+   },
+   "translucent": 56
+  },
+  "pg_trafficvehicles/traffic_plateus_front_base.materialbin": {
+   "counts": {
+    "17": 12
+   },
+   "translucent": 17
+  },
+  "pg_trafficvehicles/trafficcarpaint.materialbin": {
+   "counts": {
+    "17": 77
+   },
+   "translucent": 17
+  },
+  "pg_trafficvehicles/trafficinterior_lod1.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "pg_trafficvehicles/trafficinterior_silhouette.materialbin": {
+   "counts": {
+    "17": 33
+   },
+   "translucent": 17
+  },
+  "plates/plate_atlas_he.materialbin": {
+   "counts": {
+    "56": 36
+   },
+   "translucent": 56
+  },
+  "plates/plate_atlas_uk_front.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "plates/plate_base_uk_front.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "plates/plate_light.materialbin": {
+   "counts": {
+    "60": 299
+   },
+   "translucent": 60
+  },
+  "plates/plate_light_utility.materialbin": {
+   "counts": {
+    "60": 36
+   },
+   "translucent": 60
+  },
+  "plates/plateeu_base_he.materialbin": {
+   "counts": {
+    "17": 36
+   },
+   "translucent": 17
+  },
+  "plates/plateuk_atlas.materialbin": {
+   "counts": {
+    "56": 570
+   },
+   "translucent": 56
+  },
+  "plates/plateuk_base.materialbin": {
+   "counts": {
+    "17": 570
+   },
+   "translucent": 17
+  },
+  "plates/plateuk_shadow.materialbin": {
+   "counts": {
+    "28": 294
+   },
+   "translucent": 28
+  },
+  "plates/plateus_atlas.materialbin": {
+   "counts": {
+    "56": 624
+   },
+   "translucent": 56
+  },
+  "plates/plateus_base.materialbin": {
+   "counts": {
+    "17": 624
+   },
+   "translucent": 17
+  },
+  "plates/plateus_shadow.materialbin": {
+   "counts": {
+    "28": 310
+   },
+   "translucent": 28
+  },
+  "plates/screw_015_metal.materialbin": {
+   "counts": {
+    "56": 428
+   },
+   "translucent": 56
+  },
+  "radiosity/rad_carbonfiber.materialbin": {
+   "counts": {
+    "17": 76
+   },
+   "translucent": 17
+  },
+  "radiosity/rad_carpaint.materialbin": {
+   "counts": {
+    "17": 12
+   },
+   "translucent": 17
+  },
+  "radiosity/rad_ch1_lightsource_ch1mask.materialbin": {
+   "counts": {
+    "17": 1503
+   },
+   "translucent": 17
+  },
+  "radiosity/rad_ch1_metal.materialbin": {
+   "counts": {
+    "17": 1525
+   },
+   "translucent": 17
+  },
+  "radiosity/rad_ch1_nonmetal.materialbin": {
+   "counts": {
+    "17": 790
+   },
+   "translucent": 17
+  },
+  "radiosity/rad_ch1lightsource.materialbin": {
+   "counts": {
+    "17": 202
+   },
+   "translucent": 17
+  },
+  "radiosity/rad_ch2_lightsource_ch1mask.materialbin": {
+   "counts": {
+    "17": 34
+   },
+   "translucent": 17
+  },
+  "radiosity/rad_ch2_metal.materialbin": {
+   "counts": {
+    "17": 1069
+   },
+   "translucent": 17
+  },
+  "radiosity/rad_ch2_nonmetal.materialbin": {
+   "counts": {
+    "17": 930
+   },
+   "translucent": 17
+  },
+  "radiosity/rad_glm_ch1bump.materialbin": {
+   "counts": {
+    "60": 266
+   },
+   "translucent": 60
+  },
+  "radiosity/rad_glm_ch2bump_ch1mask.materialbin": {
+   "counts": {
+    "60": 22
+   },
+   "translucent": 60
+  },
+  "radiosity/rad_smoothglass.materialbin": {
+   "counts": {
+    "60": 1170
+   },
+   "translucent": 60
+  },
+  "rotors/rotor_carbonceramic_light.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "screws/rivet_001.materialbin": {
+   "counts": {
+    "56": 197
+   },
+   "translucent": 56
+  },
+  "screws/rivet_002.materialbin": {
+   "counts": {
+    "56": 90
+   },
+   "translucent": 56
+  },
+  "screws/rivet_003.materialbin": {
+   "counts": {
+    "56": 147
+   },
+   "translucent": 56
+  },
+  "screws/rivet_004.materialbin": {
+   "counts": {
+    "56": 94
+   },
+   "translucent": 56
+  },
+  "screws/rivet_005.materialbin": {
+   "counts": {
+    "56": 34
+   },
+   "translucent": 56
+  },
+  "screws/rivetpainted_001.materialbin": {
+   "counts": {
+    "56": 117
+   },
+   "translucent": 56
+  },
+  "screws/rivetpainted_002.materialbin": {
+   "counts": {
+    "56": 98
+   },
+   "translucent": 56
+  },
+  "screws/rubbernut_001.materialbin": {
+   "counts": {
+    "56": 59
+   },
+   "translucent": 56
+  },
+  "screws/screw_001.materialbin": {
+   "counts": {
+    "56": 192
+   },
+   "translucent": 56
+  },
+  "screws/screw_002.materialbin": {
+   "counts": {
+    "56": 482
+   },
+   "translucent": 56
+  },
+  "screws/screw_003.materialbin": {
+   "counts": {
+    "56": 400
+   },
+   "translucent": 56
+  },
+  "screws/screw_010.materialbin": {
+   "counts": {
+    "56": 180
+   },
+   "translucent": 56
+  },
+  "screws/screw_015.materialbin": {
+   "counts": {
+    "56": 173
+   },
+   "translucent": 56
+  },
+  "screws/screw_017.materialbin": {
+   "counts": {
+    "56": 110
+   },
+   "translucent": 56
+  },
+  "screws/screw_018.materialbin": {
+   "counts": {
+    "56": 23
+   },
+   "translucent": 56
+  },
+  "screws/screw_020.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "screws/screw_021.materialbin": {
+   "counts": {
+    "56": 23
+   },
+   "translucent": 56
+  },
+  "screws/screw_024.materialbin": {
+   "counts": {
+    "56": 78
+   },
+   "translucent": 56
+  },
+  "screws/screw_025.materialbin": {
+   "counts": {
+    "56": 101
+   },
+   "translucent": 56
+  },
+  "screws/screw_026.materialbin": {
+   "counts": {
+    "56": 20
+   },
+   "translucent": 56
+  },
+  "screws/screw_027.materialbin": {
+   "counts": {
+    "56": 3
+   },
+   "translucent": 56
+  },
+  "screws/screw_028.materialbin": {
+   "counts": {
+    "56": 35
+   },
+   "translucent": 56
+  },
+  "screws/screw_042.materialbin": {
+   "counts": {
+    "56": 42
+   },
+   "translucent": 56
+  },
+  "screws/screw_cadmium_tarnished_001.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "screws/screwpainted_001.materialbin": {
+   "counts": {
+    "56": 95
+   },
+   "translucent": 56
+  },
+  "screws/screwpainted_002.materialbin": {
+   "counts": {
+    "56": 33
+   },
+   "translucent": 56
+  },
+  "screws/screwpainted_003.materialbin": {
+   "counts": {
+    "56": 52
+   },
+   "translucent": 56
+  },
+  "screws/screwpainted_011.materialbin": {
+   "counts": {
+    "56": 108
+   },
+   "translucent": 56
+  },
+  "screws/screwpainted_012.materialbin": {
+   "counts": {
+    "56": 49
+   },
+   "translucent": 56
+  },
+  "sdpmats/carbonkevlar_aluminum.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "sdpmats/suede_leather.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "specialcase/nonmetal_ch2_recieveslivery.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "specialcase/racebumpercf.materialbin": {
+   "counts": {
+    "17": 468
+   },
+   "translucent": 17
+  },
+  "specificuse/alphafadelivery_normal.materialbin": {
+   "counts": {
+    "28": 2
+   },
+   "translucent": 28
+  },
+  "specificuse/backfacinggeo.materialbin": {
+   "counts": {
+    "17": 10440
+   },
+   "translucent": 17
+  },
+  "specificuse/blackglass.materialbin": {
+   "counts": {
+    "17": 2401
+   },
+   "translucent": 17
+  },
+  "specificuse/digitalgauge.materialbin": {
+   "counts": {
+    "17": 205
+   },
+   "translucent": 17
+  },
+  "specificuse/digitalgauge_clearcoat.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "specificuse/doorseam.materialbin": {
+   "counts": {
+    "17": 100
+   },
+   "translucent": 17
+  },
+  "specificuse/frame.materialbin": {
+   "counts": {
+    "17": 8143
+   },
+   "translucent": 17
+  },
+  "specificuse/gauge.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "specificuse/hoodcamhack_updated.materialbin": {
+   "counts": {
+    "17": 26
+   },
+   "translucent": 17
+  },
+  "specificuse/interior_lod1.materialbin": {
+   "counts": {
+    "17": 1936
+   },
+   "translucent": 17
+  },
+  "specificuse/label_transparentwhenbroken.materialbin": {
+   "counts": {
+    "56": 16
+   },
+   "translucent": 56
+  },
+  "specificuse/liveryable_metal.materialbin": {
+   "counts": {
+    "17": 6
+   },
+   "translucent": 17
+  },
+  "specificuse/mirrorcenter.materialbin": {
+   "counts": {
+    "17": 375
+   },
+   "translucent": 17
+  },
+  "specificuse/mirrorleft.materialbin": {
+   "counts": {
+    "17": 815
+   },
+   "translucent": 17
+  },
+  "specificuse/mirrorright.materialbin": {
+   "counts": {
+    "17": 763
+   },
+   "translucent": 17
+  },
+  "specificuse/nav_screen.materialbin": {
+   "counts": {
+    "17": 19
+   },
+   "translucent": 17
+  },
+  "specificuse/nav_screen_emissive.materialbin": {
+   "counts": {
+    "56": 2
+   },
+   "translucent": 56
+  },
+  "specificuse/navscreenbackupcam.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "specificuse/nodraw.materialbin": {
+   "counts": {
+    "56": 54
+   },
+   "translucent": 56
+  },
+  "specificuse/undercarriage.materialbin": {
+   "counts": {
+    "17": 2774
+   },
+   "translucent": 17
+  },
+  "specificuse/wheel_blur.materialbin": {
+   "counts": {
+    "28": 1636
+   },
+   "translucent": 28
+  },
+  "specificuse/wheel_blurlip.materialbin": {
+   "counts": {
+    "28": 522
+   },
+   "translucent": 28
+  },
+  "specificuse/windshield_custom.materialbin": {
+   "counts": {
+    "28": 5
+   },
+   "translucent": 28
+  },
+  "specificuse/windshieldbanner.materialbin": {
+   "counts": {
+    "56": 51
+   },
+   "translucent": 56
+  },
+  "specificuse/windshieldbanner_base.materialbin": {
+   "counts": {
+    "17": 60,
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "specificuse/windshieldbanner_interior.materialbin": {
+   "counts": {
+    "17": 11
+   },
+   "translucent": 17
+  },
+  "specificuse/windshieldbanner_updated.materialbin": {
+   "counts": {
+    "56": 24
+   },
+   "translucent": 56
+  },
+  "specificuse/zeroblack.materialbin": {
+   "counts": {
+    "17": 2872
+   },
+   "translucent": 17
+  },
+  "trafficvehicle/car_paint.materialbin": {
+   "counts": {
+    "17": 44
+   },
+   "translucent": 17
+  },
+  "trafficvehicle/clear_glass.materialbin": {
+   "counts": {
+    "28": 24
+   },
+   "translucent": 28
+  },
+  "trafficvehicle/detail_opaque.materialbin": {
+   "counts": {
+    "17": 387
+   },
+   "translucent": 17
+  },
+  "trafficvehicle/detail_transparency.materialbin": {
+   "counts": {
+    "28": 189
+   },
+   "translucent": 28
+  },
+  "wetinterior/fabric/fabric_2color_ch1mask.materialbin": {
+   "counts": {
+    "17": 1
+   },
+   "translucent": 17
+  },
+  "wetinterior/fabric/fabric_ch2norm_color.materialbin": {
+   "counts": {
+    "17": 66
+   },
+   "translucent": 17
+  },
+  "wetinterior/fabric/fabric_color_custom.materialbin": {
+   "counts": {
+    "17": 30
+   },
+   "translucent": 17
+  },
+  "wetinterior/fabric/suede_001.materialbin": {
+   "counts": {
+    "17": 41
+   },
+   "translucent": 17
+  },
+  "wetinterior/glass/glm_ch1custom.materialbin": {
+   "counts": {
+    "28": 14
+   },
+   "translucent": 28
+  },
+  "wetinterior/glass/gls_smooth.materialbin": {
+   "counts": {
+    "28": 38
+   },
+   "translucent": 28
+  },
+  "wetinterior/leather/leather.materialbin": {
+   "counts": {
+    "17": 43
+   },
+   "translucent": 17
+  },
+  "wetinterior/leather/leather_coarse.materialbin": {
+   "counts": {
+    "17": 10
+   },
+   "translucent": 17
+  },
+  "wetinterior/leather/leather_embossed_alpha.materialbin": {
+   "counts": {
+    "17": 15,
+    "56": 10
+   },
+   "translucent": 56
+  },
+  "wetinterior/leather/leather_smooth.materialbin": {
+   "counts": {
+    "17": 50
+   },
+   "translucent": 17
+  },
+  "wetinterior/leather/leather_textured_custom.materialbin": {
+   "counts": {
+    "17": 55
+   },
+   "translucent": 17
+  },
+  "wetinterior/leather/leather_textured_embossed.materialbin": {
+   "counts": {
+    "17": 2
+   },
+   "translucent": 17
+  },
+  "wetinterior/metal/chrome.materialbin": {
+   "counts": {
+    "17": 98
+   },
+   "translucent": 17
+  },
+  "wetinterior/metal/metal_anodized.materialbin": {
+   "counts": {
+    "17": 100
+   },
+   "translucent": 17
+  },
+  "wetinterior/metal/metal_brushed.materialbin": {
+   "counts": {
+    "17": 5
+   },
+   "translucent": 17
+  },
+  "wetinterior/metal/metal_ch1_custom.materialbin": {
+   "counts": {
+    "17": 24,
+    "56": 31
+   },
+   "translucent": 56
+  },
+  "wetinterior/metal/metal_rgh_dirty.materialbin": {
+   "counts": {
+    "17": 28
+   },
+   "translucent": 17
+  },
+  "wetinterior/metal/metal_smooth.materialbin": {
+   "counts": {
+    "17": 127
+   },
+   "translucent": 17
+  },
+  "wetinterior/metal/metal_textured_custom.materialbin": {
+   "counts": {
+    "17": 7
+   },
+   "translucent": 17
+  },
+  "wetinterior/misc/carbon_fiber.materialbin": {
+   "counts": {
+    "17": 18
+   },
+   "translucent": 17
+  },
+  "wetinterior/misc/int_gauges.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  },
+  "wetinterior/misc/int_symbols_emissive.materialbin": {
+   "counts": {
+    "56": 68
+   },
+   "translucent": 56
+  },
+  "wetinterior/misc/paint.materialbin": {
+   "counts": {
+    "17": 49
+   },
+   "translucent": 17
+  },
+  "wetinterior/misc/paint_embossed_alpha.materialbin": {
+   "counts": {
+    "17": 3,
+    "56": 23
+   },
+   "translucent": 56
+  },
+  "wetinterior/misc/rubbertrim.materialbin": {
+   "counts": {
+    "17": 51
+   },
+   "translucent": 17
+  },
+  "wetinterior/misc/wood.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "wetinterior/plastic/plastic_ch1_custom.materialbin": {
+   "counts": {
+    "17": 36,
+    "56": 89
+   },
+   "translucent": 56
+  },
+  "wetinterior/plastic/plastic_rgh_001.materialbin": {
+   "counts": {
+    "17": 108
+   },
+   "translucent": 17
+  },
+  "wetinterior/plastic/plastic_textured_custom.materialbin": {
+   "counts": {
+    "17": 74
+   },
+   "translucent": 17
+  },
+  "wetinterior/plastic/plastic_textured_embossed.materialbin": {
+   "counts": {
+    "17": 9
+   },
+   "translucent": 17
+  },
+  "wetinterior/plastic/smoothplastic.materialbin": {
+   "counts": {
+    "17": 312
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/aluminum_clearcoat_flake.materialbin": {
+   "counts": {
+    "17": 254
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/aluminum_machined_lowgloss.materialbin": {
+   "counts": {
+    "17": 82
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/aluminum_machined_matte.materialbin": {
+   "counts": {
+    "17": 100
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/aluminum_machined_satin.materialbin": {
+   "counts": {
+    "17": 406
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/aluminum_machined_semigloss.materialbin": {
+   "counts": {
+    "17": 26
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/aluminum_polished.materialbin": {
+   "counts": {
+    "17": 92
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/aluminum_satin.materialbin": {
+   "counts": {
+    "17": 8
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/brass_clearcoat_flake.materialbin": {
+   "counts": {
+    "17": 19
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/brass_machined_satin.materialbin": {
+   "counts": {
+    "17": 42
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/chrome.materialbin": {
+   "counts": {
+    "17": 118
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/chrome_machined_satin.materialbin": {
+   "counts": {
+    "17": 175
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/chrome_machined_semigloss.materialbin": {
+   "counts": {
+    "17": 74
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/gold_clearcoat_flake.materialbin": {
+   "counts": {
+    "17": 23
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/metal.materialbin": {
+   "counts": {
+    "17": 27
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/metalicpaint_lightgrey.materialbin": {
+   "counts": {
+    "17": 133
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/metalicpaint_lightsilver.materialbin": {
+   "counts": {
+    "17": 131
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/metalicpaint_lightsilver_lg.materialbin": {
+   "counts": {
+    "17": 180
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/metalicpaint_midgrey.materialbin": {
+   "counts": {
+    "17": 209
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/metalicpaint_silver.materialbin": {
+   "counts": {
+    "17": 131
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/metalicplaint_flat_darkgrey.materialbin": {
+   "counts": {
+    "17": 265
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/paint_glossblack.materialbin": {
+   "counts": {
+    "17": 170
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/paint_glossblack_bump.materialbin": {
+   "counts": {
+    "17": 26
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/paint_gold_001.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/paint_matteblack.materialbin": {
+   "counts": {
+    "17": 1032
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/paint_orange.materialbin": {
+   "counts": {
+    "17": 4
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/paint_white.materialbin": {
+   "counts": {
+    "17": 103
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/paint_white_002.materialbin": {
+   "counts": {
+    "17": 16
+   },
+   "translucent": 17
+  },
+  "wheelmaterials/paint_white_alpha.materialbin": {
+   "counts": {
+    "56": 6
+   },
+   "translucent": 56
+  },
+  "wheelmaterials/wheel_paint.materialbin": {
+   "counts": {
+    "17": 290
+   },
+   "translucent": 17
+  },
+  "z_che_montecarlo_alt_001/carcolors/che_montecarlo_88_blackgold.materialbin": {
+   "counts": {
+    "56": 47
+   },
+   "translucent": 56
+  },
+  "z_dod_chargerdaytona_alt_001/livery/carpaint_livery_white.materialbin": {
+   "counts": {
+    "56": 13
+   },
+   "translucent": 56
+  },
+  "z_for_mustang_alt_001/for_badge_025.materialbin": {
+   "counts": {
+    "56": 7
+   },
+   "translucent": 56
+  },
+  "z_for_mustang_alt_001/for_badge_032.materialbin": {
+   "counts": {
+    "56": 5
+   },
+   "translucent": 56
+  },
+  "z_mer_amggt_alt_001/interiorengine/speaker_001.materialbin": {
+   "counts": {
+    "56": 1
+   },
+   "translucent": 56
+  }
+ }
+}

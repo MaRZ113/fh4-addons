@@ -8,6 +8,7 @@ from pathlib import Path
 from contextlib import closing
 
 from .fh4_db import snapshot
+from .fh4_native_defaults import NativeDefaults
 from .vehicle_ir import sha256
 
 
@@ -29,10 +30,15 @@ class Row:
     values: dict
     rule: str
     dependencies: tuple = field(default_factory=tuple)
+    native_defaults: dict = field(default_factory=dict)
 
     def receipt(self):
-        return {"key": vars(self.key), "owner": self.owner, "rule": self.rule,
-                "values": self.values, "dependencies": [vars(key) for key in self.dependencies]}
+        receipt = {"key": vars(self.key), "owner": self.owner, "rule": self.rule,
+                   "values": self.values, "dependencies": [vars(key) for key in self.dependencies]}
+        if self.native_defaults:
+            receipt["native_defaults"] = {c: {"rule": r, "value": v}
+                                          for c, (r, v) in sorted(self.native_defaults.items())}
+        return receipt
 
 
 class DatabaseGraph:
@@ -41,6 +47,7 @@ class DatabaseGraph:
         self.rows = {}
         self.spec = {}
         self.unresolved = []
+        self.defaults = NativeDefaults(db)
 
     def schema(self, table):
         if table not in self.spec:
@@ -65,7 +72,7 @@ class DatabaseGraph:
         return self.db.execute(f"SELECT 1 FROM {ident(key.table)} WHERE {ident(key.field)}=?",
                                (key.value,)).fetchone() is not None
 
-    def add(self, table, value, owner, fields, rule, links=()):
+    def add(self, table, value, owner, fields, rule, links=(), keep=()):
         key = self.key(table, value)
         pk, columns = self.schema(table)
         if key in self.rows or self.exists(key):
@@ -74,8 +81,10 @@ class DatabaseGraph:
         if unknown:
             raise ValueError(f"Unknown native fields in {table}: {sorted(unknown)}")
         values = {column: fields[column] for column in columns if column in fields and column != pk}
+        values, filled = self.defaults.complete(table, pk, values, keep)
+        values = {column: values[column] for column in columns if column in values}
         values[pk] = value
-        self.rows[key] = Row(key, owner, values, rule, tuple(dict.fromkeys(links)))
+        self.rows[key] = Row(key, owner, values, rule, tuple(dict.fromkeys(links)), filled)
         return key
 
     def ordered(self):
@@ -123,8 +132,17 @@ class DatabaseGraph:
                     for row in ordered:
                         cols = ", ".join(map(ident, row.values))
                         masks = ", ".join("?" for _ in row.values)
-                        db.execute(f"INSERT INTO {ident(row.key.table)} ({cols}) VALUES ({masks})",
-                                   tuple(row.values.values()))
+                        try:
+                            db.execute(f"INSERT INTO {ident(row.key.table)} ({cols}) VALUES ({masks})",
+                                       tuple(row.values.values()))
+                        except sqlite3.IntegrityError as error:
+                            failing = [fk for fk in db.execute(f"PRAGMA foreign_key_list({ident(row.key.table)})")
+                                       if fk[3] in row.values and db.execute(
+                                           f"SELECT 1 FROM {ident(fk[2])} WHERE {ident(fk[4] or 'rowid')}=?",
+                                           (row.values[fk[3]],)).fetchone() is None]
+                            raise ValueError(f"{error} inserting {row.key}: "
+                                             + ", ".join(f"{fk[3]}={row.values[fk[3]]!r} -> {fk[2]}.{fk[4]}"
+                                                         for fk in failing)) from error
             with closing(snapshot(scratch)) as db, closing(snapshot(source)) as before:
                 delta = audit_insertions(before, db, expected)
                 for row in ordered:
@@ -133,6 +151,9 @@ class DatabaseGraph:
                                      (key.value,)).fetchone()
                     if got is None or any(got[c] != v for c, v in row.values.items()):
                         raise ValueError(f"Catalogue readback differs for {key}")
+                    nulls = self.defaults.violations(key.table, got)
+                    if nulls:
+                        raise ValueError(f"NULL in native-required columns of {key}: {nulls}")
             if sha256(source) != baseline:
                 raise ValueError("Database baseline changed while staging")
             scratch.rename(output)

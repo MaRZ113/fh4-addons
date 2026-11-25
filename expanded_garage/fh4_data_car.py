@@ -4,7 +4,7 @@ from collections import Counter
 from statistics import median
 
 from .database_graph import ident
-from .fh4_dynamics import finite_between
+from .fh4_dynamics import car_attributes, finite_between
 
 
 CAMERA = ("IsCameraCollidable","UseBoxCameraCollision")
@@ -48,19 +48,32 @@ class NativeDataCarContract:
 
     def road_fields(self, src, bucket, families):
         original = src.record("Data_Car")
-        if original["CarTypeID"] != 1 or bucket is None:
+        # Road cars (1) and race cars (3: FH4 ships 71, e.g. FER_FXX_05, PAG_ZondaR_10) are supported; the
+        # catalogue cohort is the bucket's road cars plus those of the source's own type.
+        if original["CarTypeID"] not in (1, 3) or bucket is None:
             raise ValueError("Source needs a supported road-car body and catalogue classification")
         catalogue = self.db.execute("""SELECT c.* FROM Data_Car c JOIN Data_Car_Buckets k ON k.CarId=c.Id
-                                       WHERE c.CarTypeID=1 AND c.ContentId<>99 AND k.CarBucket=? ORDER BY c.Id""",
-                                    (bucket,)).fetchall()
+                                       WHERE c.CarTypeID IN (1, ?) AND c.ContentId<>99 AND k.CarBucket=? ORDER BY c.Id""",
+                                    (original["CarTypeID"], bucket)).fetchall()
         components = {part["name"].casefold() for model in src.ir["sections"]["geometry"]["data"]["models"]
                       if model["role"].startswith("exterior") for part in model["components"]}
         flags = ("IsOpenCockpit","IsOpenWheel")
-        if not {"body","glassf","glassr"} <= components or not any(p.startswith("bumperf") for p in components):
-            raise ValueError("Source body closure and wheel coverage need a native classification")
-        body,body_evidence = self.mode(catalogue,flags,"Closed FM4 body/window groups and matching native catalogue class")
-        if tuple(body.values()) != (0,0):
-            raise ValueError("Native body cohort conflicts with the source closed road body")
+        # Closed body: windscreen plus a rear screen or both front side panes (mid-engine GUM_ApolloS_10 has an
+        # engine cover where the rear screen would be).
+        attrs = car_attributes(src.ir)
+        general = next((x["attributes"] for x in attrs["xml"]["children"] if x["tag"] == "General"), {}) if attrs else {}
+        if general.get("OpenCockpit") == "1" and {"body", "glassf"} <= components:
+            # Roadsters (FH1 FOR_GTX1_06): the source's own CarAttribs General/OpenCockpit, covered wheels.
+            body = {"IsOpenCockpit": 1, "IsOpenWheel": 0}
+            body_evidence = {"rule": "CarAttribs General OpenCockpit=1 and a covered-wheel body",
+                             "source": attrs["provenance"]}
+        else:
+            closed = {"body", "glassf"} <= components and ("glassr" in components or {"glasslf", "glassrf"} <= components)
+            if not closed or not any(p.startswith("bumperf") for p in components):
+                raise ValueError("Source body closure and wheel coverage need a native classification")
+            body,body_evidence = self.mode(catalogue,flags,"Closed body/window groups and matching native catalogue class")
+            if tuple(body.values()) != (0,0):
+                raise ValueError("Native body cohort conflicts with the source closed road body")
         road = self.db.execute("SELECT * FROM Data_Car WHERE CarTypeID=1 AND IsDrivable=1 ORDER BY Id").fetchall()
         camera,camera_evidence = self.mode(road,CAMERA,"Native road-car camera collision flag pair",.95)
         assist,assist_evidence = self.mode([r for r in road if r["DriveTypeID"]==original["DriveTypeID"]],

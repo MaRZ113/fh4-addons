@@ -23,7 +23,7 @@ STOCK = ROOT / "game/ForzaHorizon4/media"
 BASELINE = ROOT / ".scratch/phase7_1/camera-owner-test/baseline.sqlite"
 MANIFEST = ROOT / ".scratch/phase3/fixed-layout/zipmanifest.plain.xml"
 MATERIALS = STOCK / "cars/_library/Materials.zip"
-FIXTURES = (("SUZ_SX4_11",12000,3,"L"),("HON_IntegraR_00",12002,2,"R"),("RUF_CTR2_95",12001,2,"L"))
+FIXTURES = (("SUZ_SX4_11",12000,2,"L"),("HON_IntegraR_00",12002,2,"R"),("RUF_CTR2_95",12001,2,"L"))
 
 
 class ScopeTests(unittest.TestCase):
@@ -50,10 +50,15 @@ class ScopeTests(unittest.TestCase):
         self.assertEqual(surface_binding("gauge_emissive").use,MaterialUse.EFFECT)
         self.assertFalse(surface_binding("new_unknown").drive_resolved)
         self.assertTrue(surface_binding("tire").drive_resolved)
-        self.assertEqual(surface_binding("solid","cockpit","seatL").trial_compatibility,"trial-compatible")
-        self.assertNotEqual(surface_binding("solid","cockpit","seatL").member,
-                            surface_binding("solid","cockpit","interior").member)
-        self.assertFalse(surface_binding("misc","exterior","unclassified").drive_resolved)
+        # Cockpit atlas classes take the textured cabin shader; the exterior seen from the cockpit does not.
+        atlas = surface_binding("solid","cockpit","seatL")
+        self.assertEqual((atlas.member,atlas.fidelity),
+                         ("interior_plastic/plastic_perforated_004.materialbin","source_cockpit_atlas"))
+        self.assertEqual(surface_binding("reflector","cockpit","interior").member,atlas.member)
+        self.assertNotEqual(surface_binding("black","cockpit","a_pillar").member,atlas.member)
+        self.assertEqual(surface_binding("chrome","cockpit","interior").member,"interior_metal/chrome_satin.materialbin")
+        self.assertEqual(surface_binding("chrome","cockpit","hoodb").member,"exterior_metal/chrome.materialbin")
+        self.assertFalse(surface_binding("weird_new_class","exterior","unclassified").drive_resolved)
 
 
 @unittest.skipUnless(all((CONTROLS/c/"ir/vehicle.json").is_file() for c,*_ in FIXTURES)

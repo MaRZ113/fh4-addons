@@ -64,16 +64,24 @@ class NativeCarSceneContract:
                     suffix = None
                 components = tuple(prefix + suffix for prefix in family.prefixes
                                    if suffix is not None and prefix + suffix in exterior)
-                if not components:
+                if not components and not row["IsStock"]:
                     self.unresolved.append({"table": family.table, "id": row["Id"], "label": label,
                                             "reason": "no matching source mesh for this variant"})
                     continue
+                # A stock row without a mesh is the bare body (NIS_Leaf_11: no stock wing, race wing optional):
+                # it stays the group's stock part with no models, so the upgrade group keeps one stock entry.
                 prior = self.selected.intersection(components)
                 if prior:
                     raise ValueError(f"Ambiguous FM4 upgrade geometry ownership: {sorted(prior)}")
                 self.selected.update(components)
                 self.parts.append(Part(family, row["Id"], body_id + row["Id"] % 1000,
                                        row["Level"], bool(row["IsStock"]), components, label))
+        # Mesh-less stock parts only where the family has a modelled variant to switch to.
+        modelled = {part.family for part in self.parts if part.components}
+        for part in [p for p in self.parts if not p.components and p.family not in modelled]:
+            self.parts.remove(part)
+            self.unresolved.append({"table": part.family.table, "id": part.source_key, "label": part.label,
+                                    "reason": "no matching source mesh for this variant"})
         for name in sorted(exterior & (self.reserved_components - self.selected)):
             self.unresolved.append({"component": name, "reason": "no mapped FM4 catalogue variant"})
 

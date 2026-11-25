@@ -2,6 +2,30 @@
   "version": 1,
   "profiles": [
     {
+      "name": "Ford GTX1 Ricardo six-speed manual",
+      "mode": "stick",
+      "make": "FOR",
+      "years": [2006, 2006],
+      "displacement_cc": 5409,
+      "drive_type": 2,
+      "engine_placement": 2,
+      "gears": 6,
+      "wheelbase_m": 2.71,
+      "ratios": [3.135, 2.61, 1.71, 1.23, 0.94, 0.77, 0.63],
+      "minimum_matching_ratios": 7,
+      "final_drive": 3.36,
+      "suspension": {
+        "Front": "wishbone",
+        "Rear": "wishbone",
+        "native_twin": "FOR_GT_05",
+        "reference": "https://www.ultimatecarpage.com/spec/2527/Ford-GTX1-Roadster.html"
+      },
+      "references": [
+        "https://www.ultimatecarpage.com/spec/2527/Ford-GTX1-Roadster.html",
+        "https://qualityservicemanual.com/sites/default/files/Ford%20GT%202004-2006_0.pdf"
+      ]
+    },
+    {
       "name": "Suzuki J20B six-speed manual",
       "mode": "stick",
       "make": "SUZ",
@@ -39,6 +63,7 @@
       "final_drive": 4.4,
       "suspension": {
         "Front": "wishbone",
+        "native_twin": "ACU_IntegraR_01",
         "Rear": "wishbone",
         "reference": "https://www.honda.co.jp/sportscar/sportscar/integra_type_r/"
       },
@@ -58,6 +83,12 @@
       "gears": 6,
       "wheelbase_m": 2.272,
       "mass_kg": 1380,
+      "suspension": {
+        "Front": "strut",
+        "Rear": "multilink",
+        "native_twin": "POR_911GT2_95",
+        "reference": "https://www.ultimatecarpage.com/car/7967/Ruf-CTR2.html"
+      },
       "references": [
         "https://www.no-speedlimit.it/downloads/World%20of%20RUF%202017%20-%20Edition%20VII.pdf"
       ]

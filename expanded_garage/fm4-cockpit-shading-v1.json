@@ -1,0 +1,104 @@
+{
+ "format": "fm4-cockpit-shading-v1",
+ "source": "FM4 Media/cars/Shared.zip ShaderSettings/Normal.xml",
+ "meaning": "cockpit atlas texel multiplier in linear light; car ShaderSettings.xml overrides",
+ "priority": [
+  "CockpitPaintScale",
+  "CockpitPlasticPaintScale",
+  "PaintScale"
+ ],
+ "techniques": {
+  "badge": {
+   "scale": 0.5,
+   "parameter": "PaintScale"
+  },
+  "body": {
+   "scale": 1.0,
+   "parameter": "PaintScale"
+  },
+  "bump_leather": {
+   "scale": 0.5,
+   "parameter": "CockpitPaintScale"
+  },
+  "bump_leather2": {
+   "scale": 0.5,
+   "parameter": "CockpitPaintScale"
+  },
+  "bump_leather3": {
+   "scale": 0.5,
+   "parameter": "CockpitPaintScale"
+  },
+  "bump_plastic": {
+   "scale": 0.3,
+   "parameter": "CockpitPaintScale"
+  },
+  "bump_plastic2": {
+   "scale": 0.5,
+   "parameter": "CockpitPaintScale"
+  },
+  "bump_plastic3": {
+   "scale": 0.3,
+   "parameter": "CockpitPaintScale"
+  },
+  "bump_stitching": {
+   "scale": 0.5,
+   "parameter": "CockpitPaintScale"
+  },
+  "bump_stitching2": {
+   "scale": 0.5,
+   "parameter": "CockpitPaintScale"
+  },
+  "cloth": {
+   "scale": 0.5,
+   "parameter": "PaintScale"
+  },
+  "gauge_emissive": {
+   "scale": 1.0,
+   "parameter": "CockpitPlasticPaintScale"
+  },
+  "leather": {
+   "scale": 0.5,
+   "parameter": "PaintScale"
+  },
+  "metal": {
+   "scale": 0.002,
+   "parameter": "PaintScale"
+  },
+  "metal2": {
+   "scale": 0.01,
+   "parameter": "PaintScale"
+  },
+  "mottled": {
+   "scale": 0.35,
+   "parameter": "CockpitPlasticPaintScale"
+  },
+  "plastic": {
+   "scale": 0.5,
+   "parameter": "CockpitPlasticPaintScale"
+  },
+  "reflector": {
+   "scale": 0.5,
+   "parameter": "PaintScale"
+  },
+  "rubber": {
+   "scale": 0.5,
+   "parameter": "PaintScale"
+  },
+  "smooth_metal": {
+   "scale": 1.0,
+   "parameter": "PaintScale"
+  },
+  "solid": {
+   "scale": 0.5,
+   "parameter": "PaintScale"
+  },
+  "stitching": {
+   "scale": 0.5,
+   "parameter": "PaintScale"
+  },
+  "wood": {
+   "scale": 0.25,
+   "parameter": "PaintScale"
+  }
+ }
+}

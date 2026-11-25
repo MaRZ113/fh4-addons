@@ -6,6 +6,7 @@ from pathlib import Path
 import sqlite3
 import struct
 import subprocess
+import os
 import sys
 import tempfile
 from zipfile import BadZipFile
@@ -96,6 +97,10 @@ def fleet(args):
             cars.append((folder, receipt))
         database = compile_database(args.fh4_db, vehicles, build, strings=args.fh4_strings,
                                     source_tools=args.source_tools)
+        from . import fh4_audio
+        audio = fh4_audio.compile_fleet(build, vehicles, args.fh4_db, build / "gamedb.sqlite", args.fh4_audio_mapping)
+        if audio:
+            vehicle_ir.write_json(build / "audio.json", audio)
         mount = presentation_mount(mount,database["presentation"])
         (build / "zipmanifest.xml").write_bytes(mount)
         report = integrated_report(args.fh4_db, args.fh4_manifest, args.fh4_materials, build, mount, cars)
@@ -194,6 +199,8 @@ def main(argv=None):
     fleet_parser.add_argument("--ir", action="append", required=True, type=Path)
     fleet_parser.add_argument("--out", required=True, type=Path)
     fleet_parser.add_argument("--source-tools", type=Path, default=DEFAULT_DSF, help="Local XDS decoder checkout")
+    fleet_parser.add_argument("--fh4-audio-mapping", type=Path,
+                              help="Stock media/audio/cars/CarEngineEventMapping.xml: adds the cars' FM4 engine sound")
     target_args(fleet_parser)
     fleet_parser.set_defaults(run=fleet)
     install = sub.add_parser("install", help="Deploy a qualified native package to a closed offline host")
@@ -211,6 +218,17 @@ def main(argv=None):
     rollback.add_argument("--host", required=True, type=Path)
     rollback.add_argument("--transaction", required=True)
     rollback.set_defaults(run=deploy)
+    overlay_apply = sub.add_parser("overlay-apply", help="Apply an overlay (receipt.json + files/) over the installed fleet")
+    overlay_apply.add_argument("--host", required=True, type=Path)
+    overlay_apply.add_argument("--overlay", required=True, type=Path)
+    overlay_apply.add_argument("--name", required=True)
+    overlay_apply.set_defaults(run=lambda a: print(json.dumps(
+        __import__("expanded_garage.fh4_overlay", fromlist=["apply"]).apply(a.host, a.overlay, a.name)["name"])))
+    overlay_rollback = sub.add_parser("overlay-rollback", help="Restore the files an overlay replaced")
+    overlay_rollback.add_argument("--host", required=True, type=Path)
+    overlay_rollback.add_argument("--name", required=True)
+    overlay_rollback.set_defaults(run=lambda a: print(json.dumps(
+        __import__("expanded_garage.fh4_overlay", fromlist=["rollback"]).rollback(a.host, a.name))))
     acceptance = sub.add_parser("record-runtime", help="Record owner observations after a successful test and rollback")
     acceptance.add_argument("--host", required=True, type=Path)
     acceptance.add_argument("--transaction", required=True)
@@ -231,6 +249,9 @@ def main(argv=None):
     except (BadZipFile, ImportError, KeyError, OSError, ValueError, sqlite3.Error, struct.error,
             subprocess.CalledProcessError) as error:
         print(f"expanded-garage: {error}", file=sys.stderr)
+        if os.environ.get("EXPANDED_GARAGE_TRACEBACK"):
+            import traceback
+            traceback.print_exc()
         return 1
     return 0
 

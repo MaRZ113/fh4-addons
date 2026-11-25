@@ -1,15 +1,17 @@
 """Compile stock FM4 catalogue records into a separate FH4 SQLite snapshot."""
 
+from collections import Counter, defaultdict
 from contextlib import closing, nullcontext
 from dataclasses import dataclass
 from pathlib import Path
+import os
 import sqlite3
 from zipfile import ZipFile
 
 from .database_graph import DatabaseGraph, ident
 from .fh4_data_car import NativeDataCarContract, wheel_load_contract
 from .fh4_db import snapshot
-from .fh4_dynamics import NativeDynamicsCompiler, TARGET_FIELDS, aero_offsets, drive_class, localized_rows, ratios
+from .fh4_dynamics import NativeDynamicsCompiler, shift_accepted, TARGET_FIELDS, aero_offsets, drive_class, localized_rows, ratios
 from .fh4_trial_dynamics import TrialDynamics
 from .fh4_presentation import NativeLocalization, generate_art
 from .fh4_scene_contract import FAMILIES, NativeCarSceneContract
@@ -34,6 +36,22 @@ TUNED_SOURCE = {
     "AeroPhysicsID": "List_AeroPhysics",
     "TorqueCurveFullThrottleID": "List_TorqueCurve",
 }
+
+
+# Performance upgrades with no model of their own (the stock brake models stay, as on native cars, whose
+# brake rows all carry RequiresGraphics=1 over fixed brake models). FM4 ships these levels per car; only the
+# stock rows were converted and the cars could not be upgraded beyond tyres, rims and aero (owner, visual-53).
+# Body kits, roll cage (ChassisStiffness), engine/drivetrain swaps and rim sizes need models: still stock only.
+# EXPANDED_GARAGE_UPGRADES=stock: stock rows only.
+PERFORMANCE_UPGRADES = frozenset({
+    *(f"List_UpgradeEngine{part}" for part in (
+        "Camshaft", "CSC", "DSC", "Displacement", "Exhaust", "Flywheel", "FuelSystem", "Ignition", "Intake",
+        "Intercooler", "Manifold", "OilCooling", "PistonsCompression", "RestrictorPlate", "TurboSingle",
+        "TurboTwin", "TurboQuad", "Valves")),
+    *(f"List_UpgradeDrivetrain{part}" for part in ("Clutch", "Differential", "Driveline", "Transmission")),
+    "List_UpgradeCarBodyWeight", "List_UpgradeAntiSwayFront", "List_UpgradeAntiSwayRear",
+    "List_UpgradeSpringDamper", "List_UpgradeBrakes", "List_UpgradeMotorParts",
+})
 
 
 class Source:
@@ -115,6 +133,31 @@ def register_manufacturer(graph, src, locale):
 
 
 def catalogue_bucket(car, drive):
+    """FH4 CarBucket name for an FM4 car: the hand rules of the first fleet, then a nearest-neighbour vote over
+    the cars both games ship (fm4-fh4-bucket-map-v1.json, research/extract_bucket_map.py)."""
+    return hand_bucket(car, drive) or learned_bucket(car)
+
+
+def learned_bucket(car, k=5):
+    if os.environ.get("EXPANDED_GARAGE_BUCKETS") == "hand":
+        return None
+    import json
+    from importlib.resources import files
+    table = json.loads(files(__package__).joinpath("fm4-fh4-bucket-map-v1.json").read_text(encoding="utf-8"))
+
+    def distance(row):
+        return ((row["CarTypeID"] != car["CarTypeID"]) * 10 + (row["FamilyBodyID"] != car["FamilyBodyID"]) * 4
+                + abs(row["Year"] - car["Year"]) / 5 + abs(row["PerformanceIndex"] - car["PerformanceIndex"]) / 0.06
+                + abs(row["CurbWeight"] - car["CurbWeight"]) / 1.5
+                + (row["EnginePlacementID"] != car["EnginePlacementID"]) * 0.7)
+    rows = [r for r in table["cars"] if r["media_name"].casefold() != str(car.get("MediaName", "")).casefold()]
+    votes = Counter()
+    for row in sorted(rows, key=lambda r: (distance(r), r["media_name"]))[:k]:
+        votes[row["bucket"]] += 1 / (1 + distance(row))
+    return votes.most_common(1)[0][0] if votes else None
+
+
+def hand_bucket(car, drive):
     if car["CarTypeID"] != 1:
         return None
     if car["FamilyBodyID"] == 4 and car["EnginePlacementID"] == 1:
@@ -125,6 +168,44 @@ def catalogue_bucket(car, drive):
     if car["FamilyBodyID"] == 11:
         return "Retro Supercars" if car["Year"] < 2006 else "Modern Supercars"
     return None
+
+
+# Tables that every native car (or car body) owns although FM4 has no source rows.
+# Each gets the most common native row pattern, keyed like the native rows.
+COMPANION_TABLES = {
+    "List_UpgradeCarBodyTrackSpacingFront": "CarBodyId",
+    "List_UpgradeCarBodyTrackSpacingRear": "CarBodyId",
+    "CarExceptions": "CarID",
+}
+
+
+def native_pattern(db, table, owner_column, pk):
+    """Most common per-owner row set (owner and key columns removed) over the native rows."""
+    cols = [r[1] for r in db.execute(f"PRAGMA table_info({ident(table)})")]
+    rest = [c for c in cols if c not in (owner_column, pk)]
+    groups = defaultdict(list)
+    for row in db.execute(f"SELECT {ident(owner_column)}, {', '.join(map(ident, rest))} FROM {ident(table)}"):
+        groups[row[0]].append(tuple(row[1:]))
+    if not groups:
+        raise ValueError(f"No native rows in {table}")
+    pattern, _ = Counter(tuple(sorted(v, key=repr)) for v in groups.values()).most_common(1)[0]
+    return rest, pattern
+
+
+def companion_rows(graph, alias, car_id, body_id, car, body):
+    for table, owner_column in COMPANION_TABLES.items():
+        pk, cols = graph.schema(table)
+        owner, link = (body_id, body) if owner_column.casefold() == "carbodyid" else (car_id, car)
+        staged = [k for k in graph.rows if k.table == table and graph.rows[k].values.get(owner_column) == owner]
+        if staged or graph.db.execute(f"SELECT 1 FROM {ident(table)} WHERE {ident(owner_column)}=?", (owner,)).fetchone():
+            continue
+        rest, pattern = native_pattern(graph.db, table, owner_column, pk)
+        for index, values in enumerate(pattern):
+            fields = dict(zip(rest, values))
+            fields[owner_column] = owner
+            key = owner if pk == owner_column else owner + int(fields.get("Level", index) or 0)
+            graph.add(table, key, alias, {k: v for k, v in fields.items() if k != pk},
+                      "Most common native row pattern; FM4 has no source rows for this native table", (link,))
 
 
 def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, car_contract):
@@ -143,7 +224,7 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
     def borrow(table, number):
         return graph.key(table, number)
 
-    def insert(table, key, source, overrides, rule, links=(), trial_fields=(), evidence=None):
+    def insert(table, key, source, overrides, rule, links=(), trial_fields=(), evidence=None, keep=()):
         pk, columns = graph.schema(table)
         lookup = {k.casefold(): v for k, v in source.items()}
         projected = {c: lookup[c.casefold()] for c in columns if c != pk and c.casefold() in lookup}
@@ -156,11 +237,14 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
             unresolved(table, {"target_columns_unmapped": sorted(missing)})
         if trial_fields:
             trial_proof.append({"table":table,"pk":pk,"id":key,"fields":dict(trial_fields),"evidence":evidence})
-        return graph.add(table, key, alias, projected, rule, links)
+        return graph.add(table, key, alias, projected, rule, links, keep)
 
     original = src.record("Data_Car")
     layout = src.record("Data_CarBody")
-    engine = src.record("Data_Engine")
+    engine = src.record("Data_Engine") if src.entries("Data_Engine") else None
+    motor = src.record("Data_Motor") if src.entries("Data_Motor") else None
+    if engine is None and motor is None:
+        raise ValueError("Source has neither an engine nor an electric motor")
     drive = src.record("Data_Drivetrain")
     bucket_name = catalogue_bucket(original,drive)
     bucket = buckets.get(bucket_name.casefold()) if bucket_name else None
@@ -187,7 +271,7 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
                                   "drive_class": drive_class(table, field)}
                                  for field, status in fields.items()
                                  if status in ("unmapped", "native_default_unverified"))
-    if not shift or shift["inferred"]:
+    if not shift_accepted(shift):
         physical_unmapped.append({"table":"Data_Drivetrain","field":"ShiftSystemID",
                                   "classification":"missing_authoritative_shift_mode",
                                   "drive_class":"physics_startup"})
@@ -203,7 +287,8 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
     class_key = borrow("CarClasses", chosen_class[0])
     car_type = borrow("List_CarType", original["CarTypeID"])
     drive_type = borrow("List_DriveType", drive["DrivetypeID"])
-    engine_config = borrow("List_EngineConfig", engine["ConfigID"])
+    # Electric cars take the motor's configuration (FM4 and FH4 ConfigID 6, e.g. RIM_Concept2_19).
+    engine_config = borrow("List_EngineConfig", (engine or motor)["ConfigID"])
     placement = borrow("List_EnginePlacement", original["EnginePlacementID"])
     steering_override = borrow("AutoSteerOverrides", original["AutoSteerOverrideID"])
     for table, key, field in (("List_DriveType", drive_type, "DriveType"), ("List_EngineConfig", engine_config, "Config")):
@@ -263,23 +348,44 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
            for label, axis in zip(("Width", "Height", "Length"), ("X", "Y", "Z"), strict=True)},
     }, "FM4 body measurements and extent spans in meters")
     own_engine = insert("Data_Engine", car_id, engine, {"MediaName": alias},
-                        "Own FM4-derived engine identity, audio awaiting binding", (engine_config,))
+                        "Own FM4-derived engine identity, audio awaiting binding", (engine_config,)) if engine else None
     shift_fields = {"ShiftSystemID": shift["id"]} if shift else {}
     shift_links = (borrow("List_ShiftSystem", shift["id"]),) if shift else ()
     own_drive = insert("Data_Drivetrain", car_id, drive, shift_fields,
                        "FM4 drivetype and mounting orientation; shift mode from source rig and gearing",
                        (drive_type, *shift_links))
-    owners = {"ordinal": car, "carbodyid": body, "engineid": own_engine, "drivetrainid": own_drive}
+    owners = {"ordinal": car, "carbodyid": body, "drivetrainid": own_drive}
+    if own_engine is not None:
+        owners["engineid"] = own_engine
 
     if src.entries("CameraOverrides"):
-        insert("CameraOverrides", car_id, src.record("CameraOverrides"), {},
-               "FM4 camera offsets, native camera behavior pending", (car,))
+        # Cockpit camera offsets derived from the car's own seating (fh4.cockpit_camera_offsets).
+        camera = dict(vehicle.identity.get("cockpit_camera") or {})
+        insert("CameraOverrides", car_id, src.record("CameraOverrides"), camera,
+               "FM4 camera offsets; cockpit offsets from the converted seating", (car,), keep=tuple(camera))
+    if "Combo_Colors" in src.tables:
+        for item in sorted(src.raw_records("Combo_Colors", "Ordinal", src.id), key=lambda i: i["record"]["Sequence"]):
+            row = item["record"]
+            insert("Combo_Colors", car_id * 1000 + row["Sequence"], row, {"Ordinal": car_id},
+                   "FM4 stock manufacturer colour; swatches and paint materials in ManufacturerColors.bin", (car,))
+    companion_rows(graph, alias, car_id, body_id, car, body)
     for item in src.raw_records("CarPartPositions", "Ordinal", src.id):
         row = item["record"]
         insert("CarPartPositions", body_id + row["PartId"], row, {"Ordinal": car_id},
                f'FM4 authored position {item["provenance"]["asset"]}, native field frame retained', (car,))
 
     mapped = {}
+    if motor is not None:
+        # FH4 electric cars (RIM_Concept2_19, JAG_IPACE_18, RAE_Tachyon_19, VW_94_IDR_18): Data_Motor with its own
+        # full-throttle curve, List_UpgradeMotor on the car, List_UpgradeMotorParts levels on the motor.
+        old_curve = motor["TorqueCurveFullThrottleID"]
+        curve_entry, = [e for e in src.entries("List_TorqueCurve") if e["record"]["TorqueCurveID"] == old_curve]
+        curve_key = insert("List_TorqueCurve", body_id, curve_entry["record"], {},
+                           f'FM4 source {curve_entry["provenance"]["asset"]} {curve_entry["provenance"]["locator"]}')
+        mapped["List_TorqueCurve", old_curve] = curve_key
+        own_motor = insert("Data_Motor", car_id, motor, {"MediaName": alias, "TorqueCurveFullThrottleID": curve_key.value},
+                           "Own FM4-derived electric motor", (engine_config, curve_key))
+        owners["motorid"] = own_motor
     contract = NativeCarSceneContract(vehicle.ir, body_id)
     variant_tables = {family.table for family in FAMILIES}
     variant_keys = {(part.family.table, part.source_key) for part in contract.parts}
@@ -288,10 +394,15 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
         for table, entries in sorted(src.tables.items()):
             if not table.startswith("List_Upgrade"):
                 continue
+            if table.startswith("List_UpgradeMotor") and not src.entries("Data_Motor"):
+                # Electric motors (TOY_Prius_11 hybrid, NIS_Leaf_11) are not converted yet: no Data_Motor row.
+                unresolved(table, "Electric motor upgrades need Data_Motor, not converted yet.")
+                continue
             for entry in entries:
                 row = entry["record"]
                 if (row["IsStock"] or (table, row["Id"]) in variant_keys or table in WIDTH_TABLES
-                        or table == "List_UpgradeTireCompound"):
+                        or table == "List_UpgradeTireCompound"
+                        or table in PERFORMANCE_UPGRADES and os.environ.get("EXPANDED_GARAGE_UPGRADES") != "stock"):
                     yield table, entry
 
     for table, entry in selected_upgrades():
@@ -300,6 +411,10 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
             continue
         row = entry["record"]
         if table == "List_UpgradeDrivetrainTransmission":
+            if not row["IsStock"] and type(row.get("NumGears")) is int:
+                # FM4 race gearboxes pad unused slots with -0.95 (stock rows use -1, as FH4 does).
+                row = {**row, **{f"GearRatio{i}": -1.0 for i in range(row["NumGears"], 9)
+                                 if isinstance(row.get(f"GearRatio{i}"), float) and row[f"GearRatio{i}"] < 0}}
             ratios(row, original["NumGears"] if row["IsStock"] else None)
         _, cols = graph.schema(table)
         lookup = {col.casefold(): col for col in cols}
@@ -340,6 +455,11 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
                     typ, = graph.db.execute("SELECT SuspensionPhysicsTypeID FROM List_SuspensionPhysicsType WHERE Name=?",
                                             (raw_type["record"]["Name"],)).fetchall()
                     out["SuspensionPhysicsTypeID"] = typ[0]
+                    if not data["MinRideHeight"] > 0 < data["DefRideHeight"]:
+                        # FM4 race springs leave the lower limit at 0; native level-3 springs sit at 0.933 of the
+                        # default height (median of 679 FH4 rows).
+                        out["MinRideHeight"] = round(0.933 * data["DefRideHeight"], 4)
+                        data = {**data, "MinRideHeight": out["MinRideHeight"]}
                     out.update(dynamics.spring(data))
                     axle = field.removesuffix("SpringDamperPhysicsID")
                     if row["IsStock"] and old == spring_sources.get(axle):
@@ -380,7 +500,9 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
                 links.append(borrow("List_DamageModDef", row[field]))
         if table == "List_UpgradeBrakes":
             overrides.update({axle+"BrakeSizeMM":row[axle+"BrakeSize"]*25.4 for axle in ("Front","Rear")})
-            brake_fields, brake_proof, brake_types = dynamics.brakes(src,row)
+            brake_fields, row_proof, brake_types = dynamics.brakes(src,row)
+            if row["IsStock"]:
+                brake_proof = row_proof   # the readback checks the stock brakes
             physical_unmapped = [item for item in physical_unmapped if not (
                 item["table"]==table and item["field"] in brake_fields)]
             links.extend(borrow("List_BrakeType",x) for x in brake_types)

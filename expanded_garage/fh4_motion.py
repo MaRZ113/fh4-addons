@@ -2,11 +2,12 @@
 
 from dataclasses import dataclass
 import math
+import os
 
 import numpy as np
 
 from .fh4_dynamics import car_attributes
-from .fh4_granny_animation import animation_clip, gauge_graph
+from .fh4_granny_animation import animation_clip, gauge_graph, template_slots
 from .fh4_model import Bone
 
 
@@ -15,6 +16,11 @@ GAUGES = (
     ("speed", "Speed", "speedometer", "boneSpeed", "speed"),
     ("tach", "Tach", "tachometer", "boneTach", "tach"),
 )
+
+
+# Input range of a motionless placeholder gauge (mph, thousands of rpm): any positive maximum works.
+STATIC_GAUGE_MAX = {"speed": 200.0, "tach": 10.0, "fuel": 1.0}
+STATIC_GAUGE_TURN = math.radians(0.05)
 
 
 @dataclass(frozen=True)
@@ -33,7 +39,8 @@ def fit_rotation(first, after):
     matrix = a @ reflection @ b
     offset = centers[1] - matrix @ centers[0]
     worst = np.linalg.norm(first @ matrix.T + offset - after, axis=1).max()
-    if worst > 3e-5:
+    # 0.2 mm on a ~10 cm needle: FM4 stores the poses in half floats/quantised positions (GUM_ApolloS_10 30-80 um).
+    if worst > 2e-4:
         raise ValueError(f"Needle samples are not a matched rigid mesh ({worst:.6f} m)")
     return matrix, offset, float(worst)
 
@@ -109,6 +116,24 @@ def parameter_remap(ticks, label):
     return max_input, values
 
 
+def calibrated(keys, ticks, samples=64):
+    """Clip keys over the input fraction: the FM4 needle sweep `keys` (clip time -> rotation about one
+    axis) sampled through the dial's tick calibration `ticks` ((input, sweep) pairs packed to 0..65535).
+    The native graph then only maps input to time linearly (time = input / max)."""
+    times = np.array([t for t,_ in keys])
+    quats = np.array([q for _,q in keys], dtype=np.float64)
+    axis = quats[np.argmax(np.linalg.norm(quats[:,:3],axis=1)),:3]
+    axis = axis/np.linalg.norm(axis)
+    angles = np.unwrap(2*np.arctan2(quats[:,:3] @ axis, quats[:,3]))
+    tx, ty = (np.array(v, dtype=np.float64)/65535 for v in zip(*ticks))
+    xs = np.unique(np.concatenate([np.linspace(0,1,samples+1), tx[(tx>0)&(tx<1)]]))
+    out = []
+    for x in xs:
+        half = .5*float(np.interp(np.interp(x,tx,ty),times,angles))
+        out.append((float(x),(*map(float,axis*math.sin(half)),math.cos(half))))
+    return out
+
+
 def steering_rotation(draws, pivot):
     best = min(d.lod for d in draws)
     vertices = np.concatenate([d.positions for d in draws if d.lod == best]).astype(np.float64)
@@ -123,6 +148,30 @@ def steering_rotation(draws, pivot):
     return tuple(map(float,q/np.linalg.norm(q))), z.tolist()
 
 
+def rim_center(draws, pivot, axis):
+    """Steering pivot on the rim's axis. Native steering wheels have the rim centred on the spindle
+    (within 3 mm over sampled cars); FM4's authored hardpoint sat ~5 cm off it, so the wheel swung
+    around off-centre. Keeps the hardpoint's depth along the axis and moves it in the rim plane to the
+    centre of a circle fitted to the outermost vertices."""
+    best = min(d.lod for d in draws)
+    vertices = np.concatenate([d.positions for d in draws if d.lod == best]).astype(np.float64)
+    pivot, axis = np.asarray(pivot, float), np.asarray(axis, float)
+    u = np.cross(axis, (1.0, 0.0, 0.0) if abs(axis[0]) < .9 else (0.0, 1.0, 0.0))
+    u /= np.linalg.norm(u)
+    v = np.cross(axis, u)
+    plane = np.stack([(vertices - pivot) @ u, (vertices - pivot) @ v], 1)
+    center = np.zeros(2)
+    for _ in range(4):
+        radius = np.linalg.norm(plane - center, axis=1)
+        rim = plane[radius >= np.percentile(radius, 85)]
+        a = np.c_[2 * rim, np.ones(len(rim))]
+        (cx, cy, _), *_ = np.linalg.lstsq(a, (rim ** 2).sum(1), rcond=None)
+        center = np.array((cx, cy))
+    if np.linalg.norm(center) > 0.15:
+        raise ValueError("Steering rim centre is implausibly far from the authored hardpoint")
+    return tuple(map(float, pivot + center[0] * u + center[1] * v))
+
+
 def compile_motion(alias, ir, bones, points, grouped):
     cockpit, exterior = grouped["cockpit"], grouped["exterior"]
     attachments, report, payloads = {}, {"gauges": [], "unresolved": []}, {}
@@ -130,10 +179,12 @@ def compile_motion(alias, ir, bones, points, grouped):
     if steering and 9 in points:
         try:
             rotation, axis = steering_rotation(steering, points[9].meters)
+            pivot = rim_center(steering, points[9].meters, axis)
             i = len(bones)
-            bones += [Bone("boneSteeringWheel",1,points[9].meters,rotation),Bone("boneSteeringWheelSpindle",i)]
-            attachments["steering_wheel"] = Attachment(i+1,points[9].meters,rotation)
-            report["steering"] = {"bone":"boneSteeringWheelSpindle", "pivot_m":points[9].meters,
+            bones += [Bone("boneSteeringWheel",1,pivot,rotation),Bone("boneSteeringWheelSpindle",i)]
+            attachments["steering_wheel"] = Attachment(i+1,pivot,rotation)
+            report["steering"] = {"bone":"boneSteeringWheelSpindle", "pivot_m":pivot,
+                                  "authored_pivot_m":points[9].meters,
                                   "axis_vehicle":axis, "source":points[9].source_asset, "runtime":"unverified"}
         except ValueError as error:
             report["unresolved"].append({"role":"steering","reason":str(error)})
@@ -149,12 +200,41 @@ def compile_motion(alias, ir, bones, points, grouped):
             continue
         attachments[key+"_min"] = Attachment(len(bones),pivot)
         bones.append(Bone(bone,1,pivot))
+        if clip not in template_slots():
+            # The needle stays bound to its bone at rest; the native gauge graph has no slot for it.
+            report["unresolved"].append({"role":clip,"reason":"Native gauge graph template has no slot"})
+            continue
         member = f"animations/{clip}.gr2"
-        payloads[member] = animation_clip(clip,bone,pivot,keys)
+        payloads[member] = animation_clip(clip,bone,pivot,calibrated(keys,ticks))
         report["gauges"].append({"clip":clip,"bone":bone,"input":parameter,"input_max":max_input,
                                  "packed_remap":ticks, "pivot_m":pivot, "member":member, **fit})
-    if payloads:
+    missing_slots = set(template_slots()) - {g["clip"] for g in report["gauges"]}
+    if missing_slots and os.environ.get("EXPANDED_GARAGE_STATIC_GAUGES") != "off":
+        # Every native car ships a GSF; BMW_6_M3GTR_01 / SAL_S281_06 / TOY_Prius_11 without one hung on the
+        # autoshow loading screen (owner, visual-59). Slots without a usable needle (digital dash, no FM4 dial
+        # calibration) get a bone at the cabin origin with a motionless clip; resolved needles keep working.
+        for key, label, clip, bone, parameter in GAUGES:
+            if clip not in missing_slots:
+                continue
+            pivot = (0.0, 0.0, 0.0)
+            bones.append(Bone(bone, 1, pivot))
+            member = f"animations/{clip}.gr2"
+            # A clip whose end equals its start fails verify_clip (it catches dead needles); the empty bone turns
+            # 0.05 degrees over the sweep instead.
+            payloads[member] = animation_clip(clip, bone, pivot, [
+                (step / 16, (0.0, 0.0, math.sin(step / 16 * STATIC_GAUGE_TURN / 2), math.cos(step / 16 * STATIC_GAUGE_TURN / 2)))
+                for step in range(17)])
+            report["gauges"].append({"clip": clip, "bone": bone, "input": parameter,
+                                     "input_max": STATIC_GAUGE_MAX[parameter], "packed_remap": [(0, 0), (65535, 65535)],
+                                     "pivot_m": pivot, "member": member, "static": True})
+    if {g["clip"] for g in report["gauges"]} == set(template_slots()):
         payloads[f"animations/{alias}.gsf"] = gauge_graph(report["gauges"])
+    elif report["gauges"]:
+        # The native graph template needs every one of its clips; partial clusters stay at rest.
+        for gauge in report["gauges"]:
+            payloads.pop(gauge["member"])
+            report["unresolved"].append({"role":gauge["clip"],"reason":"Gauge cluster lacks a template clip"})
+        report["gauges"] = []
     for role in ("doors","hood","trunk","wipers","driver_ik"):
         report["unresolved"].append({"role":role,"reason":"Source pivot or runtime controller remains unqualified"})
     return attachments, payloads, report

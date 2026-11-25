@@ -215,6 +215,86 @@ def swatch(name, width, height, rgba):
     return result
 
 
+BC7_FORMAT = 9   # native per-car colour textures (DIFF/LITE): BC7, full mip chain, TXCH format 9
+TEXCONV_CANDIDATES = ("tools/ForzaStudioEVO_0.0.7/texconv.exe", "tools/ForzaStudio-EVO-main/!ForzaStudio release/texconv.exe")
+
+
+def texconv():
+    """DirectXTex texconv (BC7 encoder). EXPANDED_GARAGE_TEXCONV overrides; =off keeps the BC3 writer."""
+    import os
+    value = os.environ.get("EXPANDED_GARAGE_TEXCONV")
+    if value == "off":
+        return None
+    for candidate in ([value] if value else []) + [str(ROOT / c) for c in TEXCONV_CANDIDATES]:
+        if candidate and Path(candidate).is_file():
+            return Path(candidate)
+    return None
+
+
+def mip_header(identifier, width, height, fmt, mips):
+    """TXCH of a native mipped swatch (ACU_RSXTypeS_02 gauges DIFF): after the format, one record per mip
+    (size, offset into the payload, byte offset of the next record or -1)."""
+    fields = [56, 80, identifier, width, height, 1, 1 | len(mips) << 16, 0, 0, 0, 0, 64, 68, fmt, 76, 0xffffffff]
+    offset = 0
+    for level, size in enumerate(mips):
+        fields += [size, offset, 92 + 12 * level if level < len(mips) - 1 else 0xffffffff]
+        offset += size
+    return struct.pack("<II16sIIII4I2I3I", *fields[:16]) + struct.pack(f"<{len(fields) - 16}I", *fields[16:])
+
+
+def swatch_bc7(name, width, height, rgba):
+    """swatch_bc7_uncached through the content cache (texconv BC7 is ~45 s per 2048^2 texture on the CPU)."""
+    tool = texconv()
+    if tool is None:
+        return swatch(name, width, height, rgba)
+    from . import fh4_cache
+    return fh4_cache.cached_bytes("bc7-swatch", (__name__,), (name, width, height, bytes(rgba), Path(tool).name),
+                                  lambda: swatch_bc7_uncached(name, width, height, rgba))
+
+
+def swatch_bc7_uncached(name, width, height, rgba):
+    """Native-format colour swatch: premultiplied BC7 with a full mip chain (TXCH format 9).
+
+    FH4 reads per-car DIFF/LITE textures as BC7 format 9 with mips; our BC3 format 2 single-mip textures
+    showed the FM4 cockpit atlas far too bright (owner, visual-27) and aliased fine patterns (seat cloth).
+    Values are stored as authored (sRGB in, sRGB out, no conversion); mips are filtered by texconv."""
+    import subprocess
+    import tempfile
+    from PIL import Image, ImageChops
+
+    tool = texconv()
+    if tool is None:
+        return swatch(name, width, height, rgba)
+    straight = Image.frombytes("RGBA", (width, height), bytes(rgba))
+    red, green, blue, alpha = straight.split()
+    premultiplied = Image.merge("RGBA", tuple(ImageChops.multiply(c, alpha) for c in (red, green, blue)) + (alpha,))
+    with tempfile.TemporaryDirectory(prefix="bc7-") as tmp:
+        source = Path(tmp) / "texture.png"
+        premultiplied.save(source)
+        subprocess.run([str(tool), "-nologo", "-y", "-nogpu", "-f", "BC7_UNORM_SRGB", "-srgb", "-m", "0",
+                        "-o", tmp, str(source)], check=True, capture_output=True)
+        dds = (Path(tmp) / "texture.dds").read_bytes()
+    if dds[84:88] != b"DX10" or struct.unpack_from("<I", dds, 128)[0] not in (98, 99):
+        raise ValueError("texconv did not return a BC7 texture")
+    payload = dds[148:]
+    mips, w, h = [], width, height
+    while True:
+        mips.append(max(1, (w + 3) // 4) * max(1, (h + 3) // 4) * 16)
+        if w == 1 and h == 1:
+            break
+        w, h = max(1, w // 2), max(1, h // 2)
+    if sum(mips) != len(payload):
+        raise ValueError("BC7 mip chain size mismatch")
+    identifier = uuid.uuid5(uuid.NAMESPACE_URL, "urn:fh4-expanded-garage:swatch:" + name.casefold())
+    header = mip_header(identifier.bytes_le, width, height, BC7_FORMAT, mips)
+    result = fh4_model.bundle([fh4_model.Chunk("TXCB", (0, 0), payload,
+                                              (fh4_model.metadata("TXCH", header, 0),))])
+    _, _, _, _, _, offset, size, _ = fh4_model.BLOB.unpack_from(result, fh4_model.HEADER.size)
+    if size != len(payload) or result[offset:offset+size] != payload:
+        raise ValueError("Swatch wire readback failed")
+    return result
+
+
 def generate_art(output, vehicles, manufacturers, checkout=None):
     codec = xds_codec(checkout)
     emitted, missing, brands = [], [], set()

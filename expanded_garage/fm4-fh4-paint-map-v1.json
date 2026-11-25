@@ -1,0 +1,2547 @@
+{
+ "calibration": {
+  "gamma": 0.9,
+  "median_abs_error": 12.22,
+  "scale": 0.93
+ },
+ "cars": 195,
+ "colors": {
+  "000000": {
+   "carcolors_pbc/ferrari/nerods1250_solid_fer.materialbin": 1
+  },
+  "000002": {
+   "carcolors/black.materialbin": 2
+  },
+  "000a38": {
+   "carcolors/santorinblue.materialbin": 1
+  },
+  "00144f": {
+   "carcolors/forestgreen.materialbin": 1
+  },
+  "001450": {
+   "carcolors/nis_fairladyzvstwinturbo_94_darkbluegraphitepearl.materialbin": 1
+  },
+  "001711": {
+   "carcolors_pbc/audi/brilliantblack_solid_aud.materialbin": 1
+  },
+  "002145": {
+   "carcolors/bluemcl.materialbin": 1
+  },
+  "002300": {
+   "carcolors_pbc/ferrari/blupozzi_solid_fer.materialbin": 1,
+   "carcolors_pbc/ferrari/verdebritish_historic_met_fer.materialbin": 1
+  },
+  "002430": {
+   "carcolors_pbc/volkswagen/shadowblue_met_vw.materialbin": 1
+  },
+  "0026c2": {
+   "carcolors_pbc/lotus/persianblue_met_lot.materialbin": 1
+  },
+  "002a72": {
+   "carcolors/azurebluegreenpearl.materialbin": 1
+  },
+  "002b81": {
+   "carcolors_pbc/audi/mugelloblue_pearl_aud.materialbin": 2
+  },
+  "002e26": {
+   "carcolors/oxfordgreenmet.materialbin": 1
+  },
+  "0033a1": {
+   "carcolors/brightbluemetallic.materialbin": 2
+  },
+  "004c4f": {
+   "carcolors/darkteal.materialbin": 1
+  },
+  "004f82": {
+   "carcolors/interlagosbluemet.materialbin": 1
+  },
+  "005299": {
+   "carcolors/ardenblue.materialbin": 1
+  },
+  "00537f": {
+   "carcolors/porcelainbluemet.materialbin": 1
+  },
+  "010101": {
+   "carcolors_pbc/audi/brilliantblack_solid_aud.materialbin": 1,
+   "carcolors_pbc/bmw/jetblack_solid_bmw.materialbin": 1,
+   "carcolors_pbc/mini/jetblack_solid_min.materialbin": 2,
+   "carcolors_pbc/volkswagen/black_vw.materialbin": 1
+  },
+  "010859": {
+   "carcolors/redbullblue.materialbin": 1
+  },
+  "011636": {
+   "carcolors_pbc/ferrari/blupozzi_solid_fer.materialbin": 1,
+   "carliveries/fer_599gto_stripe_bluepozzi.materialbin": 2
+  },
+  "012e26": {
+   "carcolors/oxfordgreenmet.materialbin": 1
+  },
+  "014e6a": {
+   "carcolors_pbc/ferrari/blutourdefrance_met_fer.materialbin": 2
+  },
+  "016c9d": {
+   "carcolors_pbc/bmw/estorilblue2_met_bmw.materialbin": 1
+  },
+  "020130": {
+   "carcolors/blueserametallic.materialbin": 1,
+   "carcolors_pbc/ferrari/blupozzi_solid_fer.materialbin": 3
+  },
+  "020202": {
+   "carcolors_pbc/nissan/superblack_solid_nis.materialbin": 1
+  },
+  "021124": {
+   "carcolors_pbc/mini/midnightblack_met_min.materialbin": 1
+  },
+  "021c41": {
+   "carcolors_pbc/audi/sepangblue_metallic_aud.materialbin": 2
+  },
+  "022628": {
+   "carcolors/black.materialbin": 1
+  },
+  "023fb2": {
+   "carcolors/lightningbluemica.materialbin": 1
+  },
+  "024da0": {
+   "carcolors_pbc/subaru/wrbluemica_met_sub.materialbin": 1
+  },
+  "024dd3": {
+   "carcolors_pbc/subaru/wrbluemica_met_sub.materialbin": 2
+  },
+  "026bba": {
+   "carcolors/jetstreambluemetallic.materialbin": 1
+  },
+  "030005": {
+   "carcolors/nighthawkblackpearl.materialbin": 1
+  },
+  "030303": {
+   "carcolors/black.materialbin": 6,
+   "carcolors/pyreneanblackpearl.materialbin": 1,
+   "carcolors_pbc/nissan/superblack_solid_nis.materialbin": 2,
+   "carcolors_pbc/volkswagen/deepblack_pearl_vw.materialbin": 1
+  },
+  "034005": {
+   "carcolors/greenpearl.materialbin": 1
+  },
+  "036be3": {
+   "carcolors_pbc/nissan/premiumlemansbluepearl_met_nis.materialbin": 1
+  },
+  "040505": {
+   "carcolors/black.materialbin": 1
+  },
+  "040630": {
+   "carcolors/blackpearl.materialbin": 1
+  },
+  "04b0f0": {
+   "carcolors/grabberblue.materialbin": 1
+  },
+  "050505": {
+   "carcolors/black.materialbin": 11,
+   "carcolors/blackpearl.materialbin": 2,
+   "carcolors/diamondblackmet.materialbin": 1,
+   "carcolors/mallardgreen.materialbin": 1,
+   "carcolors/nighthawkblackpearl.materialbin": 1,
+   "carcolors_pbc/audi/darkgreen_pearl_aud.materialbin": 1,
+   "carcolors_pbc/bmw/jetblack_solid_bmw.materialbin": 1,
+   "carcolors_pbc/ferrari/blupozzi_solid_fer.materialbin": 1,
+   "carcolors_pbc/ferrari/nerods1250_solid_fer.materialbin": 4,
+   "carcolors_pbc/ferrari/verdebritish_historic_met_fer.materialbin": 1,
+   "carcolors_pbc/ford/black_solid_for.materialbin": 2,
+   "carcolors_pbc/lamborghini/neroaldebaran_solid_lam.materialbin": 1,
+   "carcolors_pbc/lamborghini/neronoctis_solid_lam.materialbin": 2,
+   "carcolors_pbc/lotus/black_met_lot_material.materialbin": 1,
+   "carcolors_pbc/mclaren/cosmosblack_solid_mcl.materialbin": 1,
+   "carcolors_pbc/nissan/superblack_solid_nis.materialbin": 2,
+   "carcolors_pbc/subaru/obsidianblack_pearl_sub.materialbin": 2,
+   "carcolors_pbc/volkswagen/deepblack_pearl_vw.materialbin": 2,
+   "exterior_plastic/plastic_mgl.materialbin": 1
+  },
+  "05249c": {
+   "carcolors/blucaelummetallic.materialbin": 1
+  },
+  "052628": {
+   "carcolors/santorinblue.materialbin": 1
+  },
+  "057fc1": {
+   "carcolors/mediumblue.materialbin": 1
+  },
+  "060606": {
+   "carcolors_pbc/nissan/diamondblackpearl_met_nis.materialbin": 1,
+   "carcolors_pbc/nissan/superblack_solid_nis.materialbin": 1
+  },
+  "070707": {
+   "carcolors/santorinblue.materialbin": 1,
+   "carcolors/santoriniblackmet.materialbin": 1,
+   "carcolors_pbc/ferrari/blupozzi_solid_fer.materialbin": 2,
+   "carcolors_pbc/ferrari/nerods1250_solid_fer.materialbin": 1,
+   "carcolors_pbc/renault/deepblack_solid_ren.materialbin": 1
+  },
+  "071643": {
+   "carcolors_pbc/bmw/carbonblack_met_bmw.materialbin": 1,
+   "carcolors_pbc/bmw/jerezblack_met_bmw.materialbin": 1
+  },
+  "076699": {
+   "carcolors_pbc/mini/laserblue_met_min.materialbin": 2
+  },
+  "080808": {
+   "carcolors/black.materialbin": 1,
+   "carcolors/diamondblackmetallic.materialbin": 1,
+   "carcolors_pbc/bmw/jetblack_solid_bmw.materialbin": 2,
+   "carcolors_pbc/ferrari/verdebritish_historic_met_fer.materialbin": 1,
+   "carcolors_pbc/lotus/black_met_lot_material.materialbin": 1
+  },
+  "08090d": {
+   "carcolors/black.materialbin": 1
+  },
+  "080a08": {
+   "carcolors_pbc/ferrari/verdebritish_historic_met_fer.materialbin": 1
+  },
+  "080c32": {
+   "carcolors_pbc/ford/black_solid_for.materialbin": 1
+  },
+  "081130": {
+   "carcolors_pbc/volkswagen/deepblack_pearl_vw.materialbin": 1
+  },
+  "0836b0": {
+   "carcolors/iliadeblue.materialbin": 1
+  },
+  "0856c9": {
+   "carcolors/championblue.materialbin": 1
+  },
+  "0a0808": {
+   "carcolors/blacksapphiremetallicvolvo.materialbin": 1
+  },
+  "0a080a": {
+   "carcolors/black.materialbin": 1
+  },
+  "0a0a0a": {
+   "carcolors/black.materialbin": 4,
+   "carcolors/blackpearl.materialbin": 1,
+   "carcolors/diamondblackmetallic.materialbin": 1,
+   "carcolors/starlightblackmet.materialbin": 1,
+   "carcolors_pbc/alfa_romeo/alfablack_solid_alf.materialbin": 1,
+   "carcolors_pbc/aston_martin/jetblack_solid_ast.materialbin": 2,
+   "carcolors_pbc/audi/phantomblack_pearl_aud.materialbin": 2,
+   "carcolors_pbc/ford/black_solid_for.materialbin": 1,
+   "carcolors_pbc/lotus/black_solid_lot.materialbin": 1,
+   "carcolors_pbc/nissan/superblack_solid_nis.materialbin": 1
+  },
+  "0a1905": {
+   "carcolors/brewstergreen.materialbin": 2
+  },
+  "0a1c2b": {
+   "carcolors_pbc/maserati/blupassione_met_mas.materialbin": 1
+  },
+  "0a270e": {
+   "carcolors_pbc/volkswagen/deepblack_pearl_vw.materialbin": 1
+  },
+  "0b0a4d": {
+   "carcolors_pbc/volkswagen/moonlightblue_pearl_vw.materialbin": 1
+  },
+  "0b1112": {
+   "carcolors/imperialgreen.materialbin": 1
+  },
+  "0b3022": {
+   "carcolors_pbc/audi/darkgreen_pearl_aud.materialbin": 1
+  },
+  "0b3412": {
+   "carcolors_pbc/volkswagen/blackmagic_pearl_vw.materialbin": 1
+  },
+  "0b71ab": {
+   "carcolors/briteblue..materialbin": 1
+  },
+  "0c0c0c": {
+   "carcolors_pbc/audi/brilliantblack_solid_aud.materialbin": 1
+  },
+  "0c2352": {
+   "carcolors_pbc/ferrari/blutourdefrance_met_fer.materialbin": 1
+  },
+  "0c2567": {
+   "carcolors/pearlbluelfa.materialbin": 1
+  },
+  "0c2c2b": {
+   "carcolors_pbc/aston_martin/emeraldgreen_met_ast.materialbin": 1
+  },
+  "0c35c7": {
+   "carcolors/falconbase.materialbin": 1
+  },
+  "0c4f95": {
+   "carcolors/extremebluemet.materialbin": 1
+  },
+  "0d0d0d": {
+   "carcolors/black.materialbin": 1,
+   "carcolors/darkredburgundy.materialbin": 1,
+   "carcolors_pbc/ford/black_solid_for.materialbin": 1
+  },
+  "0d1a26": {
+   "carcolors/marianablue.materialbin": 1
+  },
+  "0d3038": {
+   "carcolors/grisdanishblue.materialbin": 1
+  },
+  "0e2314": {
+   "carcolors_pbc/audi/darkgreen_pearl_aud.materialbin": 1
+  },
+  "0e2772": {
+   "carcolors_pbc/volkswagen/shadowblue_met_vw.materialbin": 1
+  },
+  "0f0f0f": {
+   "carcolors/black.materialbin": 1,
+   "carcolors/blackpearl.materialbin": 1,
+   "carcolors/neronemesis.materialbin": 1,
+   "carcolors/phantomblackpearlmitsu.materialbin": 1,
+   "carcolors/tungstengrey.materialbin": 1,
+   "carliveries/amc_javelin_canaryyellow.materialbin": 2,
+   "carliveries/lot_2eleven_blacksilver.materialbin": 1
+  },
+  "0f140d": {
+   "carcolors/black.materialbin": 1
+  },
+  "0f1e42": {
+   "carcolors/midnightpurple.materialbin": 1
+  },
+  "0f2451": {
+   "carcolors_pbc/mclaren/pacificblue_met_mcl.materialbin": 1
+  },
+  "0f3733": {
+   "carcolors_pbc/mclaren/xpgreen_met_mcl.materialbin": 1
+  },
+  "0f3d2d": {
+   "carliveries/pon_gto_wrblack_w.materialbin": 1
+  },
+  "0f403f": {
+   "carcolors/bostongreenmet.materialbin": 1
+  },
+  "103359": {
+   "carcolors/blueserametallic.materialbin": 1
+  },
+  "112b7b": {
+   "carcolors_pbc/subaru/sonicbluemica_met_sub.materialbin": 1
+  },
+  "113b21": {
+   "carcolors/verdebritish.materialbin": 1
+  },
+  "121214": {
+   "carcolors/everettgreenmet.materialbin": 1
+  },
+  "121217": {
+   "carcolors_pbc/bmw/jetblack_solid_bmw.materialbin": 1
+  },
+  "121921": {
+   "carcolors_pbc/bmw/carbonblack_met_bmw.materialbin": 1
+  },
+  "12262b": {
+   "carcolors/timbergreen.materialbin": 1
+  },
+  "122665": {
+   "carcolors/pearlbluelfa.materialbin": 1
+  },
+  "122c29": {
+   "carcolors_pbc/mini/britishracinggreen2_met_min.materialbin": 2
+  },
+  "122c33": {
+   "carcolors_pbc/audi/phantomblack_pearl_aud.materialbin": 1
+  },
+  "123364": {
+   "carcolors_pbc/bmw/lemansblue_met_bmw.materialbin": 1
+  },
+  "123c91": {
+   "carcolors/bridgehamptonbluepoly.materialbin": 1
+  },
+  "123d3d": {
+   "carcolors_pbc/ferrari/nerodaytona_met_fer.materialbin": 2
+  },
+  "123e7b": {
+   "carcolors/porcelainbluemet.materialbin": 1
+  },
+  "131e3c": {
+   "carcolors_pbc/audi/darkgreen_pearl_aud.materialbin": 1,
+   "carcolors_pbc/audi/pantherblack_crystal_aud.materialbin": 1
+  },
+  "131f55": {
+   "carcolors/blunart.materialbin": 1,
+   "carcolors_pbc/ferrari/bluswaters_historic_met_fer.materialbin": 1,
+   "carcolors_pbc/ferrari/blutourdefrance_met_fer.materialbin": 7
+  },
+  "13208a": {
+   "carcolors/ultrasonicbluemica.materialbin": 1
+  },
+  "132853": {
+   "carcolors/daytonabluemet.materialbin": 1
+  },
+  "140014": {
+   "carcolors_pbc/audi/brilliantblack_solid_aud.materialbin": 1
+  },
+  "141414": {
+   "carcolors/blackpearl.materialbin": 1,
+   "carcolors_pbc/maserati/nero_solid_mas.materialbin": 1,
+   "carcolors_pbc/volkswagen/black_vw.materialbin": 1
+  },
+  "141416": {
+   "carcolors/black.materialbin": 1
+  },
+  "141c33": {
+   "carcolors_pbc/bmw/blacksapphire_met_bmw.materialbin": 1
+  },
+  "143755": {
+   "carcolors/mediumturquoisemetallic.materialbin": 1
+  },
+  "143c9e": {
+   "carcolors/porcelainbluemet.materialbin": 1
+  },
+  "151513": {
+   "carcolors/black.materialbin": 1
+  },
+  "15223f": {
+   "carcolors_pbc/bmw/blacksapphire_met_bmw.materialbin": 1
+  },
+  "152258": {
+   "carcolors/darkmetallicblue.materialbin": 2
+  },
+  "155ad3": {
+   "carcolors/olympusblue.materialbin": 1
+  },
+  "161b2e": {
+   "carcolors/darkblue.materialbin": 1
+  },
+  "164b91": {
+   "carcolors/arcticbluepearl.materialbin": 1
+  },
+  "165293": {
+   "carcolors/darkbluemet.materialbin": 1,
+   "carcolors/darkbluepoly.materialbin": 1,
+   "carcolors/mediumblue69chargerdaytona.materialbin": 1,
+   "carcolors/truebluemet.materialbin": 1
+  },
+  "172332": {
+   "carcolors_pbc/audi/darkgreen_pearl_aud.materialbin": 1
+  },
+  "173223": {
+   "carcolors_pbc/audi/darkgreen_pearl_aud.materialbin": 1
+  },
+  "173829": {
+   "carcolors_pbc/lotus/black_met_lot_material.materialbin": 1
+  },
+  "174f82": {
+   "carcolors_pbc/bmw/montecarloblue_met_bmw.materialbin": 1
+  },
+  "181818": {
+   "carcolors/black.materialbin": 1
+  },
+  "18191e": {
+   "carcolors_pbc/bmw/blacksapphire_met_bmw.materialbin": 2
+  },
+  "183972": {
+   "carcolors/velvetblue.materialbin": 1
+  },
+  "190315": {
+   "carcolors/blackpearl.materialbin": 1
+  },
+  "191917": {
+   "carcolors/black.materialbin": 1
+  },
+  "191919": {
+   "carcolors/black.materialbin": 1,
+   "carcolors/blackmetallichummer.materialbin": 1,
+   "carcolors_pbc/bmw/blacksapphire_met_bmw.materialbin": 1,
+   "carcolors_pbc/ford/black_solid_for.materialbin": 1,
+   "carcolors_pbc/mclaren/abyssblack_met_mcl.materialbin": 1,
+   "carcolors_pbc/nissan/superblack_solid_nis.materialbin": 1,
+   "carcolors_pbc/subaru/obsidianblack_pearl_sub.materialbin": 1,
+   "carliveries/pon_gto_yrblue_b.materialbin": 1,
+   "exterior_misc/carbonfiber_005.materialbin": 1
+  },
+  "19243f": {
+   "carcolors/bluoceanometallic.materialbin": 1
+  },
+  "194a7d": {
+   "carcolors/pearlbluelfa.materialbin": 1
+  },
+  "1a0805": {
+   "carcolors/fireblack.materialbin": 1
+  },
+  "1a1a1a": {
+   "carcolors/darkbluepearl.materialbin": 1
+  },
+  "1a1b1f": {
+   "carcolors_pbc/ferrari/blupozzi_solid_fer.materialbin": 1
+  },
+  "1a264f": {
+   "carcolors/darkbluepearl.materialbin": 1
+  },
+  "1a3a3d": {
+   "carcolors/bostongreenmet.materialbin": 1
+  },
+  "1b304c": {
+   "carcolors_pbc/bmw/carbonblack_met_bmw.materialbin": 1
+  },
+  "1b3425": {
+   "carcolors/grandprixgreen.materialbin": 1
+  },
+  "1b3725": {
+   "carcolors_pbc/audi/monteregreen_pearl_aud.materialbin": 1
+  },
+  "1b4272": {
+   "carcolors_pbc/ford/performance blue_met_for.materialbin": 1
+  },
+  "1c2957": {
+   "carcolors/darkteal.materialbin": 1
+  },
+  "1c3154": {
+   "carcolors/royalbluemetallic.materialbin": 1
+  },
+  "1c4056": {
+   "carcolors_pbc/ferrari/blutourdefrance_met_fer.materialbin": 1
+  },
+  "1c4784": {
+   "carcolors/apolloblue.materialbin": 1
+  },
+  "1c4cb0": {
+   "carcolors/acapulcoblue.materialbin": 1
+  },
+  "1c5996": {
+   "carcolors_pbc/bmw/estorilblue2_met_bmw.materialbin": 1
+  },
+  "1c68a0": {
+   "carcolors/apolloblue.materialbin": 1
+  },
+  "1c9f6e": {
+   "carcolors/grabbergreen.materialbin": 1
+  },
+  "1d2f50": {
+   "carcolors/opalescentdarkblue.materialbin": 1
+  },
+  "1e2434": {
+   "carcolors_pbc/audi/phantomblack_pearl_aud.materialbin": 1
+  },
+  "1e2a44": {
+   "carcolors/darkmetallicblue.materialbin": 2
+  },
+  "1e42b5": {
+   "carcolors/baysidebluemet.materialbin": 1
+  },
+  "1e8fd7": {
+   "carcolors/fathomblue.materialbin": 2
+  },
+  "1e9be3": {
+   "carcolors/competitionblue.materialbin": 1
+  },
+  "1f1fb4": {
+   "carcolors/bluenis.materialbin": 1
+  },
+  "1f2022": {
+   "carcolors/diamondblackmetallic.materialbin": 1
+  },
+  "1f2600": {
+   "carcolors/black.materialbin": 1
+  },
+  "1f3f9d": {
+   "carcolors_pbc/bmw/estorilblue2_met_bmw.materialbin": 1
+  },
+  "1f581f": {
+   "carcolors/britishracinggreenjag.materialbin": 1
+  },
+  "212166": {
+   "carcolors/opalescentdarkblue.materialbin": 1
+  },
+  "21312b": {
+   "carcolors/bahamagreenmet.materialbin": 1
+  },
+  "215938": {
+   "carcolors/emeraldfiremetallic.materialbin": 1
+  },
+  "215e5c": {
+   "carcolors_pbc/lotus/britishracinggreen_met_lot.materialbin": 1
+  },
+  "224162": {
+   "carcolors_pbc/ferrari/blutourdefrance_met_fer.materialbin": 1
+  },
+  "233d2a": {
+   "carcolors/blackpearl.materialbin": 1
+  },
+  "236195": {
+   "carcolors_pbc/lamborghini/bluenethus_met_lam.materialbin": 1
+  },
+  "241247": {
+   "carcolors/hemiorange.materialbin": 1,
+   "carcolors/invioletmetallicfc7.materialbin": 1
+  },
+  "242f48": {
+   "carcolors_pbc/maserati/bluenettuno_met_mas.materialbin": 1
+  },
+  "243730": {
+   "carcolors/junpiergreenmet.materialbin": 1
+  },
+  "243d69": {
+   "carcolors/porcelainbluemet.materialbin": 1
+  },
+  "244538": {
+   "carcolors/darkgreen.materialbin": 1
+  },
+  "2446ba": {
+   "carcolors_pbc/audi/nogaroblue_pearl_aud.materialbin": 1
+  },
+  "24523d": {
+   "carcolors/tropicanagreenmetallic.materialbin": 1
+  },
+  "2470b3": {
+   "carcolors/porcelainbluemet.materialbin": 1
+  },
+  "25417f": {
+   "carcolors/bluenis.materialbin": 1
+  },
+  "262626": {
+   "carcolors_pbc/bmw/blacksapphire_met_bmw.materialbin": 1
+  },
+  "266bbd": {
+   "carcolors/lagunablue.materialbin": 1
+  },
+  "2678d9": {
+   "carcolors_pbc/bugatti/frenchracingblue_solid_bug.materialbin": 1
+  },
+  "272a30": {
+   "carcolors_pbc/audi/darkgreen_pearl_aud.materialbin": 1,
+   "carcolors_pbc/audi/pantherblack_crystal_aud.materialbin": 1
+  },
+  "28010e": {
+   "carcolors_pbc/nissan/superblack_solid_nis.materialbin": 1
+  },
+  "283d3a": {
+   "carcolors/bluoceanometallic.materialbin": 1
+  },
+  "290a00": {
+   "carcolors/black.materialbin": 1
+  },
+  "293350": {
+   "carcolors/starlightblackmet.materialbin": 1
+  },
+  "293c34": {
+   "carcolors_pbc/ford/black_solid_for.materialbin": 1
+  },
+  "295933": {
+   "carcolors/everettgreenmet.materialbin": 1
+  },
+  "2a2a2a": {
+   "carcolors/black.materialbin": 1
+  },
+  "2a74c8": {
+   "carcolors/brightsilverblue.materialbin": 1
+  },
+  "2a7a7c": {
+   "carcolors/montanametallic.materialbin": 1
+  },
+  "2b272e": {
+   "carcolors_pbc/nissan/superblack_solid_nis.materialbin": 1
+  },
+  "2b3070": {
+   "carcolors/bluenis.materialbin": 1
+  },
+  "2b4575": {
+   "carcolors_pbc/aston_martin/quantumsilver_met_ast.materialbin": 1
+  },
+  "2c5fc9": {
+   "carcolors/bluef1.materialbin": 1
+  },
+  "2c80d1": {
+   "carcolors/viperbluemet.materialbin": 1
+  },
+  "2d3c5c": {
+   "carcolors_pbc/ferrari/blutourdefrance_met_fer.materialbin": 3
+  },
+  "2d63a8": {
+   "carcolors_pbc/mclaren/parisblue_solid_mcl.materialbin": 1
+  },
+  "2d928c": {
+   "carcolors/twilightturquoise.materialbin": 1
+  },
+  "2e1c0f": {
+   "carcolors/black.materialbin": 1
+  },
+  "2f2222": {
+   "carcolors/imperialmaroon.materialbin": 1
+  },
+  "2f3030": {
+   "carcolors/ivygreenmetallic.materialbin": 1
+  },
+  "302314": {
+   "carliveries/pon_gto_wrblack_w.materialbin": 1
+  },
+  "303030": {
+   "carcolors_pbc/aston_martin/onyxblack_solid_ast.materialbin": 1
+  },
+  "303441": {
+   "carcolors/graphitegrey.materialbin": 1
+  },
+  "30572e": {
+   "carcolors/tropicanagreenmetallic.materialbin": 1
+  },
+  "305c4c": {
+   "carcolors_pbc/aston_martin/quantumsilver_met_ast.materialbin": 1
+  },
+  "313131": {
+   "carcolors_pbc/maserati/grigiogranito_met_mas.materialbin": 1
+  },
+  "323333": {
+   "carcolors/oxfordgreenmet.materialbin": 1
+  },
+  "324d3d": {
+   "carcolors/sherwoodgreen.materialbin": 1
+  },
+  "32502e": {
+   "carcolors_pbc/lotus/black_met_lot_material.materialbin": 1
+  },
+  "326666": {
+   "carcolors/steelgreymetallic.materialbin": 1
+  },
+  "32aa37": {
+   "carcolors/brightgreenmet69chargerdaytona.materialbin": 1
+  },
+  "32afbe": {
+   "carcolors/brightbluemetallic2.materialbin": 1,
+   "carcolors/mediumblue.materialbin": 1
+  },
+  "33333b": {
+   "carcolors/delphinmetallic.materialbin": 1
+  },
+  "333636": {
+   "carcolors/pearlgraylfa.materialbin": 1
+  },
+  "33a538": {
+   "carcolors/tropicanagreenmetallic.materialbin": 1
+  },
+  "342f0a": {
+   "carcolors/monzagreymagno.materialbin": 1
+  },
+  "344645": {
+   "carcolors/ivygreenmetallic.materialbin": 1
+  },
+  "345d85": {
+   "carcolors/ivygreenmetallic.materialbin": 1
+  },
+  "354a69": {
+   "carcolors/indigo.materialbin": 1
+  },
+  "361b52": {
+   "carcolors/technovioletmet.materialbin": 1
+  },
+  "362e3b": {
+   "carcolors/tuxedoblackmetallic.materialbin": 1
+  },
+  "365599": {
+   "carcolors_pbc/maserati/blusofisticato_met_mas.materialbin": 1
+  },
+  "368dfd": {
+   "carcolors/brightsilverblue.materialbin": 1
+  },
+  "371723": {
+   "carcolors_pbc/mclaren/abyssblack_met_mcl.materialbin": 1
+  },
+  "37322b": {
+   "carcolors_pbc/ferrari/blutourdefrance_met_fer.materialbin": 2,
+   "carcolors_pbc/ferrari/nerodaytona_met_fer.materialbin": 2
+  },
+  "375099": {
+   "carcolors_pbc/maserati/blusofisticato_met_mas.materialbin": 1
+  },
+  "375748": {
+   "carcolors_pbc/aston_martin/quantumsilver_met_ast.materialbin": 1
+  },
+  "385143": {
+   "carcolors/indigo.materialbin": 1
+  },
+  "385196": {
+   "carcolors/mediumturquoisemetallic.materialbin": 1
+  },
+  "399a9b": {
+   "carcolors/chameleongreen.materialbin": 1
+  },
+  "3a403f": {
+   "carcolors/sablebrownmetallic.materialbin": 1
+  },
+  "3a4e3d": {
+   "carcolors/greenolive.materialbin": 1
+  },
+  "3b2735": {
+   "carcolors/darkburgundypearl.materialbin": 1
+  },
+  "3d414a": {
+   "carcolors/greenolive.materialbin": 1
+  },
+  "3d5778": {
+   "carcolors/bayoubluepearl.materialbin": 1
+  },
+  "3d82c4": {
+   "carliveries/che_camaroz28_79_blue.materialbin": 1
+  },
+  "3e0c16": {
+   "carcolors_pbc/lamborghini/marronealcestis_met_lam.materialbin": 1
+  },
+  "3e3936": {
+   "carcolors/mossgreenmetmb.materialbin": 1
+  },
+  "400303": {
+   "carcolors/fireblack.materialbin": 1
+  },
+  "401526": {
+   "carcolors/hibiscusredpearl.materialbin": 1
+  },
+  "406192": {
+   "carcolors/blucaracalla.materialbin": 1
+  },
+  "410101": {
+   "carcolors/burgundy.materialbin": 1
+  },
+  "420000": {
+   "carcolors/lightmaroon.materialbin": 1
+  },
+  "431d26": {
+   "carcolors_pbc/maserati/rossorubino_met_mas.materialbin": 1
+  },
+  "433876": {
+   "carcolors/blucaelummetallic.materialbin": 1
+  },
+  "436788": {
+   "carcolors/blue.materialbin": 1
+  },
+  "445b6b": {
+   "carcolors/indigo.materialbin": 1
+  },
+  "451e27": {
+   "carcolors/burgandyf1.materialbin": 2
+  },
+  "45423d": {
+   "carcolors_pbc/bmw/blacksapphire_met_bmw.materialbin": 1
+  },
+  "47404b": {
+   "carcolors/darkgreypearl.materialbin": 1
+  },
+  "47423f": {
+   "carcolors_pbc/aston_martin/quantumsilver_met_ast.materialbin": 1
+  },
+  "474645": {
+   "carcolors/dakotagreymetallic.materialbin": 1
+  },
+  "474a4a": {
+   "carcolors/altogrey.materialbin": 1
+  },
+  "476da8": {
+   "carcolors/windwardbluemet.materialbin": 1
+  },
+  "4881a8": {
+   "carcolors/azureturquiosepoly.materialbin": 1
+  },
+  "48a2bb": {
+   "carcolors/marinabluemet.materialbin": 1
+  },
+  "4a4a4a": {
+   "carcolors/grigiogranitomatte.materialbin": 2
+  },
+  "4a6a63": {
+   "carcolors/burnishbrown.materialbin": 2
+  },
+  "4a6d87": {
+   "carcolors/windwardbluemet.materialbin": 1
+  },
+  "4b4b4b": {
+   "carcolors/spacegreen.materialbin": 1
+  },
+  "4b589a": {
+   "carcolors/bluenis.materialbin": 1
+  },
+  "4b6432": {
+   "carcolors/limegreenpoly.materialbin": 1,
+   "carcolors/mediumgreenmet69chargerdaytona.materialbin": 1,
+   "carcolors/sherwoodgreenmet.materialbin": 1
+  },
+  "4b89b2": {
+   "carcolors_pbc/lamborghini/blucepheus_met_lam.materialbin": 1
+  },
+  "4b9c3a": {
+   "carcolors/tropicanagreenmetallic.materialbin": 1
+  },
+  "4c0fab": {
+   "carcolors/pearlescentpurple.materialbin": 1
+  },
+  "4d0506": {
+   "carcolors/darkburgundypearl.materialbin": 1
+  },
+  "4d4b4e": {
+   "carcolors_pbc/lamborghini/grigioreventon_matt_lam.materialbin": 1
+  },
+  "4d5761": {
+   "carcolors/cybergreymetallic.materialbin": 1
+  },
+  "4d5a7d": {
+   "carcolors_pbc/ferrari/grigiosilverstone_met_fer.materialbin": 1
+  },
+  "4e4d52": {
+   "carcolors/graphitegrey.materialbin": 1
+  },
+  "4e555a": {
+   "carcolors/sherwoodgreen.materialbin": 1
+  },
+  "4f291c": {
+   "carcolors/autumnbronzemet.materialbin": 1,
+   "carcolors/darktanpoly.materialbin": 1
+  },
+  "4f626d": {
+   "carcolors/mediumbluemetmb.materialbin": 1
+  },
+  "4f82be": {
+   "carcolors/mulsannebluepoly.materialbin": 1
+  },
+  "502332": {
+   "carcolors/sablebrownmetallic.materialbin": 1
+  },
+  "50504b": {
+   "carcolors/darkgrey.materialbin": 1
+  },
+  "510000": {
+   "carcolors/lightmaroon.materialbin": 1
+  },
+  "51565b": {
+   "carcolors/steelgreymetallic.materialbin": 1
+  },
+  "51715e": {
+   "carcolors/gray.materialbin": 1
+  },
+  "536527": {
+   "carcolors/citrusgreen.materialbin": 1
+  },
+  "538ad0": {
+   "carcolors/lightbluemet69chargerdaytona.materialbin": 1,
+   "carcolors/mediumblue.materialbin": 1
+  },
+  "544a40": {
+   "carcolors/sablebrownmetallic.materialbin": 1
+  },
+  "545454": {
+   "carcolors_pbc/audi/daytonagrey_pearl_aud.materialbin": 1
+  },
+  "545960": {
+   "carcolors/carbongreymet.materialbin": 1
+  },
+  "545a6a": {
+   "carcolors/gunmetalmetpon.materialbin": 1
+  },
+  "548fe2": {
+   "carcolors/horizonblueche.materialbin": 3
+  },
+  "555658": {
+   "carcolors/sparklinggraphite.materialbin": 1
+  },
+  "561323": {
+   "carcolors/chiaretoredmet.materialbin": 1
+  },
+  "575447": {
+   "carcolors/graphitegrey.materialbin": 1
+  },
+  "575b5a": {
+   "carcolors_pbc/volkswagen/carbonsteelgrey_met_vw.materialbin": 1
+  },
+  "58101c": {
+   "carcolors/monzaredjag.materialbin": 1
+  },
+  "58585a": {
+   "carcolors_pbc/lamborghini/neronemesis_matt_lam.materialbin": 1
+  },
+  "587a34": {
+   "carcolors/burnishbrown.materialbin": 1
+  },
+  "59595d": {
+   "carcolors/silvergraymet.materialbin": 1
+  },
+  "595b5e": {
+   "carcolors_pbc/ferrari/grigiosilverstone_met_fer.materialbin": 1
+  },
+  "59660b": {
+   "carcolors/citrusgreen.materialbin": 1
+  },
+  "5a3036": {
+   "carcolors/maroonmet.materialbin": 1
+  },
+  "5a5a5a": {
+   "carcolors/icegreyvioletpearl.materialbin": 1
+  },
+  "5a733c": {
+   "carcolors/lagunagraypoly.materialbin": 1
+  },
+  "5c5736": {
+   "carcolors/darktanpoly.materialbin": 1
+  },
+  "5d5f5d": {
+   "carcolors_pbc/audi/daytonagrey_pearl_aud.materialbin": 2
+  },
+  "5d6164": {
+   "carcolors/blucaracalla.materialbin": 1
+  },
+  "5e0007": {
+   "carcolors/carminemet.materialbin": 1
+  },
+  "5e0014": {
+   "carcolors/blackcherry.materialbin": 1
+  },
+  "5e5e61": {
+   "carcolors/graymetallic.materialbin": 2
+  },
+  "5f584b": {
+   "carcolors_pbc/lamborghini/grigioantares_met_lam.materialbin": 1
+  },
+  "60635b": {
+   "carcolors/carbongreymet.materialbin": 1
+  },
+  "606465": {
+   "carcolors/bronzebrownmetmb.materialbin": 1
+  },
+  "61984a": {
+   "carcolors/greenmetallictvr.materialbin": 1
+  },
+  "625e63": {
+   "carcolors/greygreenmica.materialbin": 1
+  },
+  "632a17": {
+   "carcolors/darkrussetmet.materialbin": 1
+  },
+  "636363": {
+   "carcolors/imolagrey.materialbin": 1
+  },
+  "637c9a": {
+   "carcolors_pbc/aston_martin/casinoroyale_met_ast.materialbin": 1
+  },
+  "638593": {
+   "carcolors/lynndalebluemet.materialbin": 1
+  },
+  "656971": {
+   "carcolors/spacegrey.materialbin": 1
+  },
+  "666d51": {
+   "carcolors/expressobrown.materialbin": 1
+  },
+  "666e6e": {
+   "carcolors/altogrey.materialbin": 1
+  },
+  "66a0b5": {
+   "carcolors/crystalturquoisemet.materialbin": 1
+  },
+  "67b8c9": {
+   "carcolors/lagoonaquamet.materialbin": 1
+  },
+  "680d14": {
+   "carcolors_pbc/lotus/velvetred_pearl_lot.materialbin": 1
+  },
+  "690f0e": {
+   "carcolors_pbc/bmw/imolared2_solid_bmw.materialbin": 2
+  },
+  "696863": {
+   "carcolors_pbc/aston_martin/quantumsilver_met_ast.materialbin": 1
+  },
+  "698e2d": {
+   "carcolors/mediumgreenmet69chargerdaytona.materialbin": 1
+  },
+  "6a1820": {
+   "carcolors_pbc/ferrari/rossomugello_solid_fer.materialbin": 1
+  },
+  "6a6d49": {
+   "carcolors/burnishbrown.materialbin": 1
+  },
+  "6ab6ac": {
+   "carcolors/azureturquiosepoly.materialbin": 1
+  },
+  "6b0308": {
+   "carcolors/mercuryred.materialbin": 1
+  },
+  "6c121e": {
+   "carcolors/sherrypearl.materialbin": 1
+  },
+  "6c6c6c": {
+   "carcolors_pbc/mini/horizonblue_met_min.materialbin": 3
+  },
+  "6d7275": {
+   "carcolors/umbermetallic_porsche.materialbin": 2,
+   "carcolors_pbc/bmw/havana_met_bmw.materialbin": 1
+  },
+  "6e1d1d": {
+   "carcolors/rossowinner.materialbin": 1
+  },
+  "6e706b": {
+   "carcolors_pbc/aston_martin/casinoroyale_met_ast.materialbin": 1
+  },
+  "6e7a4b": {
+   "carcolors/lightgreenmet69chargerdaytona.materialbin": 1
+  },
+  "6e8791": {
+   "carcolors/mulsannebluepoly.materialbin": 1
+  },
+  "6f6c65": {
+   "carcolors/cassiopeegraymet.materialbin": 1
+  },
+  "701717": {
+   "carcolors/winered.materialbin": 1
+  },
+  "708263": {
+   "carcolors/limelightgreenmet.materialbin": 1
+  },
+  "715941": {
+   "carcolors/umbermetallic_porsche.materialbin": 2
+  },
+  "717172": {
+   "carcolors/desertsilvermetallic.materialbin": 1
+  },
+  "724942": {
+   "carcolors/mulberrymetallic.materialbin": 1
+  },
+  "73000a": {
+   "carcolors/hondurasmaroon.materialbin": 2,
+   "carcolors_pbc/volkswagen/tornadored_vw.materialbin": 2
+  },
+  "730a0a": {
+   "carcolors/redmet.materialbin": 1
+  },
+  "73550d": {
+   "carcolors/autumngold.materialbin": 1
+  },
+  "737373": {
+   "carcolors_pbc/maserati/grigioalfieri_met_mas.materialbin": 1
+  },
+  "74988a": {
+   "carcolors/desertsilvermetallic.materialbin": 1
+  },
+  "74b42a": {
+   "carcolors_pbc/lamborghini/verdeithaca_met_lam.materialbin": 1
+  },
+  "750508": {
+   "carcolors_pbc/subaru/lightningred_solid_sub.materialbin": 1
+  },
+  "757785": {
+   "carcolors_pbc/aston_martin/morningfrostwhite_met_ast.materialbin": 1
+  },
+  "770d16": {
+   "carcolors/firepepperredpearl.materialbin": 1
+  },
+  "77a6c1": {
+   "carcolors/astroblue.materialbin": 1
+  },
+  "790202": {
+   "carcolors/lightmaroon.materialbin": 1
+  },
+  "7a345a": {
+   "carcolors/berryredpearl.materialbin": 1
+  },
+  "7a7872": {
+   "carcolors/grigioff.materialbin": 1
+  },
+  "7a995e": {
+   "carcolors/cascadegreen.materialbin": 2
+  },
+  "7b7d83": {
+   "carcolors_pbc/ferrari/grigiosilverstone_met_fer.materialbin": 1
+  },
+  "7c8389": {
+   "carcolors/sonicsilver.materialbin": 1
+  },
+  "7c88a2": {
+   "carcolors_pbc/aston_martin/morningfrostwhite_met_ast.materialbin": 1
+  },
+  "7d0514": {
+   "carcolors_pbc/aston_martin/firered_met_ast.materialbin": 1
+  },
+  "7f0f0f": {
+   "carcolors_pbc/maserati/rossomondiale_met_mas.materialbin": 1
+  },
+  "800000": {
+   "carcolors/marlboromaroonpoly.materialbin": 2
+  },
+  "800003": {
+   "carcolors_pbc/aston_martin/scorpusred_met_ast.materialbin": 1
+  },
+  "800606": {
+   "carcolors_pbc/aston_martin/torored_met_ast.materialbin": 1
+  },
+  "80080d": {
+   "carcolors/nis_fairladyzvstwinturbo_94_solidred.materialbin": 1
+  },
+  "800d0d": {
+   "carcolors/darkredmet.materialbin": 1
+  },
+  "801c1c": {
+   "carcolors/monzaredhon.materialbin": 1
+  },
+  "808080": {
+   "carcolors/graynis.materialbin": 1
+  },
+  "808c8c": {
+   "carcolors/shadowgray.materialbin": 2
+  },
+  "80abb5": {
+   "carcolors_pbc/lamborghini/blucepheus_met_lam.materialbin": 1
+  },
+  "81001a": {
+   "carcolors/berryredpearl.materialbin": 1
+  },
+  "810900": {
+   "carcolors_pbc/ferrari/rossocorsa_solid_fer.materialbin": 2
+  },
+  "818286": {
+   "carcolors/silverstonemet.materialbin": 1
+  },
+  "818ea2": {
+   "carcolors/moonstonefor.materialbin": 1
+  },
+  "81b51e": {
+   "carcolors/limegreenmet.materialbin": 1
+  },
+  "828a87": {
+   "carcolors_pbc/nissan/darkmetalgrey_met_nis.materialbin": 1
+  },
+  "829ead": {
+   "carcolors/almondfawnmet.materialbin": 1
+  },
+  "838c8a": {
+   "carcolors_pbc/ferrari/grigiotitaniometallizzato_met_fer.materialbin": 1
+  },
+  "83a1ad": {
+   "carcolors/elkhartbluemet.materialbin": 1
+  },
+  "861a2f": {
+   "carcolors_pbc/ferrari/rossomugello_solid_fer.materialbin": 3
+  },
+  "87000a": {
+   "carcolors_pbc/bmw/melbournered_met_bmw.materialbin": 1
+  },
+  "87613d": {
+   "carcolors/pearlbrownlfa.materialbin": 1
+  },
+  "878b8d": {
+   "carcolors/spasilver.materialbin": 1
+  },
+  "87aec6": {
+   "carcolors/azzurrohyperion.materialbin": 1
+  },
+  "888480": {
+   "carcolors_pbc/maserati/grigionuvolari_met_mas.materialbin": 1
+  },
+  "88a4c2": {
+   "carcolors/titaniumsilver.materialbin": 1
+  },
+  "893f2b": {
+   "carcolors/copperbronzemetallic.materialbin": 1
+  },
+  "898f8f": {
+   "carcolors_pbc/aston_martin/tungstensilver_met_ast.materialbin": 1
+  },
+  "8a8273": {
+   "carcolors/rosegreymet.materialbin": 1
+  },
+  "8c8c8a": {
+   "carcolors/rosegreymet.materialbin": 1
+  },
+  "8cbebe": {
+   "carcolors/mistyturquoise.materialbin": 2
+  },
+  "8d0000": {
+   "carcolors_pbc/alfa_romeo/alfared_solid_alf.materialbin": 1
+  },
+  "8d9fab": {
+   "carcolors/silverbirch.materialbin": 1
+  },
+  "8e131b": {
+   "carcolors/blackcherry.materialbin": 1
+  },
+  "8ec1e1": {
+   "carcolors/icebluepoly.materialbin": 1,
+   "carcolors/lightbluemet.materialbin": 1,
+   "carcolors/lightbluemet69chargerdaytona.materialbin": 1
+  },
+  "8ed328": {
+   "carcolors/limeglaze.materialbin": 1
+  },
+  "8f1b23": {
+   "carcolors/cherryredpearl.materialbin": 1
+  },
+  "8f7a61": {
+   "carcolors/saddletanmet.materialbin": 1
+  },
+  "91b5c2": {
+   "carcolors/icebluepearl.materialbin": 1
+  },
+  "91b5d3": {
+   "carcolors/bronzitmetallic.materialbin": 1
+  },
+  "929292": {
+   "carcolors_pbc/subaru/sparksilver_met_sub.materialbin": 1
+  },
+  "939696": {
+   "carcolors/silvermetdodge.materialbin": 2
+  },
+  "93a7ae": {
+   "carcolors_pbc/audi/monzasilver_met_aud.materialbin": 2
+  },
+  "950101": {
+   "carcolors/garnetred.materialbin": 1
+  },
+  "951726": {
+   "carcolors_pbc/bmw/imolared2_solid_bmw.materialbin": 2
+  },
+  "951a1d": {
+   "carcolors/crystalredmetallic.materialbin": 1
+  },
+  "959dad": {
+   "carcolors_pbc/lamborghini/grigionimbus_met_lam.materialbin": 2
+  },
+  "960007": {
+   "carcolors_pbc/audi/misanored_pearl_aud.materialbin": 2
+  },
+  "969494": {
+   "carcolors/iridiumsilver.materialbin": 1
+  },
+  "969699": {
+   "carcolors/montecarlosilver.materialbin": 1
+  },
+  "96c6ea": {
+   "carcolors/warwickbluemet.materialbin": 1
+  },
+  "984231": {
+   "carcolors/skylinebrown.materialbin": 1
+  },
+  "990e16": {
+   "carcolors_pbc/volkswagen/tornadored_vw.materialbin": 1
+  },
+  "991a19": {
+   "carcolors/emberred.materialbin": 1
+  },
+  "991c1a": {
+   "carcolors/passionred.materialbin": 1
+  },
+  "999999": {
+   "carcolors/bronzitmetallic.materialbin": 1,
+   "carcolors/quicksilvermet.materialbin": 1
+  },
+  "9a9a9a": {
+   "carcolors/platinumgraymet.materialbin": 1
+  },
+  "9b0200": {
+   "carcolors/superredii.materialbin": 1
+  },
+  "9b1e2d": {
+   "carcolors/flameredmetallic.materialbin": 1
+  },
+  "9b8c89": {
+   "carcolors_pbc/aston_martin/blushpearl_met_ast.materialbin": 1
+  },
+  "9bab8f": {
+   "carcolors/almondfawnmet.materialbin": 1
+  },
+  "9c9d9b": {
+   "carcolors/charcoalmet.materialbin": 1
+  },
+  "9c9d9c": {
+   "carcolors_pbc/ford/ingot silver_met_for.materialbin": 1
+  },
+  "9ca4a6": {
+   "carcolors/arctissilvermet.materialbin": 1
+  },
+  "9d0000": {
+   "carcolors/monzaredhon.materialbin": 1
+  },
+  "9d9279": {
+   "carcolors_pbc/mini/darksilver_met_min.materialbin": 1
+  },
+  "9da0a0": {
+   "carcolors_pbc/aston_martin/skyfallsilver_met_ast.materialbin": 1
+  },
+  "9e6d4c": {
+   "carcolors/gold.materialbin": 1
+  },
+  "9ea6a8": {
+   "carcolors/supersilver.materialbin": 1
+  },
+  "9f0a0f": {
+   "carcolors/marsred.materialbin": 1
+  },
+  "9fa39b": {
+   "carcolors/dovegreynoble.materialbin": 1
+  },
+  "9fc0c9": {
+   "carcolors/cortezsilverpoly.materialbin": 1
+  },
+  "a0a0a0": {
+   "carcolors/quicksilveramc.materialbin": 2
+  },
+  "a0a3a3": {
+   "carcolors_pbc/audi/monzasilver_met_aud.materialbin": 1
+  },
+  "a0a3a5": {
+   "carcolors/almondfawnmet.materialbin": 1
+  },
+  "a0a6a6": {
+   "carcolors/cascadegreen.materialbin": 2
+  },
+  "a0a7ac": {
+   "carcolors/alabastersilvermet.materialbin": 1
+  },
+  "a0bdd6": {
+   "carcolors_pbc/ferrari/grigioalloy_met_fer.materialbin": 1
+  },
+  "a12129": {
+   "carcolors_pbc/lamborghini/rossomars_met_lam.materialbin": 1
+  },
+  "a12421": {
+   "carcolors/autumnbronzemet.materialbin": 1,
+   "carcolors/rallyeredfe5.materialbin": 1
+  },
+  "a29ea0": {
+   "carcolors/hamiltonsilver.materialbin": 1
+  },
+  "a2a2a2": {
+   "carcolors/opalescentsilvergrey.materialbin": 1
+  },
+  "a32b2e": {
+   "carcolors_pbc/lotus/calypsored_solid_lot.materialbin": 1
+  },
+  "a3a0b6": {
+   "carcolors/graynis.materialbin": 1
+  },
+  "a3a8ac": {
+   "carcolors_pbc/bmw/spacegrey_met_bmw.materialbin": 1
+  },
+  "a40000": {
+   "carcolors/redlinemet.materialbin": 1,
+   "carcolors_pbc/jaguar_land_rover/photonred_solid_jlr.materialbin": 1
+  },
+  "a40912": {
+   "carcolors/superclearred.materialbin": 1
+  },
+  "a40c00": {
+   "carcolors/marlboromaroonpoly.materialbin": 1,
+   "carcolors/winered.materialbin": 1
+  },
+  "a4a3ab": {
+   "carcolors_pbc/subaru/premiumsilver_met_sub.materialbin": 1
+  },
+  "a4a4a5": {
+   "carcolors/mercurymetallic.materialbin": 1
+  },
+  "a4aeb8": {
+   "carcolors/titaniumsilver.materialbin": 1
+  },
+  "a60f0a": {
+   "carcolors_pbc/ferrari/rossocorsa_solid_fer.materialbin": 2
+  },
+  "a62121": {
+   "carcolors/superred.materialbin": 1
+  },
+  "a6a6a6": {
+   "carcolors/silver55mercedes.materialbin": 1
+  },
+  "a6a6b0": {
+   "carcolors/sonicsilver.materialbin": 1
+  },
+  "a6b3c4": {
+   "carcolors/skybluemetallic.materialbin": 1
+  },
+  "a6b4bd": {
+   "carcolors/sparksilvermetallic.materialbin": 1
+  },
+  "a6b9a7": {
+   "carcolors/gobibeige.materialbin": 1
+  },
+  "a7a4a4": {
+   "carcolors/dovegreynoble.materialbin": 1
+  },
+  "a7a6ab": {
+   "carcolors/suzukagreyr8v10.materialbin": 1
+  },
+  "a8acad": {
+   "carcolors/voguesilvermet.materialbin": 1
+  },
+  "a8afb2": {
+   "carcolors/arctissilvermet.materialbin": 1
+  },
+  "a8d580": {
+   "carcolors/grabberlime.materialbin": 1
+  },
+  "a8d6b7": {
+   "carcolors/erminewhite.materialbin": 1
+  },
+  "a90101": {
+   "carcolors_pbc/ferrari/rossocorsa_solid_fer.materialbin": 3
+  },
+  "a90202": {
+   "carcolors_pbc/ferrari/rossocorsa_solid_fer.materialbin": 1
+  },
+  "aa5037": {
+   "carcolors/corvettebronzepoly.materialbin": 1
+  },
+  "aa997d": {
+   "carcolors/mushroombeige.materialbin": 1
+  },
+  "ab161b": {
+   "carcolors_pbc/ford/torch red_solid_for.materialbin": 1
+  },
+  "ab1f24": {
+   "carcolors/aztecred.materialbin": 1
+  },
+  "aba99e": {
+   "carcolors_pbc/ferrari/argentonurburgring_met_fer.materialbin": 1
+  },
+  "ababab": {
+   "carcolors/starmistsilver.materialbin": 1
+  },
+  "abb0b2": {
+   "carcolors_pbc/maserati/biancofuji_special_mas.materialbin": 1
+  },
+  "acb0af": {
+   "carcolors/cortezsilverpoly.materialbin": 2,
+   "carcolors/gobibeige.materialbin": 2
+  },
+  "ad0309": {
+   "carcolors_pbc/lotus/calypsored_solid_lot.materialbin": 1
+  },
+  "ad0a21": {
+   "carcolors/redlfa.materialbin": 1
+  },
+  "ada594": {
+   "carcolors/sandstonebeige.materialbin": 1
+  },
+  "adab97": {
+   "carcolors_pbc/aston_martin/blushpearl_met_ast.materialbin": 1
+  },
+  "adb3b0": {
+   "carcolors_pbc/lotus/arcticsilver_met_lot.materialbin": 1
+  },
+  "ae0000": {
+   "carcolors/victoryred2.materialbin": 1
+  },
+  "ae0200": {
+   "carcolors_pbc/mini/chilired_solid_min.materialbin": 3
+  },
+  "ae481e": {
+   "carcolors/desertsand.materialbin": 1
+  },
+  "aea49b": {
+   "carcolors/charcoalmet.materialbin": 1
+  },
+  "aeaeae": {
+   "carcolors_pbc/ferrari/argentonurburgring_met_fer.materialbin": 1
+  },
+  "af2c1a": {
+   "carcolors/red83gmc.materialbin": 1
+  },
+  "afafaf": {
+   "carcolors/arctissilvermet.materialbin": 1,
+   "carcolors/rosequartzmetallic.materialbin": 1
+  },
+  "afafb4": {
+   "carcolors/mazsilverstonemetallic.materialbin": 1
+  },
+  "afb5c2": {
+   "carcolors_pbc/bmw/alpinewhite_solid_bmw.materialbin": 1
+  },
+  "afc0df": {
+   "carcolors/opalescentsilverblue.materialbin": 1
+  },
+  "b01414": {
+   "carcolors/monzaredhon.materialbin": 1
+  },
+  "b0abab": {
+   "carcolors_pbc/aston_martin/blushpearl_met_ast.materialbin": 1
+  },
+  "b11d1d": {
+   "carcolors/skylinebrown.materialbin": 1
+  },
+  "b1b1b1": {
+   "carcolors_pbc/ferrari/grigioalloy_met_fer.materialbin": 1
+  },
+  "b20000": {
+   "carcolors/britered.materialbin": 1
+  },
+  "b21111": {
+   "carcolors/durangocopperpearl.materialbin": 1
+  },
+  "b21f14": {
+   "carcolors/riversidered.materialbin": 1
+  },
+  "b26621": {
+   "carcolors/mustardyellow.materialbin": 2
+  },
+  "b29172": {
+   "carcolors/saddletanmet.materialbin": 1
+  },
+  "b2a89e": {
+   "carcolors/metallicpewter.materialbin": 1
+  },
+  "b2b2b5": {
+   "carcolors/suzukagreymetallic2.materialbin": 1
+  },
+  "b2b4b2": {
+   "carcolors/cortezsilverpoly.materialbin": 1
+  },
+  "b3382e": {
+   "carcolors/candyredmatte.materialbin": 1
+  },
+  "b3b0b0": {
+   "carcolors/metallicsilverlfa.materialbin": 1
+  },
+  "b3cb8f": {
+   "carcolors_pbc/ferrari/argentonurburgring_met_fer.materialbin": 1
+  },
+  "b40808": {
+   "carcolors/aztecred.materialbin": 1
+  },
+  "b40a0f": {
+   "carcolors/reddodge.materialbin": 1
+  },
+  "b4151a": {
+   "carcolors/flashred.materialbin": 1
+  },
+  "b4b4b4": {
+   "carcolors/jetsilvermet.materialbin": 1
+  },
+  "b4b5b7": {
+   "carcolors_pbc/volkswagen/irongrey_met_vw.materialbin": 1
+  },
+  "b4c6e0": {
+   "carcolors/white.materialbin": 1
+  },
+  "b5080d": {
+   "carcolors/redhon.materialbin": 1
+  },
+  "b50f11": {
+   "carcolors/superredii.materialbin": 1,
+   "carcolors/viperred.materialbin": 1
+  },
+  "b51a2d": {
+   "carcolors/newformulared.materialbin": 1
+  },
+  "b58a4e": {
+   "carcolors/champagnegold.materialbin": 1
+  },
+  "b58d4e": {
+   "carcolors/autumngold.materialbin": 1
+  },
+  "b5a129": {
+   "carcolors_pbc/bmw/dakaryellow2_solid_bmw.materialbin": 1
+  },
+  "b5bfbf": {
+   "carcolors/palladiumsilvermetallic.materialbin": 1
+  },
+  "b60012": {
+   "carcolors/britered.materialbin": 1
+  },
+  "b70201": {
+   "carcolors_pbc/renault/flamered_solid_ren.materialbin": 1
+  },
+  "b71626": {
+   "carcolors_pbc/lamborghini/rossomars_met_lam.materialbin": 1
+  },
+  "b7b6c0": {
+   "carcolors/sparklingsilver.materialbin": 2
+  },
+  "b7b7b7": {
+   "carcolors_pbc/ferrari/grigioalloy_met_fer.materialbin": 2,
+   "carcolors_pbc/ferrari/grigioingrid_met_fer.materialbin": 4
+  },
+  "b7bdc3": {
+   "carcolors/alabastersilvermet.materialbin": 1
+  },
+  "b8632c": {
+   "carcolors/corvettebronzepoly.materialbin": 1
+  },
+  "b86434": {
+   "carcolors/goldmet69chargerdaytona.materialbin": 1,
+   "carcolors/goldmetallic.materialbin": 1
+  },
+  "b8e4c6": {
+   "carcolors/whitegreymb.materialbin": 1
+  },
+  "b9b9b1": {
+   "carcolors_pbc/aston_martin/skyfallsilver_met_ast.materialbin": 1
+  },
+  "b9b9b9": {
+   "carcolors_pbc/lotus/arcticsilver_met_lot.materialbin": 1
+  },
+  "b9beba": {
+   "carcolors/skylinesilvermetallic.materialbin": 1
+  },
+  "b9cad4": {
+   "carcolors/silverstoneiimetallic.materialbin": 1
+  },
+  "ba3063": {
+   "carcolors/mulberrymetallic.materialbin": 1
+  },
+  "baa65d": {
+   "carcolors/goldmet69chargerdaytona.materialbin": 1,
+   "carcolors/lightbronzemet.materialbin": 1
+  },
+  "babfbd": {
+   "carcolors_pbc/ferrari/grigioalloy_met_fer.materialbin": 1
+  },
+  "bac4c7": {
+   "carcolors/whitemetallic.materialbin": 1
+  },
+  "bc0118": {
+   "carcolors/winered.materialbin": 1
+  },
+  "bcc2c6": {
+   "carcolors/quicksilver.materialbin": 1
+  },
+  "bcc4ce": {
+   "carcolors_pbc/bmw/alpinewhite_solid_bmw.materialbin": 1
+  },
+  "bd080d": {
+   "carcolors/lanciared.materialbin": 1
+  },
+  "bdb99c": {
+   "carcolors/sebringsilvermet.materialbin": 1
+  },
+  "bdbdc1": {
+   "carcolors/silvermetallicae86.materialbin": 1
+  },
+  "bdc4cc": {
+   "carcolors/chromesilvermet.materialbin": 1
+  },
+  "bdd4f2": {
+   "carcolors_pbc/ferrari/biancoavus_solid_fer.materialbin": 1,
+   "carcolors_pbc/ferrari/grigioingrid_met_fer.materialbin": 1
+  },
+  "be162c": {
+   "carcolors/rallyeredfe5.materialbin": 1,
+   "carcolors/reddodge.materialbin": 1
+  },
+  "bebec6": {
+   "carcolors/chromesilvermet.materialbin": 1,
+   "carcolors/sparklingsilvermet.materialbin": 1
+  },
+  "bec0bf": {
+   "carcolors_pbc/subaru/premiumsilver_met_sub.materialbin": 2
+  },
+  "bec6c8": {
+   "carcolors/pearl.materialbin": 1
+  },
+  "bf0222": {
+   "carcolors/cranberryred.materialbin": 1
+  },
+  "bf0505": {
+   "carcolors_pbc/subaru/lightningred_solid_sub.materialbin": 1
+  },
+  "bf051a": {
+   "carcolors/lizstickred.materialbin": 1
+  },
+  "bf0d2e": {
+   "carcolors_pbc/volkswagen/tornadored_vw.materialbin": 1
+  },
+  "bf8b31": {
+   "carcolors_pbc/lamborghini/arancrioatlas_pearl_lam.materialbin": 1
+  },
+  "bfb09c": {
+   "carcolors/titaniumsilver.materialbin": 1
+  },
+  "bfbfc9": {
+   "carcolors_pbc/audi/avussilver_met_aud.materialbin": 2
+  },
+  "c00000": {
+   "carcolors/britered.materialbin": 1,
+   "carcolors_pbc/ferrari/rossocorsa_solid_fer.materialbin": 12,
+   "carcolors_pbc/ferrari/rossoscuderia_solid_fer.materialbin": 6
+  },
+  "c14c1a": {
+   "carcolors/orangef1.materialbin": 1
+  },
+  "c1ad7c": {
+   "carcolors/champagne.materialbin": 1
+  },
+  "c1c1c3": {
+   "carcolors_pbc/koenigsegg/moonsilver_met_koe.materialbin": 1
+  },
+  "c1c5c9": {
+   "carcolors/arctissilvermet.materialbin": 1,
+   "carcolors/titaniumsilvermcl.materialbin": 1,
+   "carcolors_pbc/bmw/alpinewhite_solid_bmw.materialbin": 2,
+   "carcolors_pbc/bmw/mineralsilver_met_bmw.materialbin": 1
+  },
+  "c1c7d7": {
+   "carcolors_pbc/bmw/alpinewhite_solid_bmw.materialbin": 1
+  },
+  "c1d4ca": {
+   "carcolors_pbc/aston_martin/skyfallsilver_met_ast.materialbin": 1
+  },
+  "c2000a": {
+   "carcolors/competizioneredmet.materialbin": 1,
+   "carcolors_pbc/alfa_romeo/alfared_solid_alf.materialbin": 1
+  },
+  "c2081a": {
+   "carcolors/redlfa.materialbin": 1
+  },
+  "c2bba6": {
+   "carcolors/ivorymb.materialbin": 1
+  },
+  "c3c9cd": {
+   "carcolors/erminewhite.materialbin": 1
+  },
+  "c41512": {
+   "carcolors/rossocorsa.materialbin": 1
+  },
+  "c45019": {
+   "carcolors/atomicorangemetallic.materialbin": 1
+  },
+  "c4c4c4": {
+   "carcolors/iridiumsilver.materialbin": 1
+  },
+  "c4c9c4": {
+   "carcolors/whitemetallic.materialbin": 1
+  },
+  "c52823": {
+   "carcolors/coppermetmb.materialbin": 1
+  },
+  "c5c4c3": {
+   "carcolors_pbc/nissan/brilliantwhitepearl_met_nis.materialbin": 1
+  },
+  "c5c5c5": {
+   "carcolors/frozenwhite.materialbin": 1
+  },
+  "c70101": {
+   "carcolors_pbc/ferrari/rossoscuderia_solid_fer.materialbin": 1
+  },
+  "c7050a": {
+   "carcolors/amglemansred.materialbin": 1
+  },
+  "c7c7cf": {
+   "carcolors/arctissilvermet.materialbin": 1
+  },
+  "c7c9c8": {
+   "carcolors_pbc/bmw/alpinewhite_solid_bmw.materialbin": 1
+  },
+  "c80000": {
+   "carcolors_pbc/lamborghini/rossomars_met_lam.materialbin": 2
+  },
+  "c80407": {
+   "carcolors/superred.materialbin": 1
+  },
+  "c80a0a": {
+   "carcolors/passionred.materialbin": 1
+  },
+  "c80f0f": {
+   "carcolors/cranberryred.materialbin": 2
+  },
+  "c81300": {
+   "carcolors_pbc/lotus/calypsored_solid_lot.materialbin": 1
+  },
+  "c90a0d": {
+   "carcolors_pbc/aston_martin/scorpusred_met_ast.materialbin": 1
+  },
+  "c9a03b": {
+   "carcolors/camarogold.materialbin": 1
+  },
+  "c9bdb4": {
+   "carcolors/alabastersilvermet.materialbin": 1
+  },
+  "c9f900": {
+   "carcolors_pbc/lamborghini/newgialloorion_pearl_lam.materialbin": 2
+  },
+  "ca0505": {
+   "carcolors_pbc/jaguar_land_rover/photonred_solid_jlr.materialbin": 1
+  },
+  "ca1e1c": {
+   "carcolors/vibrantred.materialbin": 1
+  },
+  "cbcfce": {
+   "carcolors/bladesilvermetallic.materialbin": 1
+  },
+  "cc0000": {
+   "carcolors/misanoredpearl.materialbin": 1
+  },
+  "cc0200": {
+   "carcolors/rallyeredfe5.materialbin": 1
+  },
+  "cccccc": {
+   "carcolors/sebringsilvermet.materialbin": 1,
+   "carcolors/standardsilvermcl.materialbin": 1
+  },
+  "ccd4d7": {
+   "carcolors_pbc/bmw/alpinewhite_solid_bmw.materialbin": 1
+  },
+  "cd6612": {
+   "carcolors/orangef1.materialbin": 1
+  },
+  "cd6a23": {
+   "carcolors/lemanssunsetmet.materialbin": 1
+  },
+  "cdc4b5": {
+   "carcolors/darkred.materialbin": 1
+  },
+  "cdc593": {
+   "carcolors/creamdodge.materialbin": 2,
+   "carcolors/sandpebble.materialbin": 1
+  },
+  "cdcdcd": {
+   "carcolors_pbc/lotus/monacowhite_solid_lot.materialbin": 1
+  },
+  "cdecff": {
+   "carcolors_pbc/ferrari/whitestripe_met_fer.materialbin": 1
+  },
+  "ce0b00": {
+   "carcolors/newformulared.materialbin": 1
+  },
+  "cfcfcf": {
+   "carcolors/sebringsilvermet.materialbin": 1
+  },
+  "cfde05": {
+   "carcolors/giallo.materialbin": 1
+  },
+  "d1040f": {
+   "carcolors/britered.materialbin": 1
+  },
+  "d1a544": {
+   "carcolors_pbc/ford/triple yellow_solid_for.materialbin": 1
+  },
+  "d1c360": {
+   "carcolors/lightyellow.materialbin": 1
+  },
+  "d1cfcc": {
+   "carcolors_pbc/bugatti/argent_met_bug.materialbin": 1
+  },
+  "d1d5a7": {
+   "carcolors/cortezsilverpoly.materialbin": 1
+  },
+  "d1d6d9": {
+   "carcolors_pbc/audi/suzukagrey_met_aud.materialbin": 1
+  },
+  "d2c9c5": {
+   "carcolors/viperbrightsilvermet.materialbin": 2
+  },
+  "d2ccbe": {
+   "carcolors/mindensilverpearl.materialbin": 1
+  },
+  "d2d3c0": {
+   "carcolors/cortezsilverpoly.materialbin": 1
+  },
+  "d33324": {
+   "carcolors_pbc/ford/race red_solid_for.materialbin": 1
+  },
+  "d3d5d0": {
+   "carcolors/whitemetallic.materialbin": 1
+  },
+  "d4a71a": {
+   "carcolors/mediumyellowgold.materialbin": 1
+  },
+  "d50a03": {
+   "carcolors_pbc/koenigsegg/chillired_solid_koe.materialbin": 1
+  },
+  "d50c0c": {
+   "carcolors/viperred2.materialbin": 2
+  },
+  "d51805": {
+   "carcolors/performancered.materialbin": 1
+  },
+  "d5cfbd": {
+   "carcolors/sparklingsilver.materialbin": 1
+  },
+  "d6b526": {
+   "carcolors/mustardyellow.materialbin": 2
+  },
+  "d6d1cc": {
+   "carcolors_pbc/maserati/biancoeldorado_solid_mas.materialbin": 1
+  },
+  "d6f7f7": {
+   "carcolors/whiteblue.materialbin": 1
+  },
+  "d7000c": {
+   "carcolors_pbc/audi/dynamitered_solid_aud.materialbin": 1
+  },
+  "d7c38c": {
+   "carcolors/citrusyellowmet.materialbin": 1
+  },
+  "d7c7b1": {
+   "carcolors/gobibeige.materialbin": 1
+  },
+  "d7d7d7": {
+   "carcolors/arcticwhite.materialbin": 1
+  },
+  "d8d7d7": {
+   "carcolors/white.materialbin": 1
+  },
+  "d8d8d3": {
+   "carcolors_pbc/ford/frozen white_solid_for.materialbin": 1
+  },
+  "d90f0f": {
+   "carcolors_pbc/lamborghini/rossomars_met_lam.materialbin": 1
+  },
+  "d93782": {
+   "carcolors/pantherpink.materialbin": 1
+  },
+  "daa801": {
+   "carcolors_pbc/ferrari/giallomodena_solid_fer.materialbin": 4
+  },
+  "dbd8c1": {
+   "carcolors_pbc/ford/oxford white_solid_for.materialbin": 1
+  },
+  "dbe0e4": {
+   "carcolors/white.materialbin": 1
+  },
+  "dc1414": {
+   "carcolors/formularedpearl.materialbin": 1
+  },
+  "dc1510": {
+   "carcolors/superclearred.materialbin": 2
+  },
+  "dce1e5": {
+   "carcolors/satinsilvermet.materialbin": 1
+  },
+  "dce7ed": {
+   "carcolors_pbc/ferrari/biancoavus_solid_fer.materialbin": 3
+  },
+  "ddad19": {
+   "carcolors/competitionyellow.materialbin": 1
+  },
+  "ddc67a": {
+   "carcolors/antiquegoldmet.materialbin": 1
+  },
+  "ddcca6": {
+   "carcolors/metallicpewter.materialbin": 1
+  },
+  "dddacb": {
+   "carcolors_pbc/lamborghini/biancoisis_solid_lam.materialbin": 1
+  },
+  "df0d21": {
+   "carcolors/rallyeredfe5.materialbin": 1
+  },
+  "dfbc64": {
+   "carcolors/champagnegold.materialbin": 1
+  },
+  "dfcf85": {
+   "carcolors/olympicgold.materialbin": 1
+  },
+  "e01400": {
+   "carcolors/reddodge.materialbin": 1
+  },
+  "e02300": {
+   "carcolors/reddodge.materialbin": 1
+  },
+  "e0382b": {
+   "carcolors_pbc/ford/competition orange_met_for.materialbin": 1
+  },
+  "e1c973": {
+   "carcolors/grabberyellow.materialbin": 1
+  },
+  "e1dbc1": {
+   "carcolors/cortezsilverpoly.materialbin": 1
+  },
+  "e1e1e1": {
+   "carcolors/biancoisis.materialbin": 1,
+   "carcolors_pbc/ferrari/biancoavus_solid_fer.materialbin": 4,
+   "carcolors_pbc/ferrari/grigioingrid_met_fer.materialbin": 1,
+   "carcolors_pbc/ferrari/whitestripe_met_fer.materialbin": 1
+  },
+  "e27a17": {
+   "carcolors/grandprixorange.materialbin": 1
+  },
+  "e2a123": {
+   "carcolors/mellowyellow.materialbin": 1
+  },
+  "e2af51": {
+   "carcolors_pbc/bmw/dakaryellow2_solid_bmw.materialbin": 1
+  },
+  "e2dccf": {
+   "carcolors_pbc/ferrari/biancoavus_solid_fer.materialbin": 4,
+   "carcolors_pbc/ferrari/grigioingrid_met_fer.materialbin": 1
+  },
+  "e2e2e2": {
+   "carcolors/reflexsilvermet.materialbin": 1
+  },
+  "e51105": {
+   "carcolors_pbc/fiat/abarthred_solid_fia.materialbin": 1
+  },
+  "e5ba21": {
+   "carcolors_pbc/ford/triple yellow_solid_for.materialbin": 1
+  },
+  "e5c41e": {
+   "carcolors_pbc/ford/triple yellow_solid_for.materialbin": 1
+  },
+  "e5c79c": {
+   "carcolors_pbc/lamborghini/biancoisis_solid_lam.materialbin": 1
+  },
+  "e5e0c4": {
+   "carcolors/mayfairmaize.materialbin": 1
+  },
+  "e5e3e5": {
+   "carcolors/sateensilvermet.materialbin": 2
+  },
+  "e5e5e5": {
+   "carcolors/mindensilverpearl.materialbin": 1
+  },
+  "e60601": {
+   "carcolors_pbc/ferrari/rossoscuderia_solid_fer.materialbin": 1
+  },
+  "e61a1a": {
+   "carcolors_pbc/volkswagen/flashred_vw.materialbin": 1
+  },
+  "e6a302": {
+   "carcolors/darkbronzemet.materialbin": 1
+  },
+  "e6b91d": {
+   "carcolors_pbc/maserati/giallogranturismo_special_mas.materialbin": 1
+  },
+  "e6bd40": {
+   "carcolors_pbc/bugatti/jaunemolsheim_solid_bug.materialbin": 1
+  },
+  "e6d6b2": {
+   "carcolors/gobibeige.materialbin": 1
+  },
+  "e6e4da": {
+   "carcolors/oxfordwhite.materialbin": 1,
+   "carcolors/premiumwhitepearl.materialbin": 1
+  },
+  "e6e6e6": {
+   "carcolors/alpinewhite.materialbin": 1
+  },
+  "e7b203": {
+   "carcolors_pbc/mclaren/volcanoyellow_met_mcl.materialbin": 1
+  },
+  "e7bc54": {
+   "carcolors/camarogold.materialbin": 1
+  },
+  "e7c642": {
+   "carcolors/giallo92lancia.materialbin": 1
+  },
+  "e7ce76": {
+   "carcolors/yellowsand.materialbin": 1
+  },
+  "e7eaf0": {
+   "carcolors_pbc/subaru/satinwhite_pearl_sub.materialbin": 1
+  },
+  "e8131a": {
+   "carcolors/misanoredpearl.materialbin": 1
+  },
+  "e8b684": {
+   "carcolors/yellowdodge.materialbin": 1
+  },
+  "e8b745": {
+   "carcolors/goldenrodyellow.materialbin": 1
+  },
+  "e8c414": {
+   "carcolors/superbrightyellow.materialbin": 1
+  },
+  "e8ddc5": {
+   "carcolors/arcticwhite.materialbin": 1
+  },
+  "e8ede8": {
+   "carcolors_pbc/bmw/silverstone2_met_bmw.materialbin": 1
+  },
+  "e8eded": {
+   "carcolors_pbc/bmw/alpinewhite_solid_bmw.materialbin": 1
+  },
+  "e9daa8": {
+   "carcolors/ivorymb.materialbin": 1
+  },
+  "ea3030": {
+   "carcolors/matadorred.materialbin": 1
+  },
+  "ea6a06": {
+   "carcolors_pbc/lotus/burntorange_met_lot.materialbin": 1
+  },
+  "eae099": {
+   "carcolors/goldwoodyellow.materialbin": 1
+  },
+  "eb7800": {
+   "carcolors/mclarenorange.materialbin": 1
+  },
+  "eba80d": {
+   "carcolors_pbc/ferrari/giallomodena_solid_fer.materialbin": 1
+  },
+  "ebc34a": {
+   "carcolors/sunlightyellow.materialbin": 1
+  },
+  "ebe2d2": {
+   "carcolors/silvermetallic.materialbin": 1
+  },
+  "ebebe6": {
+   "carcolors_pbc/bmw/alpinewhite_solid_bmw.materialbin": 1
+  },
+  "ebecde": {
+   "carcolors_pbc/ford/wimbledon white_solid_for.materialbin": 1
+  },
+  "ebf0ed": {
+   "carcolors/white.materialbin": 1
+  },
+  "ececec": {
+   "carcolors_pbc/lotus/monacowhite_solid_lot.materialbin": 1
+  },
+  "edb00f": {
+   "carcolors_pbc/volkswagen/ginsteryellow_vw.materialbin": 1
+  },
+  "edb348": {
+   "carcolors/lotusyellow.materialbin": 1
+  },
+  "edc919": {
+   "carcolors/daytonayellow.materialbin": 2
+  },
+  "ede6dc": {
+   "carcolors/alpinewhite.materialbin": 1
+  },
+  "ededed": {
+   "carcolors/superwhite.materialbin": 1,
+   "carcolors/white.materialbin": 1,
+   "carcolors_pbc/bmw/alpinewhite_solid_bmw.materialbin": 1
+  },
+  "ee0000": {
+   "carcolors/garnetred.materialbin": 1
+  },
+  "f0120d": {
+   "carcolors/carnivalred.materialbin": 1
+  },
+  "f07a00": {
+   "carcolors_pbc/lotus/solidyellow_solid_lot.materialbin": 1
+  },
+  "f0be8c": {
+   "carcolors/yellowdodge.materialbin": 1
+  },
+  "f0efe7": {
+   "carcolors/reflexsilvermet.materialbin": 1
+  },
+  "f0f0e6": {
+   "carcolors_pbc/ferrari/biancoavus_solid_fer.materialbin": 1
+  },
+  "f0f0e8": {
+   "carcolors/cortezsilverpoly.materialbin": 1
+  },
+  "f0f0f0": {
+   "carcolors/alpinewhite.materialbin": 1,
+   "carcolors/galaxywhite.materialbin": 1,
+   "carcolors/white.materialbin": 2
+  },
+  "f0f1ec": {
+   "carcolors/pepperwhite.materialbin": 1
+  },
+  "f0f4db": {
+   "carcolors_pbc/aston_martin/lunarwhite_solid_ast.materialbin": 1
+  },
+  "f0f4f3": {
+   "carcolors/white.materialbin": 1
+  },
+  "f0f5f3": {
+   "carcolors/championwhite.materialbin": 1
+  },
+  "f11c26": {
+   "carcolors/rossomaranello.materialbin": 1
+  },
+  "f1eee5": {
+   "carcolors/cream.materialbin": 1
+  },
+  "f1f4ff": {
+   "carcolors_pbc/fiat/turini1975white_solid_fia.materialbin": 1
+  },
+  "f23800": {
+   "carcolors/volcanoorange.materialbin": 1
+  },
+  "f27005": {
+   "carcolors/orangeren.materialbin": 1
+  },
+  "f2a600": {
+   "carcolors_pbc/ferrari/giallomodena_solid_fer.materialbin": 1
+  },
+  "f2dda3": {
+   "carcolors/mayfairmaize.materialbin": 1
+  },
+  "f2f052": {
+   "carcolors/curiousyellow.materialbin": 1
+  },
+  "f2f0f2": {
+   "carcolors/white.materialbin": 1
+  },
+  "f2f1ef": {
+   "carcolors/pearlwhitemcl.materialbin": 1
+  },
+  "f2f2ef": {
+   "carcolors/white.materialbin": 1
+  },
+  "f2f2f0": {
+   "carcolors/whiteagera.materialbin": 1
+  },
+  "f2f2f2": {
+   "carcolors/aspenwhitepearl.materialbin": 1
+  },
+  "f3d234": {
+   "carcolors_pbc/lamborghini/gialloevros_met_lam.materialbin": 1
+  },
+  "f4140f": {
+   "carcolors_pbc/audi/misanored_pearl_aud.materialbin": 1
+  },
+  "f4bb13": {
+   "carcolors/bahamayellow.materialbin": 1
+  },
+  "f4bb2e": {
+   "carcolors/yellow97diablosv.materialbin": 1
+  },
+  "f4cd2e": {
+   "carcolors_pbc/lamborghini/newgialloorion_pearl_lam.materialbin": 1
+  },
+  "f4e39d": {
+   "carcolors/olympicgold.materialbin": 1
+  },
+  "f4edd6": {
+   "carcolors/white.materialbin": 1
+  },
+  "f4f4e6": {
+   "carcolors/biancoitalia.materialbin": 1,
+   "carliveries/fer_599gto_stripe_biancoisis.materialbin": 3
+  },
+  "f4f4f4": {
+   "carcolors_pbc/bmw/alpinewhite_solid_bmw.materialbin": 1
+  },
+  "f4f7f5": {
+   "carcolors_pbc/aston_martin/lunarwhite_solid_ast.materialbin": 1
+  },
+  "f57f0f": {
+   "carcolors/coppercascadechameleon.materialbin": 1
+  },
+  "f5a50f": {
+   "carcolors/chicaneyellow.materialbin": 1
+  },
+  "f5d40a": {
+   "carcolors/giallomidas.materialbin": 1
+  },
+  "f5dfaa": {
+   "carcolors/ivory.materialbin": 1
+  },
+  "f5f2ed": {
+   "carcolors/white.materialbin": 2
+  },
+  "f5f4f1": {
+   "carcolors/white.materialbin": 1
+  },
+  "f5f4f6": {
+   "carcolors/snowhite.materialbin": 1
+  },
+  "f5f5f1": {
+   "carcolors/white.materialbin": 1
+  },
+  "f5f5f5": {
+   "carcolors/superwhite.materialbin": 1,
+   "carcolors/white.materialbin": 2,
+   "carcolors/whiteagera.materialbin": 1,
+   "carcolors_pbc/alfa_romeo/alfawhite_solid_alf.materialbin": 1,
+   "carcolors_pbc/bmw/alpinewhite_solid_bmw.materialbin": 1
+  },
+  "f6ecaa": {
+   "carcolors/creamdodge.materialbin": 2
+  },
+  "f6f4f6": {
+   "carcolors/brilliantsilver.materialbin": 1
+  },
+  "f7cf00": {
+   "carcolors_pbc/lotus/solidyellow_solid_lot.materialbin": 1
+  },
+  "f7e7db": {
+   "carcolors/biancofujispecialmatte.materialbin": 1
+  },
+  "f7e8db": {
+   "carcolors/biancofujispecialmatte.materialbin": 1
+  },
+  "f7f4e3": {
+   "carcolors/cinquepearlwhite.materialbin": 1
+  },
+  "f7f4ef": {
+   "carcolors_pbc/volkswagen/candywhite_vw.materialbin": 1
+  },
+  "f7f6f4": {
+   "carcolors/centennialwhite.materialbin": 1
+  },
+  "f7f7f2": {
+   "carcolors_pbc/mclaren/silicawhite_met_mcl.materialbin": 1
+  },
+  "f7f9f6": {
+   "carcolors/pearlwhitenis.materialbin": 1,
+   "carcolors/white.materialbin": 1,
+   "carcolors_pbc/nissan/whitepearl_met_nis.materialbin": 1
+  },
+  "f7fff5": {
+   "carcolors/championwhite.materialbin": 1
+  },
+  "f8f6fb": {
+   "carcolors/snowhite.materialbin": 1
+  },
+  "f8f8f8": {
+   "carcolors/alpinewhite.materialbin": 1,
+   "carcolors/satinsilvermet.materialbin": 1
+  },
+  "f9701c": {
+   "carcolors_pbc/ford/triple yellow_solid_for.materialbin": 1
+  },
+  "face25": {
+   "carcolors_pbc/lotus/3elevenyellow_met_lot.materialbin": 1
+  },
+  "fad93b": {
+   "carcolors/pearlyellowlfa.materialbin": 1
+  },
+  "faf6f6": {
+   "carcolors/pikespeakwhitemet.materialbin": 1
+  },
+  "faf7f5": {
+   "carcolors/pearlwhitelfa.materialbin": 1
+  },
+  "fafaf5": {
+   "carcolors_pbc/bmw/alpinewhite_solid_bmw.materialbin": 1
+  },
+  "fafafa": {
+   "carcolors/arcticwhite.materialbin": 1,
+   "carcolors/biancoavus.materialbin": 1,
+   "carcolors/frozenwhite.materialbin": 1,
+   "carcolors/pearlwhitelfa.materialbin": 1,
+   "carcolors/pearlwhitemcl.materialbin": 1,
+   "carcolors/snowhite.materialbin": 2,
+   "carcolors/starfirepearl.materialbin": 1,
+   "carcolors/white.materialbin": 7,
+   "carcolors/white72nissan.materialbin": 1,
+   "carcolors/whiteagera.materialbin": 2,
+   "carcolors_pbc/audi/ibiswhite_solid_aud.materialbin": 1,
+   "carcolors_pbc/bmw/orionsilver_met_bmw.materialbin": 1,
+   "carcolors_pbc/bmw/silverstone2_met_bmw.materialbin": 2,
+   "carcolors_pbc/ferrari/whitestripe_met_fer.materialbin": 1,
+   "carcolors_pbc/lamborghini/biancoisis_solid_lam.materialbin": 3,
+   "carcolors_pbc/renault/glacierwhite_solid_ren.materialbin": 2
+  },
+  "fafbf0": {
+   "carcolors_pbc/lamborghini/biancoisis_solid_lam.materialbin": 1
+  },
+  "fafcf3": {
+   "carcolors/white.materialbin": 1
+  },
+  "fc000a": {
+   "carcolors/viperred.materialbin": 1
+  },
+  "fc6030": {
+   "carcolors/carouselred.materialbin": 2
+  },
+  "fc6d16": {
+   "carcolors/competitiongold.materialbin": 1
+  },
+  "fcd332": {
+   "carcolors/screamingyellow.materialbin": 1
+  },
+  "fce230": {
+   "carcolors/competitionyellowmrc.materialbin": 1
+  },
+  "fcfbef": {
+   "carcolors/alpinewhite.materialbin": 1,
+   "carcolors/championwhite.materialbin": 1
+  },
+  "fcfcfc": {
+   "carcolors/pearlwhitemcl.materialbin": 1,
+   "carcolors_pbc/nissan/brilliantwhitepearl_met_nis.materialbin": 1
+  },
+  "fdc205": {
+   "carcolors/rioyellowpearl.materialbin": 1
+  },
+  "fdcd30": {
+   "carcolors_pbc/lamborghini/giallomidas_pearl_lam.materialbin": 1
+  },
+  "fdd404": {
+   "carcolors/briteyellow.materialbin": 1
+  },
+  "fdf8ee": {
+   "carcolors/whitemb.materialbin": 1
+  },
+  "fdfbf1": {
+   "carcolors/superwhite.materialbin": 1
+  },
+  "fdfdfd": {
+   "carcolors_pbc/ford/frozen white_solid_for.materialbin": 1
+  },
+  "fe3213": {
+   "carcolors/viperveryorangepearl.materialbin": 1
+  },
+  "fed732": {
+   "carcolors/gialloflyyellow.materialbin": 2,
+   "carcolors_pbc/ferrari/giallomodena_solid_fer.materialbin": 11
+  },
+  "fee801": {
+   "carcolors/velocityyellow.materialbin": 1
+  },
+  "fef7eb": {
+   "carcolors/white72nissan.materialbin": 1
+  },
+  "ff0001": {
+   "carcolors/fer599gtomatteblackroof.materialbin": 1
+  },
+  "ff281a": {
+   "carcolors/buccaneerred.materialbin": 2
+  },
+  "ff6400": {
+   "carcolors/poppyred.materialbin": 1
+  },
+  "ff6600": {
+   "carcolors/gomango.materialbin": 1
+  },
+  "ff6e16": {
+   "carcolors/darkbronzemet.materialbin": 1,
+   "carcolors/gomango.materialbin": 1,
+   "carcolors/torredfr.materialbin": 1
+  },
+  "ff733d": {
+   "carcolors/arancioatlas.materialbin": 1
+  },
+  "ff7500": {
+   "carcolors_pbc/lamborghini/arancrioatlas_pearl_lam.materialbin": 2
+  },
+  "ff9d0b": {
+   "carcolors/competitiongold.materialbin": 1
+  },
+  "ffb829": {
+   "carcolors_pbc/lotus/solidyellow_solid_lot.materialbin": 1
+  },
+  "ffbe32": {
+   "carcolors/bahamayellow.materialbin": 1
+  },
+  "ffbf19": {
+   "carcolors/amgsolarbeamyellow.materialbin": 1
+  },
+  "ffc31b": {
+   "carcolors/yellowsport.materialbin": 1
+  },
+  "ffc91f": {
+   "carcolors_pbc/renault/liquidyellow_met_ren.materialbin": 1
+  },
+  "ffd400": {
+   "carcolors/solaryellow.materialbin": 1,
+   "carcolors_pbc/audi/vegasyellow_solid_aud.materialbin": 1
+  },
+  "ffd66b": {
+   "carcolors_pbc/bmw/dakaryellow2_solid_bmw.materialbin": 1
+  },
+  "ffe200": {
+   "carcolors/ctr2yellow.materialbin": 1
+  },
+  "ffe22b": {
+   "carcolors_pbc/aston_martin/sunburstyellow_met_ast.materialbin": 1
+  },
+  "ffe332": {
+   "carcolors/lemontwist.materialbin": 2
+  },
+  "ffe642": {
+   "carcolors/curiousyellow.materialbin": 1
+  },
+  "ffed0a": {
+   "carcolors_pbc/lamborghini/newgialloorion_pearl_lam.materialbin": 2
+  },
+  "fffdfb": {
+   "carcolors_pbc/audi/glacierwhite_met_aud.materialbin": 1
+  },
+  "fffffa": {
+   "carliveries/amc_javelin_matadorred.materialbin": 2
+  },
+  "fffffc": {
+   "carcolors/white.materialbin": 1,
+   "carcolors_pbc/ford/white platinum_met_for.materialbin": 1
+  },
+  "ffffff": {
+   "carcolors/alpinewhite.materialbin": 1,
+   "carcolors/snowhite.materialbin": 1,
+   "carcolors/white.materialbin": 1,
+   "carcolors_pbc/ferrari/biancofuji_special_fer.materialbin": 1,
+   "carcolors_pbc/koenigsegg/arcticwhite_solid_koe.materialbin": 1,
+   "carcolors_pbc/lamborghini/biancoisis_solid_lam.materialbin": 1
+  }
+ },
+ "format": "fm4-fh4-paint-map-v1",
+ "pairs": 1120
+}

@@ -23,9 +23,11 @@ EXE_SHA = "b838a79a65c6d1e12f46deaba3584e4c88ebccdfdc4214b4535ece4ba3c0abbe"
 CRYPTO_SHA = "e7de706754590c8e8666d3c0185b0ffa6b523d8a92d56f4938f6b9951d3581a0"
 DB_PATH = "media/stripped/gamedbRC.slt"
 MANIFEST_PATH = "media/zipmanifest.xml"
-REPLACEABLE = (DB_PATH, MANIFEST_PATH, EN_PATH)
+AUDIO_MAPPING = "media/audio/cars/CarEngineEventMapping.xml"   # fh4_audio.MAPPING
+REPLACEABLE = (DB_PATH, MANIFEST_PATH, EN_PATH, AUDIO_MAPPING)
 HEX = re.compile(r"[0-9a-f]{64}")
 ARCHIVE = re.compile(r"media/cars/EG_[a-zA-Z0-9_]+\.zip")
+ENGINE_PACK = re.compile(r"media/stripped/mediaoverride/rc0/audio/enginesynth/pc/EG_[A-Za-z0-9_]+\.zip")   # fh4_audio
 THUMBNAIL = re.compile(r"media/stripped/RC[0-9]{5,10}(HiRes)?\.zip")
 PRESENTATION = re.compile(r"media/expanded_garage/(?:manufacturers/[A-Za-z0-9_]+\.swatchbin|thumbnails/thumbnail_[0-9]+\.png)")
 MATERIALS = "media/cars/_library/Materials.zip"
@@ -44,7 +46,8 @@ def plain_path(path):
 
 def native_path(host, relative):
     if relative not in REPLACEABLE and not (
-            ARCHIVE.fullmatch(relative) or PRESENTATION.fullmatch(relative) or THUMBNAIL.fullmatch(relative)):
+            ARCHIVE.fullmatch(relative) or PRESENTATION.fullmatch(relative) or THUMBNAIL.fullmatch(relative)
+            or ENGINE_PACK.fullmatch(relative)):
         raise ValueError(f"Unowned FH4 installation path {relative}")
     return plain_path(host.joinpath(*PurePosixPath(relative).parts))
 
@@ -141,7 +144,7 @@ def check_entries(files):
             raise ValueError("Invalid package preimage hash")
         core = item["path"] in REPLACEABLE
         if core != (item["before"] is not None):
-            raise ValueError("Only the pinned GameDB, manifest and verified locale archive may replace existing files")
+            raise ValueError("Only the pinned GameDB, manifest, locale archive and engine sound mapping may replace existing files")
 
 
 def recover(host, folder, record, guard):
@@ -263,8 +266,12 @@ def preflight(host, package):
         if not blockers:
             stem = archive.stem.casefold()
             with ZipFile(archive) as members:
-                required_assets = {"physicsdefinition.bin", f"scene/{stem}_skeleton.gr2", f"animations/{stem}.gsf"}
-                if not required_assets <= {m.casefold() for m in members.namelist()}:
+                names = {m.casefold() for m in members.namelist()}
+                required_assets = {"physicsdefinition.bin", f"scene/{stem}_skeleton.gr2"}
+                if any(n.startswith("animations/") for n in names):
+                    # Cars without animatable needles ship no GSF (gsf state not_required).
+                    required_assets.add(f"animations/{stem}.gsf")
+                if not required_assets <= names:
                     raise ValueError(f"Drive-ready claim disagrees with the staged runtime assets: {relative}")
         if trial:
             trial_assets = car["trial_prerequisites"]
@@ -376,13 +383,17 @@ def record_runtime_acceptance(host, transaction_id, evidence):
 
 
 def suspension_xml_evidence(raw, axle):
-    # Stock comments contain XML-incompatible double hyphens. Retain the full
-    # native plaintext digest and omit comments only from structural readback.
-    tree = ET.fromstring(re.sub(rb"<!--.*?-->",b"",raw,flags=re.S))
+    # Stock comments contain XML-incompatible double hyphens, and generated templates (RevoKnuckle,
+    # Strut_DW_Linear_Camber, 5link_hyper1) open with `//` header lines. Retain the full native
+    # plaintext digest and omit both comment forms only from structural readback.
+    # They also run attributes together (x="..."y="...") and spell Steered="TRUE".
+    text = re.sub(rb"(?m)^[ \t]*//[^\n]*\n?",b"",re.sub(rb"<!--.*?-->",b"",raw,flags=re.S))
+    tree = ET.fromstring(re.sub(rb'"([A-Za-z_][A-Za-z0-9_]*=)',rb'" \1',text))
     steered = axle == "Front"
     required = (tree.find(".//Locator[@Id='S']") is not None
                 and all(tree.find(f".//{part}") is not None for part in ("Chassis","Upright")))
-    if (tree.tag != "Suspension" or tree.get("Steered") != str(steered).lower() or not required
+    # Rear templates may still say Steered="TRUE": native dwr_hyper.xml (rear of the 2015 hypercar set) does.
+    if (tree.tag != "Suspension" or steered and tree.get("Steered","").casefold() != "true" or not required
             or steered and tree.find("Kingpin") is None
             or not 0 < float(tree.get("HalfTrack","0")) < 2
             or not 0 < float(tree.get("TireRadius","0")) < 1
@@ -444,8 +455,11 @@ def prepare_package(build, output, crypto, original_db, original_manifest, origi
                         raise ValueError(f"Unexpected shared native suspension asset: {source}")
                     decoded = root / f'{car["car_id"]}-{axle}-suspension.xml'
                     invoke("decrypt",source,"-o",decoded)
-                    readback[axle] = {"protected_sha256":entry["sha256"],
-                                      **suspension_xml_evidence(decoded.read_bytes(),axle)}
+                    try:
+                        evidence = suspension_xml_evidence(decoded.read_bytes(), axle)
+                    except ValueError as error:
+                        raise ValueError(f'{error}: car {car["car_id"]} {entry["path"]}') from error
+                    readback[axle] = {"protected_sha256":entry["sha256"], **evidence}
                 shared_suspension[str(car["car_id"])] = readback
         folder = root / "candidate"
         folder.mkdir()
@@ -475,6 +489,13 @@ def prepare_package(build, output, crypto, original_db, original_manifest, origi
             stage_file(folder, EN_PATH, build / EN_PATH, english["baseline_sha256"], english["archive_sha256"])
         for art in presentation["art"]:
             stage_file(folder, art["path"], build / art["path"], None, art["sha256"])
+        if (build / "audio.json").is_file():
+            # FM4 engine sound (fh4_audio): new packs and the stock mapping with the cars' entries.
+            audio = read_json(build / "audio.json")
+            for item in audio["packs"]:
+                stage_file(folder, item["path"], build / item["path"], None, item["sha256"])
+            mapping = audio["mapping"]
+            stage_file(folder, mapping["path"], build / mapping["path"], mapping["baseline_sha256"], mapping["sha256"])
         shutil.copyfile(validation_path, folder / "validation.json")
         plan = {"executable_sha256": EXE_SHA, "validation_sha256": current(folder / "validation.json"),
                 "target": validation["target"], "state": validation["state"], "files": files,

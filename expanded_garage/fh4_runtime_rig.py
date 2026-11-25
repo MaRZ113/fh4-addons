@@ -33,6 +33,13 @@ ROOT = ((REF, "ArtToolInfo", 0, "Art"), (REF, "ExporterInfo"), (STRING, "FromFil
         (PTR_ARRAY, "Models", 0, "Model"), (PTR_ARRAY, "TrackGroups"),
         (PTR_ARRAY, "Animations"), (VARIANT, "ExtendedData"))
 BONE_SIZE = 164
+# Granny samples only bones whose LODError reaches the allowed error of the current animation LOD
+# (bones sorted by descending error). Native car skeletons are LODType 1 (estimated) with errors from
+# 81 (root) down to ~3.7; a zero error left every bone below the threshold, so the gauge graph never
+# posed the needles. One constant error keeps the required descending order.
+SKELETON_LOD_TYPE = 1
+GRANNY_MODEL = "GrannyRootBone"
+BONE_LOD_ERROR = 100.0
 
 
 class SectionBuilder:
@@ -80,7 +87,49 @@ def granny_container(main, types, root_type, tag):
     return bytes(output)
 
 
+# Native Granny skeletons group animated accessories under helper bones that the Modelbin skeleton
+# lacks (ACU_RSXTypeS_02: boneFuel/boneSpeed/boneTach/boneTemp are children of root_boneGauges). The
+# native car graph samples the gauge pose as the subtree of `root_boneGauges`; without that bone the
+# needles never received it. The game matches the two skeletons by bone name.
+GROUP_BONES = {"root_boneGauges": ("boneFuel", "boneSpeed", "boneTach", "boneTemp")}
+
+
+def granny_bones(bones):
+    """The Granny rig: Modelbin bones plus identity group bones under `root` for present children."""
+    from .fh4_model import Bone
+    names = [b.name for b in bones]
+    if len(names) < 2 or names[1] != "root":
+        return list(bones)
+    out, remap = list(bones[:2]), {0: 0, 1: 1}
+    groups = {}
+    for group, members in GROUP_BONES.items():
+        if any(m in names for m in members):
+            groups[group] = len(out)
+            out.append(Bone(group, 1))
+    owner = {m: g for g, ms in GROUP_BONES.items() if g in groups for m in ms}
+    for i, bone in enumerate(bones[2:], start=2):
+        remap[i] = len(out)
+        parent = groups[owner[bone.name]] if bone.name in owner and bone.parent == 1 else remap[bone.parent]
+        out.append(Bone(bone.name, parent, bone.translation, bone.rotation))
+    return out
+
+
+def modelbin_view(rig):
+    """Granny readback rows with the identity group bones folded away (Modelbin bone order)."""
+    keep, remap = [], {}
+    for i, row in enumerate(rig):
+        if row["name"] in GROUP_BONES:
+            if any(row["local_m"]) or "local_rotation" in row:
+                raise ValueError("Granny group bone is not an identity frame")
+            remap[i] = remap[row["parent"]]
+            continue
+        remap[i] = len(keep)
+        keep.append(dict(row, parent=remap[row["parent"]] if row["parent"] >= 0 else -1))
+    return keep
+
+
 def skeleton_file(alias, bones):
+    bones = granny_bones(bones)
     main, types = SectionBuilder(), SectionBuilder()
     declarations = {"Root": ROOT, "Art": ART, "Skeleton": SKELETON, "Bone": BONE, "Model": MODEL}
     offsets = {name: types.reserve((len(fields) + 1) * TYPE.size) for name, fields in declarations.items()}
@@ -113,8 +162,12 @@ def skeleton_file(alias, bones):
                      0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, -1)
     main.pointer(skeleton, 0, main.string("GrannyRootBone"))
     struct.pack_into("<I", main.raw, skeleton + 8, len(bones))
+    struct.pack_into("<i", main.raw, skeleton + 20, SKELETON_LOD_TYPE)
     main.pointer(skeleton + 12, 0, array)
-    main.pointer(model, 0, main.string(alias))
+    # Every native car rig names its Granny model like its skeleton, "GrannyRootBone" (65/65 sampled);
+    # a model named after the car let the GSF load yet never pose the needles (bisected against the
+    # unchanged ACU_RSXTypeS_02 animation stack, whose needles moved on this car's meshes).
+    main.pointer(model, 0, main.string(GRANNY_MODEL))
     main.pointer(model + 8, 0, skeleton)
     scale = (1, 0, 0, 0, 1, 0, 0, 0, 1)
     struct.pack_into("<I3f4f9f", main.raw, model + 16, 0, 0, 0, 0, 0, 0, 0, 1, *scale)
@@ -134,6 +187,7 @@ def skeleton_file(alias, bones):
         struct.pack_into("<iI3f4f9f", main.raw, offset + 8, bone.parent, flags,
                          *bone.translation, *bone.rotation, *scale)
         struct.pack_into("<16f", main.raw, offset + 80, *np.linalg.inv(bind).flat)
+        struct.pack_into("<f", main.raw, offset + 144, BONE_LOD_ERROR)
     return granny_container(main, types, offsets["Root"], SKELETON_TAG)
 
 
@@ -212,9 +266,11 @@ def verify_skeleton(data, alias):
         raise ValueError("Wrong Granny file identity or root list cardinality")
     skel = pointer(0, pointer(0, 52, 0), 0)
     model = pointer(0, pointer(0, 100, 0), 0)
-    if string(0, skel) != "GrannyRootBone" or string(0, model) != alias or pointer(0, model + 8, 0) != skel:
+    if string(0, skel) != "GrannyRootBone" or string(0, model) != GRANNY_MODEL or pointer(0, model + 8, 0) != skel:
         raise ValueError("Granny rig model links do not resolve to the generated skeleton")
     size, = struct.unpack_from("<I", main, skel + 8)
+    if struct.unpack_from("<i", main, skel + 20)[0] != SKELETON_LOD_TYPE:
+        raise ValueError("Granny skeleton LOD type differs from native car rigs")
     start = pointer(0, skel + 12, 0)
     if not 1 <= size <= (len(main) - start) // BONE_SIZE:
         raise ValueError("Out-of-range Granny bone array")
@@ -234,9 +290,13 @@ def verify_skeleton(data, alias):
         inverse = struct.unpack_from("<16f", main, idx + 80)
         if not np.allclose(inverse, np.linalg.inv(bind).ravel(), atol=2e-6, rtol=0):
             raise ValueError("Granny inverse bind disagrees with hierarchy")
+        error, = struct.unpack_from("<f", main, idx + 144)
+        if not (math.isfinite(error) and error > 0) or bones and error > bones[-1]["lod_error"]:
+            raise ValueError("Granny bone LOD errors must be positive and non-increasing")
         world.append(bind)
         names.add(name)
-        row = {"name": name, "parent": parent, "local_m": local, "bind_m": bind[3,:3].tolist()}
+        row = {"name": name, "parent": parent, "local_m": local, "bind_m": bind[3,:3].tolist(),
+               "lod_error": error}
         if flags & 2:
             row["local_rotation"] = rotation
         bones.append(row)

@@ -1,5 +1,6 @@
 """Resolve FM4 tire purposes to checked, shared FH4 physical and scene models."""
 
+from collections import Counter
 from dataclasses import dataclass
 from hashlib import sha256
 from io import BytesIO
@@ -59,7 +60,7 @@ class NativeTireCompiler:
         self.native_examples = db.execute(
             f"SELECT u.TireCompoundID, u.IsStock, {', '.join('u.' + f for f in MODEL_FIELDS)}, "
             f"{columns} FROM List_UpgradeTireCompound u JOIN Data_Car c ON c.Id=u.Ordinal "
-            "WHERE c.CarTypeID=1 AND c.Year>=1985 AND c.Id<12000"
+            "WHERE c.CarTypeID IN (1, 3) AND c.Year>=1985 AND c.Id<12000"
         ).fetchall()
 
     @staticmethod
@@ -74,8 +75,8 @@ class NativeTireCompiler:
             raise UnknownTire(f"Unknown FM4 tire compound {row['TireCompoundID']}")
         name = matches[0]["record"]["DisplayName"]
         car = source.record("Data_Car")
-        family = FAMILIES.get(family_name(name))
-        if family is None or car["CarTypeID"] != 1 or car["Year"] < 1985:
+        family = FAMILIES.get(family_name(name)) or self.observed_family(family_name(name))
+        if family is None or car["CarTypeID"] not in (1, 3) or car["Year"] < 1985:
             raise UnknownTire(f"No road-car tire rule for {name} in this vehicle class or era")
         compound = self.compounds.get(family[0])
         if compound is None or compound["IsOffroad"] != 0:
@@ -105,6 +106,23 @@ class NativeTireCompiler:
         return TireSelection(fields, name, compound["DisplayName"],
                              sum(r[0] == 1 for r in candidates[family[1][preference]]),
                              self.curve_keys(compound))
+
+    def observed_family(self, name):
+        """FH4 asphalt compound named like the FM4 one (FM4 `3_Performance` -> FH4 `4_Modern_Performance`) with
+        the tread presentations native cars mount on it, most frequent first (EXPANDED_GARAGE_TIRE_FAMILIES=fixed
+        keeps only the hand table)."""
+        import os
+        if os.environ.get("EXPANDED_GARAGE_TIRE_FAMILIES") == "fixed":
+            return None
+        for target in (name, "modern" + name):
+            compound = self.compounds.get(target)
+            if compound is None or compound["IsOffroad"]:
+                continue
+            counts = Counter(tuple((r[f] or "").casefold() for f in MODEL_FIELDS) for r in self.native_examples
+                             if r["TireCompoundID"] == compound["TireCompoundID"])
+            if counts:
+                return target, tuple(tokens for tokens, _ in counts.most_common())
+        return None
 
     def curve_keys(self, compound):
         links = []
