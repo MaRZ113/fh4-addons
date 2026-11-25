@@ -218,6 +218,17 @@ def main(argv=None):
     rollback.add_argument("--host", required=True, type=Path)
     rollback.add_argument("--transaction", required=True)
     rollback.set_defaults(run=deploy)
+    overlay_apply = sub.add_parser("overlay-apply", help="Apply an overlay (receipt.json + files/) over the installed fleet")
+    overlay_apply.add_argument("--host", required=True, type=Path)
+    overlay_apply.add_argument("--overlay", required=True, type=Path)
+    overlay_apply.add_argument("--name", required=True)
+    overlay_apply.set_defaults(run=lambda a: print(json.dumps(
+        __import__("expanded_garage.fh4_overlay", fromlist=["apply"]).apply(a.host, a.overlay, a.name)["name"])))
+    overlay_rollback = sub.add_parser("overlay-rollback", help="Restore the files an overlay replaced")
+    overlay_rollback.add_argument("--host", required=True, type=Path)
+    overlay_rollback.add_argument("--name", required=True)
+    overlay_rollback.set_defaults(run=lambda a: print(json.dumps(
+        __import__("expanded_garage.fh4_overlay", fromlist=["rollback"]).rollback(a.host, a.name))))
     acceptance = sub.add_parser("record-runtime", help="Record owner observations after a successful test and rollback")
     acceptance.add_argument("--host", required=True, type=Path)
     acceptance.add_argument("--transaction", required=True)

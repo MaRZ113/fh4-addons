@@ -215,7 +215,9 @@ def emission_loops(data, loops, subsongs, vgmstream):
     top = max(v for _, _, v in loops) or 1.0
     out = []
     for rpm, index, volume in sorted(loops):
-        if index not in decoded:
+        # Volume-0 loops are switched off in the source (FH1 FOR_GTX1_06 exhaust 2710/3280 rpm, intake first/last);
+        # as silent FH4 granular loops they cut the sound out between audible neighbours (owner: torn above 3500).
+        if index not in decoded or volume <= 0:
             continue
         rate = subsongs[index]["sample_rate_hz"]
         out.append((rpm, resample_loop(decoded[index], rate) * (volume / top)))

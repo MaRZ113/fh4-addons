@@ -963,6 +963,11 @@ def make_models(root, ir, identity, library):
                 filtered.add((role, section, draw.source_material))
     if not grouped["exterior"]:
         raise ValueError("No source exterior geometry available")
+    # Stripes painted into the body atlas (FH1 FOR_GTX1_06: nodamage_<scheme> alpha over 14.5% of the body):
+    # native FOR_GT_05 draws them as separate livery models over the body (carpaint_livery_stripe, slot flag 2).
+    if os.environ.get("EXPANDED_GARAGE_ATLAS_STRIPES") != "off":
+        for key, draws in grouped["exterior"].items():
+            draws.extend(atlas_stripe_overlays(root, ir, draws))
     if ("digital_gauge", GAUGE_MATERIAL) not in car_parameters:
         # No dash scene to draw (or EXPANDED_GARAGE_DIGITAL_DASH=off): a dark, unlit display.
         for kind in ("cockpit", "exterior"):
@@ -1158,8 +1163,8 @@ def make_models(root, ir, identity, library):
                     if kind == "cockpit" and window_part(key):
                         # Only the panes face the cabin; opaque bands on the pane (BMW_6_M3GTR_01 windscreen strip,
                         # FM4 `black`) stay outward-facing and are culled from inside, as in FM4 (owner, visual-62).
-                        draws = [inward(d) if d.transparent or fh4_model.glass_family(d.target_material) else d
-                                 for d in draws]
+                        # The opaque frit (black_glass -> blackglass) is outward too: the band stayed (owner, visual-63).
+                        draws = [inward(d) if d.transparent else d for d in draws]
                     if kind == "cockpit":
                         # Dial faces also live in the cabin body (FM4 `interior`: gauge_emissive, digital_gauge).
                         faces = [d for d in draws if d.source_material.casefold() in GAUGE_FACES]
@@ -1413,6 +1418,51 @@ def plate_omitted(rows):
     drive, = rows_for(rows, "Data_Drivetrain")
     buckets = {(catalogue_bucket(car, drive) or "").casefold(), (learned_bucket(car) or "").casefold()}
     return car["CarTypeID"] == 3 or bool(buckets & PLATELESS_BUCKETS)
+
+
+STRIPE_OFFSET_M = 0.001
+STRIPE_MIN_SHARE = 0.02    # FM4 road bodies: 0-1 % of body triangles over atlas alpha (SX4 0, BMW 0, Apollo 1)
+
+
+def atlas_stripe_overlays(root, ir, draws, cache={}):
+    """Copies of the body triangles lying on opaque texels of the car atlas, 1 mm out, as `stripe_badge`."""
+    from .fh4_material_contract import surface_binding as bind_surface
+    key = id(ir)
+    if key not in cache:
+        from .fh4_presentation import xds_codec
+        data = raw_member(root, ir, "/nodamage_lod0.xds")
+        codec = xds_codec(None)
+        if data is None or codec is None:
+            cache[key] = None
+        else:
+            width, height, rgba = codec[0](data)
+            cache[key] = np.frombuffer(bytes(rgba), np.uint8).reshape(height, width, 4)[..., 3]
+    alpha = cache[key]
+    if alpha is None:
+        return []
+    height, width = alpha.shape
+    out = []
+    for d in draws:
+        if d.lod != 0 or d.source_material.casefold() not in ("body", "body_2"):
+            continue
+        uv = d.uv0[d.indices] % 1                                     # (n, 3, 2)
+        samples = np.concatenate([uv, uv.mean(axis=1, keepdims=True)], axis=1)
+        a = alpha[np.clip((samples[..., 1] * height).astype(int), 0, height - 1),
+                  np.clip((samples[..., 0] * width).astype(int), 0, width - 1)]
+        hit = (a > 16).any(axis=1)
+        if hit.mean() < STRIPE_MIN_SHARE:
+            continue
+        tri = d.indices[hit]
+        used, remap = np.unique(tri, return_inverse=True)
+        normals = d.normals[used] / np.maximum(np.linalg.norm(d.normals[used], axis=1, keepdims=True), 1e-9)
+        binding = bind_surface("stripe_badge", "exterior", "body")
+        out.append(replace(d, name=d.name + "_stripe", source_material="stripe_badge",
+                           target_material=binding.member, transparent=binding.transparent,
+                           positions=np.asarray(d.positions[used] + normals * STRIPE_OFFSET_M, dtype=np.float32),
+                           normals=d.normals[used], uv0=d.uv0[used], uv1=d.uv1[used],
+                           indices=remap.reshape(-1, 3).astype(d.indices.dtype),
+                           **({"color": d.color[used]} if getattr(d, "color", None) is not None else {})))
+    return out
 
 
 def brake_mounts(brakes):
