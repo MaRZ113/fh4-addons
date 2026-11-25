@@ -348,7 +348,9 @@ def verify_gauge_graph(blob, assets, rig, bound_names):
     for name in record["slots"]:
         path = f"animations/{name}.gr2"
         bone, pivot = verify_clip(assets(path), name)
-        if bone not in bound_names or bone not in rig or tuple(rig[bone]["local_m"]) != pivot:
+        # Placeholder slots (fh4_motion static gauges: no needle to drive) sit on an unbound bone at the origin.
+        placeholder = bone not in bound_names and tuple(pivot) == (0.0, 0.0, 0.0)
+        if (bone not in bound_names and not placeholder) or bone not in rig or tuple(rig[bone]["local_m"]) != pivot:
             raise ValueError("GSF clip does not target its CarScene bone and bind")
         used.add(path)
     return used

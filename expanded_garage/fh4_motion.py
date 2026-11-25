@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 import math
+import os
 
 import numpy as np
 
@@ -15,6 +16,11 @@ GAUGES = (
     ("speed", "Speed", "speedometer", "boneSpeed", "speed"),
     ("tach", "Tach", "tachometer", "boneTach", "tach"),
 )
+
+
+# Input range of a motionless placeholder gauge (mph, thousands of rpm): any positive maximum works.
+STATIC_GAUGE_MAX = {"speed": 200.0, "tach": 10.0, "fuel": 1.0}
+STATIC_GAUGE_TURN = math.radians(0.05)
 
 
 @dataclass(frozen=True)
@@ -202,6 +208,25 @@ def compile_motion(alias, ir, bones, points, grouped):
         payloads[member] = animation_clip(clip,bone,pivot,calibrated(keys,ticks))
         report["gauges"].append({"clip":clip,"bone":bone,"input":parameter,"input_max":max_input,
                                  "packed_remap":ticks, "pivot_m":pivot, "member":member, **fit})
+    missing_slots = set(template_slots()) - {g["clip"] for g in report["gauges"]}
+    if missing_slots and os.environ.get("EXPANDED_GARAGE_STATIC_GAUGES") != "off":
+        # Every native car ships a GSF; BMW_6_M3GTR_01 / SAL_S281_06 / TOY_Prius_11 without one hung on the
+        # autoshow loading screen (owner, visual-59). Slots without a usable needle (digital dash, no FM4 dial
+        # calibration) get a bone at the cabin origin with a motionless clip; resolved needles keep working.
+        for key, label, clip, bone, parameter in GAUGES:
+            if clip not in missing_slots:
+                continue
+            pivot = (0.0, 0.0, 0.0)
+            bones.append(Bone(bone, 1, pivot))
+            member = f"animations/{clip}.gr2"
+            # A clip whose end equals its start fails verify_clip (it catches dead needles); the empty bone turns
+            # 0.05 degrees over the sweep instead.
+            payloads[member] = animation_clip(clip, bone, pivot, [
+                (step / 16, (0.0, 0.0, math.sin(step / 16 * STATIC_GAUGE_TURN / 2), math.cos(step / 16 * STATIC_GAUGE_TURN / 2)))
+                for step in range(17)])
+            report["gauges"].append({"clip": clip, "bone": bone, "input": parameter,
+                                     "input_max": STATIC_GAUGE_MAX[parameter], "packed_remap": [(0, 0), (65535, 65535)],
+                                     "pivot_m": pivot, "member": member, "static": True})
     if {g["clip"] for g in report["gauges"]} == set(template_slots()):
         payloads[f"animations/{alias}.gsf"] = gauge_graph(report["gauges"])
     elif report["gauges"]:

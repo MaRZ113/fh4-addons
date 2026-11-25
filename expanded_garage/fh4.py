@@ -1189,8 +1189,11 @@ def make_models(root, ir, identity, library):
     nonstock = {name for part in contract.parts if not part.stock for name in part.components}
     # Native licence plate and plate lamp in the FM4 plate recess (fh4_plate; EXPANDED_GARAGE_PLATE=off).
     from . import fh4_plate
-    plate_payloads, driver_rig["plate"] = fh4_plate.plate_models(
-        Path(library).parents[1], fh4_plate.plate_draws(grouped["exterior"], nonstock))
+    if plate_omitted(rows) and os.environ.get("EXPANDED_GARAGE_PLATE") != "on":
+        plate_payloads, driver_rig["plate"] = {}, {"generated": False, "reason": "race car or hypercar class"}
+    else:
+        plate_payloads, driver_rig["plate"] = fh4_plate.plate_models(
+            Path(library).parents[1], fh4_plate.plate_draws(grouped["exterior"], nonstock))
     with ZipFile(library) as archive:
         available = {name.casefold(): name for name in archive.namelist()}
         for member, data in sorted(plate_payloads.items()):
@@ -1365,6 +1368,20 @@ def uncovered_lamp_glass(draw, draws, reach=0.012):
     used, remap = np.unique(keep, return_inverse=True)
     return replace(draw, positions=draw.positions[used], normals=draw.normals[used], uv0=draw.uv0[used],
                    uv1=draw.uv1[used], indices=remap.reshape(-1, 3).astype(draw.indices.dtype))
+
+
+PLATELESS_BUCKETS = {"hypercars", "extreme track toys"}
+
+
+def plate_omitted(rows):
+    """FM4 has no plates, the converter finds a rear recess. On race cars and hypercars it found grilles and
+    vents: the GUM_ApolloS_10 plate sank into the rear mesh (owner, visual-59). Those classes get none
+    (EXPANDED_GARAGE_PLATE=on: place it anyway)."""
+    from .fh4_db_compiler import catalogue_bucket, learned_bucket
+    car, = rows_for(rows, "Data_Car")
+    drive, = rows_for(rows, "Data_Drivetrain")
+    buckets = {(catalogue_bucket(car, drive) or "").casefold(), (learned_bucket(car) or "").casefold()}
+    return car["CarTypeID"] == 3 or bool(buckets & PLATELESS_BUCKETS)
 
 
 def brake_mounts(brakes):
