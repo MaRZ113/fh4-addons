@@ -349,7 +349,8 @@ def compile_fleet(build, vehicles, baseline_db, compiled_db, mapping_path, vgmst
                 "SELECT CylinderID, AspirationID_Stock, EngineGraphingMaxPower FROM Data_Engine WHERE MediaName=?",
                 (media,)).fetchone()
             if engine_row is None:
-                raise ValueError(f"No Data_Engine row for {media}")
+                # Electric car: no cylinder/aspiration to match a granular donor; the game's fallback sound for now.
+                continue
             engine, bank, assets = donor(mapping_text, base, *engine_row, excluded=excluded)
             packs = {}
             for emitter, emission in EMITTERS:

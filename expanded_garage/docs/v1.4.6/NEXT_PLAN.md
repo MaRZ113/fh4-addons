@@ -736,6 +736,38 @@ visual-58). IR: `.scratch/expanded-garage-v1.4.6/candidates/<car>`; сборка
   `List_UpgradeMotorParts` (TorqueScale 1.0–2.0), экстрактор их не берёт; в FH4 те же таблицы, 4 нативных EV
   (RIM_Concept2_19, JAG_IPACE_18, RAE_Tachyon_19, VW_94_IDR_18) без строк двигателя.
 
+### visual-61: электромоторы — Nissan Leaf, гибрид Prius (установлено)
+
+- **Экстрактор** (`fm4.py`): по стоковому `List_UpgradeMotor.MotorID` берутся `Data_Motor` и `List_UpgradeMotorParts`; кривая
+  момента мотора подтягивается через `TorqueCurveFullThrottleID`. IR: `candidates/NIS_Leaf_11-ev`, `TOY_Prius_11-ev`.
+- **Компилятор**: двигатель необязателен; при моторе пишутся `List_TorqueCurve` (своя), `Data_Motor` (MediaName машины,
+  ConfigID мотора: 6 — электро, 9 — гибрид), `List_UpgradeMotor` и детали мотора уровней 1–3 (`PERFORMANCE_UPGRADES`).
+  Источник момента для проверки физики — кривая мотора на 0..RedlineRPM, если нет распредвала.
+- Проверки: у машины без двигателя вместо стокового `List_UpgradeEngine` требуется `List_UpgradeMotor`; кривая — из `Data_Motor`.
+- Нативные диапазоны поправили: TorqueScale деталей ≤ 1.5 (FM4 Leaf 1.75/2.0), масса мотора Prius 106 → 282.4 кг, графические
+  максимумы 850/450 — справочные поля, проверить, что Leaf разгоняется как в FM4.
+- **Звук EV**: подбор гранулярного донора опирается на цилиндры/наддув — для EV пропущен, игра даёт запасной звук. Дальше:
+  донор — нативный EV (JAG_IPACE_18 / RIM_Concept2_19) из `CarEngineEventMapping.xml`.
+- Остальные шесть машин побайтно как visual-60.
+
+### FH1-пилот Ford GTX1 (`FH1_GTX1_Pilot`, разбор 2026-11-25)
+
+Отдельная копия конвертера на `78efd91` (visual-58) + правки под FH1, собственный изолированный хост `FH1_GTX1_Pilot/host`,
+car id 12040, аудит пакета `fidelity-02` проходит. Правки почти все под флагом `source_game == "fh1"`:
+- IR: `fm4.build(..., source_game="fh1")`, пропуск `stripped_*` (метаданные двигателя без мешей);
+- приборы: стрелки FH1 — `gauge_emissive` в позах `*_min/mid/max`, плюс `boost_*`; циферблат `z_gauge_emissive_alpha`;
+- материалы FH1: лампы `hidhead`, `fogwhite`, `slinl/rorange`, `taillight2s`, `numplate`; `stripe_badge` → `carpaint_livery`
+  с параметрами полосы нативного FOR_GT_05; `chrome_blur_lip`, тормоз `front`, линза `lights_gls_taillightst`;
+- заводская полоса: `ManufacturerColors.bin` с двумя слотами (флаг 2 — полоса), формат обратно совместим с одним слотом;
+- `impactMask` из пары damage/nodamage FH1 (`fh1_effects.py`), LiveryMasks с отсутствующими сторонами (`valid="false"`);
+- открытый кокпит из `CarAttribs General/OpenCockpit` (родстер GTX1);
+- задняя подвеска Ford GT: исключение по хешу XML (в основной ветке уже общее правило «задний шаблон может быть Steered»);
+- ForzaVista-аудио `CarEventMapping.xml` (новый заменяемый файл установщика);
+- только для пилота: `BAKE_MAX 256`, `GTX1_*` переменные, GPU BC7, ID с 12040.
+
+Интеграция в основной конвертер: перенести FH1-ветки как есть, хеш-исключение подвески убрать (покрыто), `GTX1_*` → общие
+`EXPANDED_GARAGE_*`, `BAKE_MAX` вернуть 512; после этого GTX1 собирается вместе с флотом (ID 12040 сохраняется реестром).
+
 ## Что осталось до вида FM4 (по заметности, 2026-11-24)
 
 1. **Зазор шина–арка** (виден подкрылок, «чёрная полоса»): в FM4 шина почти касается арки, у нас ~5–8 см.

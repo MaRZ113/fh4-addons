@@ -100,7 +100,8 @@ def audit_mechanical(db, car, body, native):
     car_id = car["Id"]
     source = native["source_checks"]
     drive_id = owned_stock(db, "List_UpgradeDrivetrain", "Ordinal", car_id)["DrivetrainID"]
-    engine_id = owned_stock(db, "List_UpgradeEngine", "Ordinal", car_id)["EngineID"]
+    engine_row = db.execute("SELECT EngineID FROM List_UpgradeEngine WHERE Ordinal=? AND IsStock=1", (car_id,)).fetchone()
+    engine_id = engine_row[0] if engine_row else None
     transmission = owned_stock(db, "List_UpgradeDrivetrainTransmission", "DrivetrainID", drive_id)
     if ratios(dict(transmission), car["NumGears"]) != source["ratios_including_reverse"] or (
             transmission["FinalDriveRatio"] != source["final_drive"]):
@@ -118,9 +119,13 @@ def audit_mechanical(db, car, body, native):
     weight = owned_stock(db, "List_UpgradeCarBodyWeight", "CarBodyId", body)
     if (weight["Mass"], weight["CMBackFront"]) != (source["mass_kg"], source["front_weight_fraction"]):
         raise ValueError("Stock mass or weight distribution changed")
-    cam = owned_stock(db, "List_UpgradeEngineCamshaft", "EngineID", engine_id)
-    curve, = db.execute("SELECT * FROM List_TorqueCurve WHERE TorqueCurveID=?",
-                        (cam["TorqueCurveFullThrottleID"],)).fetchall()
+    if engine_id is not None:
+        curve_id = owned_stock(db, "List_UpgradeEngineCamshaft", "EngineID", engine_id)["TorqueCurveFullThrottleID"]
+    else:
+        motor = owned_stock(db, "List_UpgradeMotor", "Ordinal", car_id)
+        curve_id, = db.execute("SELECT TorqueCurveFullThrottleID FROM Data_Motor WHERE MotorID=?",
+                               (motor["MotorID"],)).fetchone()
+    curve, = db.execute("SELECT * FROM List_TorqueCurve WHERE TorqueCurveID=?", (curve_id,)).fetchall()
     count = curve["NumTorqueValues"]
     values = [curve[f"v{i}"] * curve["TorqueScale"] for i in range(count)]
     if count < 2 or not math.isclose(max(values), source["source_curve_peak_torque_nm"], abs_tol=1e-6):
@@ -284,8 +289,9 @@ def audit_catalogue(candidate, identity, scene, scene_contract, native=None, tir
     if (car["MediaName"], car["ModelId"], scene["ordinal"], scene["media_name"]) != (
             identity["media_name"], identity["car_id"], identity["car_id"], identity["media_name"].casefold()):
         raise ValueError("Scene and GameDB identity disagree")
-    for name in ("List_UpgradeCarBody", "List_UpgradeEngine", "List_UpgradeDrivetrain", "List_UpgradeSpringDamper",
-                 "List_UpgradeBrakes"):
+    electric = not candidate.execute("SELECT 1 FROM List_UpgradeEngine WHERE Ordinal=?", (identity["car_id"],)).fetchone()
+    for name in ("List_UpgradeCarBody", "List_UpgradeMotor" if electric else "List_UpgradeEngine",
+                 "List_UpgradeDrivetrain", "List_UpgradeSpringDamper", "List_UpgradeBrakes"):
         count, = candidate.execute(f"SELECT count(*) FROM {ident(name)} WHERE Ordinal=? AND IsStock=1",
                                    (identity["car_id"],)).fetchone()
         if count != 1:

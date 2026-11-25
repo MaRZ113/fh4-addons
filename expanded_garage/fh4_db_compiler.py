@@ -50,7 +50,7 @@ PERFORMANCE_UPGRADES = frozenset({
         "TurboTwin", "TurboQuad", "Valves")),
     *(f"List_UpgradeDrivetrain{part}" for part in ("Clutch", "Differential", "Driveline", "Transmission")),
     "List_UpgradeCarBodyWeight", "List_UpgradeAntiSwayFront", "List_UpgradeAntiSwayRear",
-    "List_UpgradeSpringDamper", "List_UpgradeBrakes",
+    "List_UpgradeSpringDamper", "List_UpgradeBrakes", "List_UpgradeMotorParts",
 })
 
 
@@ -241,7 +241,10 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
 
     original = src.record("Data_Car")
     layout = src.record("Data_CarBody")
-    engine = src.record("Data_Engine")
+    engine = src.record("Data_Engine") if src.entries("Data_Engine") else None
+    motor = src.record("Data_Motor") if src.entries("Data_Motor") else None
+    if engine is None and motor is None:
+        raise ValueError("Source has neither an engine nor an electric motor")
     drive = src.record("Data_Drivetrain")
     bucket_name = catalogue_bucket(original,drive)
     bucket = buckets.get(bucket_name.casefold()) if bucket_name else None
@@ -284,7 +287,8 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
     class_key = borrow("CarClasses", chosen_class[0])
     car_type = borrow("List_CarType", original["CarTypeID"])
     drive_type = borrow("List_DriveType", drive["DrivetypeID"])
-    engine_config = borrow("List_EngineConfig", engine["ConfigID"])
+    # Electric cars take the motor's configuration (FM4 and FH4 ConfigID 6, e.g. RIM_Concept2_19).
+    engine_config = borrow("List_EngineConfig", (engine or motor)["ConfigID"])
     placement = borrow("List_EnginePlacement", original["EnginePlacementID"])
     steering_override = borrow("AutoSteerOverrides", original["AutoSteerOverrideID"])
     for table, key, field in (("List_DriveType", drive_type, "DriveType"), ("List_EngineConfig", engine_config, "Config")):
@@ -344,13 +348,15 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
            for label, axis in zip(("Width", "Height", "Length"), ("X", "Y", "Z"), strict=True)},
     }, "FM4 body measurements and extent spans in meters")
     own_engine = insert("Data_Engine", car_id, engine, {"MediaName": alias},
-                        "Own FM4-derived engine identity, audio awaiting binding", (engine_config,))
+                        "Own FM4-derived engine identity, audio awaiting binding", (engine_config,)) if engine else None
     shift_fields = {"ShiftSystemID": shift["id"]} if shift else {}
     shift_links = (borrow("List_ShiftSystem", shift["id"]),) if shift else ()
     own_drive = insert("Data_Drivetrain", car_id, drive, shift_fields,
                        "FM4 drivetype and mounting orientation; shift mode from source rig and gearing",
                        (drive_type, *shift_links))
-    owners = {"ordinal": car, "carbodyid": body, "engineid": own_engine, "drivetrainid": own_drive}
+    owners = {"ordinal": car, "carbodyid": body, "drivetrainid": own_drive}
+    if own_engine is not None:
+        owners["engineid"] = own_engine
 
     if src.entries("CameraOverrides"):
         # Cockpit camera offsets derived from the car's own seating (fh4.cockpit_camera_offsets).
@@ -369,6 +375,17 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
                f'FM4 authored position {item["provenance"]["asset"]}, native field frame retained', (car,))
 
     mapped = {}
+    if motor is not None:
+        # FH4 electric cars (RIM_Concept2_19, JAG_IPACE_18, RAE_Tachyon_19, VW_94_IDR_18): Data_Motor with its own
+        # full-throttle curve, List_UpgradeMotor on the car, List_UpgradeMotorParts levels on the motor.
+        old_curve = motor["TorqueCurveFullThrottleID"]
+        curve_entry, = [e for e in src.entries("List_TorqueCurve") if e["record"]["TorqueCurveID"] == old_curve]
+        curve_key = insert("List_TorqueCurve", body_id, curve_entry["record"], {},
+                           f'FM4 source {curve_entry["provenance"]["asset"]} {curve_entry["provenance"]["locator"]}')
+        mapped["List_TorqueCurve", old_curve] = curve_key
+        own_motor = insert("Data_Motor", car_id, motor, {"MediaName": alias, "TorqueCurveFullThrottleID": curve_key.value},
+                           "Own FM4-derived electric motor", (engine_config, curve_key))
+        owners["motorid"] = own_motor
     contract = NativeCarSceneContract(vehicle.ir, body_id)
     variant_tables = {family.table for family in FAMILIES}
     variant_keys = {(part.family.table, part.source_key) for part in contract.parts}

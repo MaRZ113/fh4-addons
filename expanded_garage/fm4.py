@@ -195,8 +195,10 @@ def collect_rows(databases, car_id):
     body = stock(rows_for(result, "List_UpgradeCarBody")).get("CarBodyID")
     engine = stock(rows_for(result, "List_UpgradeEngine")).get("EngineID")
     drive = stock(rows_for(result, "List_UpgradeDrivetrain")).get("DrivetrainID")
+    # Electric and hybrid cars (NIS_Leaf_11: motor only; TOY_Prius_11: engine and motor).
+    motor = stock(rows_for(result, "List_UpgradeMotor")).get("MotorID")
     for table, key, value in (("Data_CarBody", "Id", body), ("Data_Engine", "EngineID", engine),
-                              ("Data_Drivetrain", "DrivetrainID", drive)):
+                              ("Data_Drivetrain", "DrivetrainID", drive), ("Data_Motor", "MotorID", motor)):
         if value is not None:
             select(table, key, value)
     select("CarPartPositions", "PartId", body)
@@ -207,6 +209,8 @@ def collect_rows(databases, car_id):
             select(table, "EngineID", engine)
         if table.startswith("List_UpgradeDrivetrain") and drive is not None:
             select(table, "DrivetrainID", drive)
+        if table == "List_UpgradeMotorParts" and motor is not None:
+            select(table, "MotorID", motor)
     for rows in list(result.values()):
         for entry in list(rows.values()):
             for column, value in entry["record"].items():
