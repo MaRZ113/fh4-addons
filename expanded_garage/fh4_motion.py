@@ -33,7 +33,8 @@ def fit_rotation(first, after):
     matrix = a @ reflection @ b
     offset = centers[1] - matrix @ centers[0]
     worst = np.linalg.norm(first @ matrix.T + offset - after, axis=1).max()
-    if worst > 3e-5:
+    # 0.2 mm on a ~10 cm needle: FM4 stores the poses in half floats/quantised positions (GUM_ApolloS_10 30-80 um).
+    if worst > 2e-4:
         raise ValueError(f"Needle samples are not a matched rigid mesh ({worst:.6f} m)")
     return matrix, offset, float(worst)
 

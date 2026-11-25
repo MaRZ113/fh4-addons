@@ -35,7 +35,7 @@ COCKPIT_ATLAS_MATERIAL = "interior_plastic/plastic_perforated_004"
 COCKPIT_ATLAS_GLOSS = {
     "plastic": 0.35, "bump_plastic": 0.3, "bump_plastic2": 0.3, "interior": 0.35, "solid": 0.3,
     "black": 0.3, "frame": 0.3, "mottled": 0.3, "leather": 0.45, "bump_leather": 0.45,
-    "bump_stitching": 0.2, "cloth": 0.1, "headliner": 0.1, "rubber": 0.2, "metal": 0.6, "reflector": 0.55,
+    "bump_stitching": 0.2, "cloth": 0.1, "headliner": 0.1, "suede": 0.1, "bump_plastic3": 0.3, "rubber": 0.2, "metal": 0.6, "reflector": 0.55,
     # Cabin badges (RUF horn-pad logo, SX4/Integra console script) are drawn in the cockpit atlas; bound to
     # satin chrome the RUF wheel showed a blank chrome plate (owner, visual-52).
     "badge": 0.7,
@@ -111,7 +111,7 @@ def atlas_source(label, component_kind="", component=""):
         return "wheel"
     if not exterior_like(component_kind, component):
         return None
-    if name in ATLAS_PLASTIC_GLOSS or name in ("emblem", "badge"):
+    if name in ATLAS_PLASTIC_GLOSS or name in ("emblem", "badge", "liverybadge"):
         return "body"
     if name.startswith(("grille1", "grille2")):
         return name[:7]
@@ -145,7 +145,7 @@ def surface_binding(label, component_kind="", component=""):
     if cockpit_atlas_surface(label, component_kind, component):
         return bind(COCKPIT_ATLAS_MATERIAL, fidelity="source_cockpit_atlas")
     source = atlas_source(label, component_kind, component)
-    if source == "body" and name in ("emblem", "badge"):
+    if source == "body" and name in ("emblem", "badge", "liverybadge"):
         # Integra "Type R" side and rear stickers are `badge` draws: the atlas alpha is the lettering (owner,
         # visual-51: white surround with the opaque badge shader).
         return bind(EXTERIOR_STICKER, MaterialUse.FIDELITY, True, fidelity="source_exterior_atlas_alpha")

@@ -6,6 +6,7 @@ from pathlib import Path
 import sqlite3
 import struct
 import subprocess
+import os
 import sys
 import tempfile
 from zipfile import BadZipFile
@@ -237,6 +238,9 @@ def main(argv=None):
     except (BadZipFile, ImportError, KeyError, OSError, ValueError, sqlite3.Error, struct.error,
             subprocess.CalledProcessError) as error:
         print(f"expanded-garage: {error}", file=sys.stderr)
+        if os.environ.get("EXPANDED_GARAGE_TRACEBACK"):
+            import traceback
+            traceback.print_exc()
         return 1
     return 0
 

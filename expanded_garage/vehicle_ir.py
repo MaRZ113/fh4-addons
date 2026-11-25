@@ -88,7 +88,27 @@ def load(root):
             pending.extend(value.values())
         elif isinstance(value, list):
             pending.extend(value)
+    normalise_component_names(ir)
     return ir
+
+
+def normalise_component_names(ir):
+    """FM4 race and supercar panes are `lexan*` (lexanF windscreen, lexanR rear, lexanLF side, lexanLTL lamp
+    cover: GUM_ApolloS_10, BMW_6_M3GTR_01) where road cars say `glass*`; every pane, lamp and category rule
+    keys on `glass`. Renamed unless the car already has that `glass` name. EXPANDED_GARAGE_LEXAN=keep."""
+    import os
+    if os.environ.get("EXPANDED_GARAGE_LEXAN") == "keep":
+        return
+    for model in ir["sections"]["geometry"]["data"].get("models", []):
+        names = {c["name"].casefold() for c in model["components"]}
+        for component in model["components"]:
+            name = component["name"]
+            if name.casefold().startswith("lexan"):
+                renamed = "glass" + name[5:]
+                if renamed.casefold() not in names:
+                    component.setdefault("source_name", name)
+                    component["name"] = renamed
+                    names.add(renamed.casefold())
 
 
 def read_asset(root, ir, digest):

@@ -132,8 +132,17 @@ class DatabaseGraph:
                     for row in ordered:
                         cols = ", ".join(map(ident, row.values))
                         masks = ", ".join("?" for _ in row.values)
-                        db.execute(f"INSERT INTO {ident(row.key.table)} ({cols}) VALUES ({masks})",
-                                   tuple(row.values.values()))
+                        try:
+                            db.execute(f"INSERT INTO {ident(row.key.table)} ({cols}) VALUES ({masks})",
+                                       tuple(row.values.values()))
+                        except sqlite3.IntegrityError as error:
+                            failing = [fk for fk in db.execute(f"PRAGMA foreign_key_list({ident(row.key.table)})")
+                                       if fk[3] in row.values and db.execute(
+                                           f"SELECT 1 FROM {ident(fk[2])} WHERE {ident(fk[4] or 'rowid')}=?",
+                                           (row.values[fk[3]],)).fetchone() is None]
+                            raise ValueError(f"{error} inserting {row.key}: "
+                                             + ", ".join(f"{fk[3]}={row.values[fk[3]]!r} -> {fk[2]}.{fk[4]}"
+                                                         for fk in failing)) from error
             with closing(snapshot(scratch)) as db, closing(snapshot(source)) as before:
                 delta = audit_insertions(before, db, expected)
                 for row in ordered:

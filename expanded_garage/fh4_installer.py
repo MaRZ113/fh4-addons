@@ -266,8 +266,12 @@ def preflight(host, package):
         if not blockers:
             stem = archive.stem.casefold()
             with ZipFile(archive) as members:
-                required_assets = {"physicsdefinition.bin", f"scene/{stem}_skeleton.gr2", f"animations/{stem}.gsf"}
-                if not required_assets <= {m.casefold() for m in members.namelist()}:
+                names = {m.casefold() for m in members.namelist()}
+                required_assets = {"physicsdefinition.bin", f"scene/{stem}_skeleton.gr2"}
+                if any(n.startswith("animations/") for n in names):
+                    # Cars without animatable needles ship no GSF (gsf state not_required).
+                    required_assets.add(f"animations/{stem}.gsf")
+                if not required_assets <= names:
                     raise ValueError(f"Drive-ready claim disagrees with the staged runtime assets: {relative}")
         if trial:
             trial_assets = car["trial_prerequisites"]
@@ -388,7 +392,8 @@ def suspension_xml_evidence(raw, axle):
     steered = axle == "Front"
     required = (tree.find(".//Locator[@Id='S']") is not None
                 and all(tree.find(f".//{part}") is not None for part in ("Chassis","Upright")))
-    if (tree.tag != "Suspension" or tree.get("Steered","").casefold() != str(steered).lower() or not required
+    # Rear templates may still say Steered="TRUE": native dwr_hyper.xml (rear of the 2015 hypercar set) does.
+    if (tree.tag != "Suspension" or steered and tree.get("Steered","").casefold() != "true" or not required
             or steered and tree.find("Kingpin") is None
             or not 0 < float(tree.get("HalfTrack","0")) < 2
             or not 0 < float(tree.get("TireRadius","0")) < 1
@@ -450,8 +455,11 @@ def prepare_package(build, output, crypto, original_db, original_manifest, origi
                         raise ValueError(f"Unexpected shared native suspension asset: {source}")
                     decoded = root / f'{car["car_id"]}-{axle}-suspension.xml'
                     invoke("decrypt",source,"-o",decoded)
-                    readback[axle] = {"protected_sha256":entry["sha256"],
-                                      **suspension_xml_evidence(decoded.read_bytes(),axle)}
+                    try:
+                        evidence = suspension_xml_evidence(decoded.read_bytes(), axle)
+                    except ValueError as error:
+                        raise ValueError(f'{error}: car {car["car_id"]} {entry["path"]}') from error
+                    readback[axle] = {"protected_sha256":entry["sha256"], **evidence}
                 shared_suspension[str(car["car_id"])] = readback
         folder = root / "candidate"
         folder.mkdir()

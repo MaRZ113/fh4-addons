@@ -1305,6 +1305,12 @@ def make_models(root, ir, identity, library):
     if animation_payloads:
         rig_report["gsf"] = {"state":"structurally_verified","member":f"animations/{aliases}.gsf",
                              "runtime":"unverified","clips":[g["member"] for g in motion["gauges"]]}
+    elif not motion["gauges"]:
+        # No needle to animate: digital or race dash (TOY_Prius_11, BMW_6_M3GTR_01) or no FM4 dial calibration
+        # (SAL_S281_06). Like the first fleet before visual-23, the car ships without a GSF, needles at rest.
+        rig_report["gsf"] = {"state": "not_required", "member": f"animations/{aliases}.gsf",
+                             "reason": "; ".join(sorted({u["reason"] for u in motion["unresolved"]
+                                                         if u["role"] in ("speedometer", "tachometer")}))}
     payloads[rig_report["gr2"]["member"]] = gr2
     if probe := animation_probe():
         # Diagnostic: the donor's whole animation stack, byte for byte (skeleton GR2, GSF, clips).

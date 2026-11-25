@@ -48,15 +48,20 @@ class NativeDataCarContract:
 
     def road_fields(self, src, bucket, families):
         original = src.record("Data_Car")
-        if original["CarTypeID"] != 1 or bucket is None:
+        # Road cars (1) and race cars (3: FH4 ships 71, e.g. FER_FXX_05, PAG_ZondaR_10) are supported; the
+        # catalogue cohort is the bucket's road cars plus those of the source's own type.
+        if original["CarTypeID"] not in (1, 3) or bucket is None:
             raise ValueError("Source needs a supported road-car body and catalogue classification")
         catalogue = self.db.execute("""SELECT c.* FROM Data_Car c JOIN Data_Car_Buckets k ON k.CarId=c.Id
-                                       WHERE c.CarTypeID=1 AND c.ContentId<>99 AND k.CarBucket=? ORDER BY c.Id""",
-                                    (bucket,)).fetchall()
+                                       WHERE c.CarTypeID IN (1, ?) AND c.ContentId<>99 AND k.CarBucket=? ORDER BY c.Id""",
+                                    (original["CarTypeID"], bucket)).fetchall()
         components = {part["name"].casefold() for model in src.ir["sections"]["geometry"]["data"]["models"]
                       if model["role"].startswith("exterior") for part in model["components"]}
         flags = ("IsOpenCockpit","IsOpenWheel")
-        if not {"body","glassf","glassr"} <= components or not any(p.startswith("bumperf") for p in components):
+        # Closed body: windscreen plus a rear screen or both front side panes (mid-engine GUM_ApolloS_10 has an
+        # engine cover where the rear screen would be).
+        closed = {"body", "glassf"} <= components and ("glassr" in components or {"glasslf", "glassrf"} <= components)
+        if not closed or not any(p.startswith("bumperf") for p in components):
             raise ValueError("Source body closure and wheel coverage need a native classification")
         body,body_evidence = self.mode(catalogue,flags,"Closed FM4 body/window groups and matching native catalogue class")
         if tuple(body.values()) != (0,0):

@@ -11,7 +11,7 @@ from zipfile import ZipFile
 from .database_graph import DatabaseGraph, ident
 from .fh4_data_car import NativeDataCarContract, wheel_load_contract
 from .fh4_db import snapshot
-from .fh4_dynamics import NativeDynamicsCompiler, TARGET_FIELDS, aero_offsets, drive_class, localized_rows, ratios
+from .fh4_dynamics import NativeDynamicsCompiler, shift_accepted, TARGET_FIELDS, aero_offsets, drive_class, localized_rows, ratios
 from .fh4_trial_dynamics import TrialDynamics
 from .fh4_presentation import NativeLocalization, generate_art
 from .fh4_scene_contract import FAMILIES, NativeCarSceneContract
@@ -133,6 +133,31 @@ def register_manufacturer(graph, src, locale):
 
 
 def catalogue_bucket(car, drive):
+    """FH4 CarBucket name for an FM4 car: the hand rules of the first fleet, then a nearest-neighbour vote over
+    the cars both games ship (fm4-fh4-bucket-map-v1.json, research/extract_bucket_map.py)."""
+    return hand_bucket(car, drive) or learned_bucket(car)
+
+
+def learned_bucket(car, k=5):
+    if os.environ.get("EXPANDED_GARAGE_BUCKETS") == "hand":
+        return None
+    import json
+    from importlib.resources import files
+    table = json.loads(files(__package__).joinpath("fm4-fh4-bucket-map-v1.json").read_text(encoding="utf-8"))
+
+    def distance(row):
+        return ((row["CarTypeID"] != car["CarTypeID"]) * 10 + (row["FamilyBodyID"] != car["FamilyBodyID"]) * 4
+                + abs(row["Year"] - car["Year"]) / 5 + abs(row["PerformanceIndex"] - car["PerformanceIndex"]) / 0.06
+                + abs(row["CurbWeight"] - car["CurbWeight"]) / 1.5
+                + (row["EnginePlacementID"] != car["EnginePlacementID"]) * 0.7)
+    rows = [r for r in table["cars"] if r["media_name"].casefold() != str(car.get("MediaName", "")).casefold()]
+    votes = Counter()
+    for row in sorted(rows, key=lambda r: (distance(r), r["media_name"]))[:k]:
+        votes[row["bucket"]] += 1 / (1 + distance(row))
+    return votes.most_common(1)[0][0] if votes else None
+
+
+def hand_bucket(car, drive):
     if car["CarTypeID"] != 1:
         return None
     if car["FamilyBodyID"] == 4 and car["EnginePlacementID"] == 1:
@@ -243,7 +268,7 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
                                   "drive_class": drive_class(table, field)}
                                  for field, status in fields.items()
                                  if status in ("unmapped", "native_default_unverified"))
-    if not shift or shift["inferred"]:
+    if not shift_accepted(shift):
         physical_unmapped.append({"table":"Data_Drivetrain","field":"ShiftSystemID",
                                   "classification":"missing_authoritative_shift_mode",
                                   "drive_class":"physics_startup"})
@@ -351,6 +376,10 @@ def compile_vehicle(graph, vehicle, locale, tires, dynamics, buckets, families, 
     def selected_upgrades():
         for table, entries in sorted(src.tables.items()):
             if not table.startswith("List_Upgrade"):
+                continue
+            if table.startswith("List_UpgradeMotor") and not src.entries("Data_Motor"):
+                # Electric motors (TOY_Prius_11 hybrid, NIS_Leaf_11) are not converted yet: no Data_Motor row.
+                unresolved(table, "Electric motor upgrades need Data_Motor, not converted yet.")
                 continue
             for entry in entries:
                 row = entry["record"]

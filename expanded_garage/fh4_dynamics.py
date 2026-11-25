@@ -86,6 +86,14 @@ def aero_offsets(row, *, source=False):
     return values
 
 
+def shift_accepted(shift):
+    """A shift mode the dynamics cohort may key on: authoritative, or inferred (stick for a clutch road car,
+    sequential for a race car) unless EXPANDED_GARAGE_INFERRED_SHIFT=block. Inferred modes stay marked in the
+    receipt. Blocking them left every converted car beyond the first three without a physics cohort."""
+    import os
+    return bool(shift) and (not shift["inferred"] or os.environ.get("EXPANDED_GARAGE_INFERRED_SHIFT") != "block")
+
+
 def ratios(row, forward=None):
     count = row["NumGears"]
     if type(count) is not int or not 2 <= count <= 9 or forward is not None and forward + 1 != count:
@@ -183,7 +191,10 @@ class NativeDynamicsCompiler:
             # FM4 non-paddle layouts include automatics. This is a candidate for an observed
             # discrete, clutch-equipped road drivetrain and needs independent gearbox evidence.
             label, rule = "stick", "discrete road gearbox and non-paddle FM4 driver rig; inferred"
-            if source.record("Data_Car")["CarTypeID"] != 1:
+            if source.record("Data_Car")["CarTypeID"] == 3:
+                # FH4 race cars (CarTypeID 3) mostly shift sequentially: 35 of 71 stock drivetrains.
+                label, rule = "sequential", "FM4 race car, native race-car majority (35 of 71); inferred"
+            elif source.record("Data_Car")["CarTypeID"] != 1:
                 return None
         else:
             return None

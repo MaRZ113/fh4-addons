@@ -15,7 +15,7 @@ from .database_graph import audit_insertions, ident
 from .fh4_db import snapshot
 from .fh4_db_compiler import GRAPHICS
 from .fh4_data_car import NativeDataCarContract, wheel_load_contract
-from .fh4_dynamics import NativeDynamicsCompiler, STEERING, aero_offsets, finite_between, ratios
+from .fh4_dynamics import shift_accepted, NativeDynamicsCompiler, STEERING, aero_offsets, finite_between, ratios
 from .fh4_presentation import EN_VIRTUAL, StringTable, thumbnail_virtual, update_mount
 from .fh4_thumbnail import audit_archive as audit_thumbnail_archive, thumbnail_archives, thumbnail_catalogue_path
 from .fh4_tires import MODEL_FIELDS, NativeTireCompiler, TireAssets, WIDTH_TABLES, dimensions
@@ -26,7 +26,7 @@ from .vehicle_ir import sha256
 
 
 TYPE_TO_TABLE = {kind: table for table, kind in GRAPHICS.items()}
-GOOD_STATES = {"confirmed", "structurally_verified"}
+GOOD_STATES = {"confirmed", "structurally_verified", "not_required"}
 
 
 DRIVE_GATES = {
@@ -337,7 +337,8 @@ def audit_trial_assets(archive, frames, zip_evidence):
     for key, label in (("steering_binding","Carbin steering wheel on boneSteeringWheelSpindle"),
                        ("locator_xml","owned Locators.xml"),
                        ("gr2","own GR2 skeleton"),("gsf","named GSF with resolved accessory clips")):
-        if not zip_evidence[key]:
+        if not zip_evidence[key] and not (key == "gsf" and not any(
+                n.casefold().startswith("animations/") for n in archive.namelist())):
             missing.append(f"Missing {label}")
     collision = None
     if "physicsdefinition.bin" in archive.namelist() and frames.get("unloaded_contact_m"):
@@ -414,7 +415,8 @@ def integrated_report(baseline, baseline_manifest, library, output, mount, build
                     "gr2": scene["skeleton"].removeprefix(fh4.virtual(alias, "")).replace("\\", "/").replace(".modelbin", ".gr2"),
                     "animation": f"animations/{alias.casefold()}.gsf",
                     "lighting": "lights.bin", "light_presets": "lightpresets.bin",
-                }.items() if key not in members)
+                }.items() if key not in members and not (
+                    label == "animation" and receipt["render"]["runtime_rig"]["gsf"]["state"] == "not_required"))
                 if native is not None:
                     native_gr2 = receipt["render"]["runtime_rig"]["gr2"]["member"]
                     if receipt["render"]["runtime_rig"].get("animation_probe"):
@@ -565,7 +567,7 @@ def integrated_report(baseline, baseline_manifest, library, output, mount, build
         "tire_physics": ("structurally_verified" if all(r["tires"]["structural_complete"] for r in results)
                          else "missing_dependency"),
         "native_dynamics": ("structurally_verified" if all(not r["dynamics"]["unresolved_target_fields"]
-            and r["dynamics"]["shift"] is not None and not r["dynamics"]["shift"]["inferred"]
+            and shift_accepted(r["dynamics"]["shift"])
             for r in results) else "missing_dependency"),
         "autoshow_catalogue": ("structurally_verified" if english and all(r["bucket"] and not r["missing_artwork"] for r in results)
                                else "missing_dependency"),
@@ -590,8 +592,8 @@ def integrated_report(baseline, baseline_manifest, library, output, mount, build
         features["native_animation_rig"] = ("unverified_runtime" if features["gr2_gsf_graph_structure"] in GOOD_STATES
                                             else "missing_dependency")
         features["native_dynamics"] = ("structurally_verified" if all(
-            not r["dynamics"]["required_drive_fields"] and r["dynamics"]["shift"] is not None
-            and not r["dynamics"]["shift"]["inferred"] for r in results) else "missing_dependency")
+            not r["dynamics"]["required_drive_fields"] and shift_accepted(r["dynamics"]["shift"])
+            for r in results) else "missing_dependency")
         features["materials_required_for_drive"] = ("missing_dependency" if any(
             not info["drive_resolved"] and info["category"] in ("mandatory_runtime","required_for_visibility")
             for r in results for info in r["material_contract"]) else "structurally_verified")

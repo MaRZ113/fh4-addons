@@ -1,0 +1,1973 @@
+{
+ "format": "fm4-fh4-bucket-map-v1",
+ "fields": [
+  "CarTypeID",
+  "FamilyBodyID",
+  "Year",
+  "PerformanceIndex",
+  "CurbWeight",
+  "EnginePlacementID"
+ ],
+ "cars": [
+  {
+   "media_name": "TOY_2000GT_69",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1969,
+   "PerformanceIndex": 0.226,
+   "CurbWeight": 11.56661,
+   "EnginePlacementID": 1,
+   "bucket": "classic sports cars"
+  },
+  {
+   "media_name": "FER_250GTO_64",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1964,
+   "PerformanceIndex": 0.45,
+   "CurbWeight": 11.245,
+   "EnginePlacementID": 1,
+   "bucket": "classic racers"
+  },
+  {
+   "media_name": "MER_300SL_54",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1954,
+   "PerformanceIndex": 0.303,
+   "CurbWeight": 13.42634,
+   "EnginePlacementID": 1,
+   "bucket": "rare classics"
+  },
+  {
+   "media_name": "FER_355Berlinetta_94",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1994,
+   "PerformanceIndex": 0.502,
+   "CurbWeight": 14.49681,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "FER_512TR_91",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1991,
+   "PerformanceIndex": 0.51,
+   "CurbWeight": 16.73756,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "FER_575_02",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2002,
+   "PerformanceIndex": 0.541,
+   "CurbWeight": 17.30484,
+   "EnginePlacementID": 1,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "CHE_CamaroSS_69",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1969,
+   "PerformanceIndex": 0.339,
+   "CurbWeight": 15.99847,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "LOT_Carlton_89",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 1990,
+   "PerformanceIndex": 0.437,
+   "CurbWeight": 16.5153,
+   "EnginePlacementID": 1,
+   "bucket": "retro saloons"
+  },
+  {
+   "media_name": "KOE_CC8_02",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2002,
+   "PerformanceIndex": 0.674,
+   "CurbWeight": 12.75,
+   "EnginePlacementID": 2,
+   "bucket": "hypercars"
+  },
+  {
+   "media_name": "TVR_Cerbera_98",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 1998,
+   "PerformanceIndex": 0.776,
+   "CurbWeight": 9.75,
+   "EnginePlacementID": 1,
+   "bucket": "extreme track toys"
+  },
+  {
+   "media_name": "FER_360Challenge_03",
+   "CarTypeID": 2,
+   "FamilyBodyID": 10,
+   "Year": 2003,
+   "PerformanceIndex": 0.606,
+   "CurbWeight": 12.9,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "CHE_Chevelle_70",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1970,
+   "PerformanceIndex": 0.341,
+   "CurbWeight": 17.23,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "HON_CivicR_04",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 2004,
+   "PerformanceIndex": 0.334,
+   "CurbWeight": 11.9,
+   "EnginePlacementID": 1,
+   "bucket": "retro hot hatch"
+  },
+  {
+   "media_name": "SHE_Cobra427_65",
+   "CarTypeID": 1,
+   "FamilyBodyID": 9,
+   "Year": 1965,
+   "PerformanceIndex": 0.508,
+   "CurbWeight": 10.66,
+   "EnginePlacementID": 1,
+   "bucket": "rare classics"
+  },
+  {
+   "media_name": "VW_Corrado_95",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1995,
+   "PerformanceIndex": 0.28,
+   "CurbWeight": 12.40122,
+   "EnginePlacementID": 1,
+   "bucket": "retro hot hatch"
+  },
+  {
+   "media_name": "CHE_CorvetteStingray_67",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1967,
+   "PerformanceIndex": 0.417,
+   "CurbWeight": 15.35,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "CHE_CorvetteZ06_02",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2002,
+   "PerformanceIndex": 0.532,
+   "CurbWeight": 14.15208,
+   "EnginePlacementID": 1,
+   "bucket": "retro muscle"
+  },
+  {
+   "media_name": "CHE_CorvetteZR1_70",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1970,
+   "PerformanceIndex": 0.376,
+   "CurbWeight": 15.3,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "LAM_Countach_88",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1988,
+   "PerformanceIndex": 0.523,
+   "CurbWeight": 14.89622,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "HON_CRXsi_91",
+   "CarTypeID": 1,
+   "FamilyBodyID": 3,
+   "Year": 1991,
+   "PerformanceIndex": 0.277,
+   "CurbWeight": 9.8,
+   "EnginePlacementID": 1,
+   "bucket": "retro hot hatch"
+  },
+  {
+   "media_name": "LAN_Delta_92",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 1992,
+   "PerformanceIndex": 0.315,
+   "CurbWeight": 13.0,
+   "EnginePlacementID": 1,
+   "bucket": "retro rally"
+  },
+  {
+   "media_name": "LAM_DiabloGTR_99",
+   "CarTypeID": 3,
+   "FamilyBodyID": 11,
+   "Year": 1999,
+   "PerformanceIndex": 0.701,
+   "CurbWeight": 13.9482,
+   "EnginePlacementID": 2,
+   "bucket": "extreme track toys"
+  },
+  {
+   "media_name": "LAM_DiabloSV_97",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 1997,
+   "PerformanceIndex": 0.586,
+   "CurbWeight": 15.76,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "FER_Dino246_69",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1969,
+   "PerformanceIndex": 0.352,
+   "CurbWeight": 10.79568,
+   "EnginePlacementID": 2,
+   "bucket": "rare classics"
+  },
+  {
+   "media_name": "MIT_EclipseGSX_95",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1995,
+   "PerformanceIndex": 0.337,
+   "CurbWeight": 14.51066,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "LOT_ElanSprint_72",
+   "CarTypeID": 1,
+   "FamilyBodyID": 8,
+   "Year": 1971,
+   "PerformanceIndex": 0.271,
+   "CurbWeight": 7.43892,
+   "EnginePlacementID": 1,
+   "bucket": "classic sports cars"
+  },
+  {
+   "media_name": "LOT_Elise111S_05",
+   "CarTypeID": 1,
+   "FamilyBodyID": 8,
+   "Year": 2005,
+   "PerformanceIndex": 0.389,
+   "CurbWeight": 8.06,
+   "EnginePlacementID": 2,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "FER_Enzo_02",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2002,
+   "PerformanceIndex": 0.704,
+   "CurbWeight": 14.0,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "LOT_Esprit_02",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2002,
+   "PerformanceIndex": 0.501,
+   "CurbWeight": 12.93,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "JAG_Etype_61",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1961,
+   "PerformanceIndex": 0.353,
+   "CurbWeight": 13.15418,
+   "EnginePlacementID": 1,
+   "bucket": "rare classics"
+  },
+  {
+   "media_name": "MCL_F1GT_97",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 1997,
+   "PerformanceIndex": 0.712,
+   "CurbWeight": 11.2,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "FER_F40_87",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 1987,
+   "PerformanceIndex": 0.621,
+   "CurbWeight": 13.51728,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "FER_F50_95",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 1995,
+   "PerformanceIndex": 0.636,
+   "CurbWeight": 12.30163,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "NIS_Fairlady432Z_69",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1969,
+   "PerformanceIndex": 0.252,
+   "CurbWeight": 10.47,
+   "EnginePlacementID": 1,
+   "bucket": "classic sports cars"
+  },
+  {
+   "media_name": "NIS_FairladyZ_03",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2003,
+   "PerformanceIndex": 0.416,
+   "CurbWeight": 15.01391,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "NIS_FairladyZvSTwinTurbo_94",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1994,
+   "PerformanceIndex": 0.414,
+   "CurbWeight": 15.2,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "FOR_GT_05",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2005,
+   "PerformanceIndex": 0.595,
+   "CurbWeight": 15.37678,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "VW_GolfGTi16vMk2_92",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 1992,
+   "PerformanceIndex": 0.233,
+   "CurbWeight": 11.0,
+   "EnginePlacementID": 1,
+   "bucket": "retro hot hatch"
+  },
+  {
+   "media_name": "VW_GolfR32_03",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 2003,
+   "PerformanceIndex": 0.349,
+   "CurbWeight": 14.77,
+   "EnginePlacementID": 1,
+   "bucket": "hot hatch"
+  },
+  {
+   "media_name": "MIT_GTO_97",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1997,
+   "PerformanceIndex": 0.413,
+   "CurbWeight": 16.8,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "FER_GTO_84",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1984,
+   "PerformanceIndex": 0.555,
+   "CurbWeight": 11.59855,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "SUB_Impreza22b_98",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1998,
+   "PerformanceIndex": 0.467,
+   "CurbWeight": 12.7,
+   "EnginePlacementID": 1,
+   "bucket": "retro rally"
+  },
+  {
+   "media_name": "SUB_WRXSTi_04",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 2004,
+   "PerformanceIndex": 0.457,
+   "CurbWeight": 14.83247,
+   "EnginePlacementID": 1,
+   "bucket": "modern rally"
+  },
+  {
+   "media_name": "SUB_WRXSTi_05",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 2005,
+   "PerformanceIndex": 0.461,
+   "CurbWeight": 15.03659,
+   "EnginePlacementID": 1,
+   "bucket": "modern rally"
+  },
+  {
+   "media_name": "ACU_IntegraR_01",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2001,
+   "PerformanceIndex": 0.321,
+   "CurbWeight": 11.9703,
+   "EnginePlacementID": 1,
+   "bucket": "retro hot hatch"
+  },
+  {
+   "media_name": "MIT_LancerEvoIXMR_06",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 2006,
+   "PerformanceIndex": 0.458,
+   "CurbWeight": 14.90076,
+   "EnginePlacementID": 1,
+   "bucket": "modern rally"
+  },
+  {
+   "media_name": "MIT_LancerEvoVIGSR_99",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 1999,
+   "PerformanceIndex": 0.452,
+   "CurbWeight": 12.80038,
+   "EnginePlacementID": 1,
+   "bucket": "retro rally"
+  },
+  {
+   "media_name": "MIT_LancerEvoVIIIMR_04",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 2004,
+   "PerformanceIndex": 0.466,
+   "CurbWeight": 14.1,
+   "EnginePlacementID": 1,
+   "bucket": "modern rally"
+  },
+  {
+   "media_name": "BMW_E36M3_97",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1997,
+   "PerformanceIndex": 0.426,
+   "CurbWeight": 14.60138,
+   "EnginePlacementID": 1,
+   "bucket": "retro saloons"
+  },
+  {
+   "media_name": "BMW_E46M3_05",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2005,
+   "PerformanceIndex": 0.45,
+   "CurbWeight": 15.49044,
+   "EnginePlacementID": 1,
+   "bucket": "retro saloons"
+  },
+  {
+   "media_name": "MAS_MC12_04",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2004,
+   "PerformanceIndex": 0.701,
+   "CurbWeight": 14.25,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "VAU_MonaroVXR_05",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2005,
+   "PerformanceIndex": 0.459,
+   "CurbWeight": 16.77,
+   "EnginePlacementID": 1,
+   "bucket": "modern muscle"
+  },
+  {
+   "media_name": "TOY_MR2GT_95",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1995,
+   "PerformanceIndex": 0.401,
+   "CurbWeight": 12.05195,
+   "EnginePlacementID": 2,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "FOR_MustangCobraR_00",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2000,
+   "PerformanceIndex": 0.468,
+   "CurbWeight": 16.27943,
+   "EnginePlacementID": 1,
+   "bucket": "retro muscle"
+  },
+  {
+   "media_name": "HON_NSXR_05",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2005,
+   "PerformanceIndex": 0.486,
+   "CurbWeight": 12.7,
+   "EnginePlacementID": 2,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "HON_NSXR_92",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1992,
+   "PerformanceIndex": 0.457,
+   "CurbWeight": 12.2971,
+   "EnginePlacementID": 2,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "BUI_RegalGNX_87",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1987,
+   "PerformanceIndex": 0.359,
+   "CurbWeight": 16.08012,
+   "EnginePlacementID": 1,
+   "bucket": "retro muscle"
+  },
+  {
+   "media_name": "AUD_RS4_06",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 2006,
+   "PerformanceIndex": 0.503,
+   "CurbWeight": 16.5,
+   "EnginePlacementID": 1,
+   "bucket": "super saloons"
+  },
+  {
+   "media_name": "AUD_RS6_03",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 2003,
+   "PerformanceIndex": 0.463,
+   "CurbWeight": 18.25256,
+   "EnginePlacementID": 1,
+   "bucket": "retro saloons"
+  },
+  {
+   "media_name": "ACU_RSXTypeS_02",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2002,
+   "PerformanceIndex": 0.287,
+   "CurbWeight": 12.79131,
+   "EnginePlacementID": 1,
+   "bucket": "retro hot hatch"
+  },
+  {
+   "media_name": "MAZ_RX7_90",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1990,
+   "PerformanceIndex": 0.338,
+   "CurbWeight": 13.52159,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "MAZ_RX7_97",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1997,
+   "PerformanceIndex": 0.417,
+   "CurbWeight": 12.8412,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "MAZ_RX7SpiritR_02",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2002,
+   "PerformanceIndex": 0.469,
+   "CurbWeight": 12.7,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "HON_S2000_03",
+   "CarTypeID": 1,
+   "FamilyBodyID": 9,
+   "Year": 2003,
+   "PerformanceIndex": 0.414,
+   "CurbWeight": 12.5,
+   "EnginePlacementID": 1,
+   "bucket": "modern sports cars"
+  },
+  {
+   "media_name": "SAL_S7_04",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2004,
+   "PerformanceIndex": 0.695,
+   "CurbWeight": 12.5,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "TVR_Sagaris_05",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2005,
+   "PerformanceIndex": 0.582,
+   "CurbWeight": 10.78,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "NIS_SilviaK_92",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1992,
+   "PerformanceIndex": 0.358,
+   "CurbWeight": 11.5,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "NIS_SilviaKs_94",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1994,
+   "PerformanceIndex": 0.34,
+   "CurbWeight": 12.7,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "NIS_SilviaSpecR_00",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2000,
+   "PerformanceIndex": 0.399,
+   "CurbWeight": 12.4,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "NIS_SkylineGTR_93",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1993,
+   "PerformanceIndex": 0.439,
+   "CurbWeight": 15.0,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "NIS_SkylineGTRVSpecII_02",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2002,
+   "PerformanceIndex": 0.459,
+   "CurbWeight": 15.6,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "REN_Clio_03",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 2003,
+   "PerformanceIndex": 0.382,
+   "CurbWeight": 14.0,
+   "EnginePlacementID": 2,
+   "bucket": "hot hatch"
+  },
+  {
+   "media_name": "TOY_Sprinter_85",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1985,
+   "PerformanceIndex": 0.229,
+   "CurbWeight": 9.5,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "LAN_Stratos_74",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1974,
+   "PerformanceIndex": 0.357,
+   "CurbWeight": 9.8023,
+   "EnginePlacementID": 2,
+   "bucket": "classic rally"
+  },
+  {
+   "media_name": "TOY_Supra20GT_92",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1992,
+   "PerformanceIndex": 0.302,
+   "CurbWeight": 16.0,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "TOY_SupraRZ_98",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1998,
+   "PerformanceIndex": 0.45,
+   "CurbWeight": 15.1,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "TVR_TuscanS_01",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2001,
+   "PerformanceIndex": 0.563,
+   "CurbWeight": 10.9998,
+   "EnginePlacementID": 1,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "DOD_ViperGTSACR_99",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1999,
+   "PerformanceIndex": 0.553,
+   "CurbWeight": 15.6492,
+   "EnginePlacementID": 1,
+   "bucket": "retro muscle"
+  },
+  {
+   "media_name": "VAU_VX220_04",
+   "CarTypeID": 1,
+   "FamilyBodyID": 8,
+   "Year": 2004,
+   "PerformanceIndex": 0.39,
+   "CurbWeight": 9.3,
+   "EnginePlacementID": 2,
+   "bucket": "modern sports cars"
+  },
+  {
+   "media_name": "JAG_XJ220_93",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 1993,
+   "PerformanceIndex": 0.624,
+   "CurbWeight": 13.50014,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "DOD_ChargerRT_69",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1969,
+   "PerformanceIndex": 0.341,
+   "CurbWeight": 16.65138,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "BMW_M3GTR_05",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2002,
+   "PerformanceIndex": 0.505,
+   "CurbWeight": 13.5,
+   "EnginePlacementID": 1,
+   "bucket": "track toys"
+  },
+  {
+   "media_name": "NIS_R390_98",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 1998,
+   "PerformanceIndex": 0.697,
+   "CurbWeight": 10.27,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "MER_CLKGTR_98",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 1998,
+   "PerformanceIndex": 0.713,
+   "CurbWeight": 14.4,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "HON_NSXRGT_05",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2005,
+   "PerformanceIndex": 0.517,
+   "CurbWeight": 11.77072,
+   "EnginePlacementID": 2,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "PEU_207Super2000_07",
+   "CarTypeID": 3,
+   "FamilyBodyID": 4,
+   "Year": 2007,
+   "PerformanceIndex": 0.518,
+   "CurbWeight": 11.0,
+   "EnginePlacementID": 1,
+   "bucket": "rally monsters"
+  },
+  {
+   "media_name": "HON_CivicTypeR_07",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 2007,
+   "PerformanceIndex": 0.317,
+   "CurbWeight": 13.45,
+   "EnginePlacementID": 1,
+   "bucket": "hot hatch"
+  },
+  {
+   "media_name": "AUD_SportQuattro_83",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1983,
+   "PerformanceIndex": 0.43,
+   "CurbWeight": 12.73233,
+   "EnginePlacementID": 1,
+   "bucket": "retro rally"
+  },
+  {
+   "media_name": "REN_5Turbo_80",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 1980,
+   "PerformanceIndex": 0.269,
+   "CurbWeight": 9.7,
+   "EnginePlacementID": 2,
+   "bucket": "retro rally"
+  },
+  {
+   "media_name": "REN_Clio197_07",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 2007,
+   "PerformanceIndex": 0.321,
+   "CurbWeight": 12.6,
+   "EnginePlacementID": 1,
+   "bucket": "hot hatch"
+  },
+  {
+   "media_name": "LAM_MiuraP400_67",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1967,
+   "PerformanceIndex": 0.437,
+   "CurbWeight": 12.45,
+   "EnginePlacementID": 2,
+   "bucket": "rare classics"
+  },
+  {
+   "media_name": "DOD_ChallengerHemi_70",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1970,
+   "PerformanceIndex": 0.371,
+   "CurbWeight": 17.23651,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "BMW_M3E30_91",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1991,
+   "PerformanceIndex": 0.34,
+   "CurbWeight": 12.52822,
+   "EnginePlacementID": 1,
+   "bucket": "retro saloons"
+  },
+  {
+   "media_name": "PON_TransAm_73",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1973,
+   "PerformanceIndex": 0.351,
+   "CurbWeight": 16.76,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "FER_FXX_05",
+   "CarTypeID": 3,
+   "FamilyBodyID": 11,
+   "Year": 2005,
+   "PerformanceIndex": 0.84,
+   "CurbWeight": 11.55,
+   "EnginePlacementID": 2,
+   "bucket": "extreme track toys"
+  },
+  {
+   "media_name": "KOE_CCGT_08",
+   "CarTypeID": 3,
+   "FamilyBodyID": 11,
+   "Year": 2008,
+   "PerformanceIndex": 0.841,
+   "CurbWeight": 10.99961,
+   "EnginePlacementID": 2,
+   "bucket": "extreme track toys"
+  },
+  {
+   "media_name": "MIT_LancerEvoXGSR_08",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 2008,
+   "PerformanceIndex": 0.448,
+   "CurbWeight": 15.4,
+   "EnginePlacementID": 1,
+   "bucket": "modern rally"
+  },
+  {
+   "media_name": "BMW_M3E92_08",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2008,
+   "PerformanceIndex": 0.461,
+   "CurbWeight": 16.55,
+   "EnginePlacementID": 1,
+   "bucket": "super saloons"
+  },
+  {
+   "media_name": "FER_F50GT_96",
+   "CarTypeID": 3,
+   "FamilyBodyID": 11,
+   "Year": 1996,
+   "PerformanceIndex": 0.882,
+   "CurbWeight": 9.08,
+   "EnginePlacementID": 2,
+   "bucket": "extreme track toys"
+  },
+  {
+   "media_name": "FER_F430Scuderia_07",
+   "CarTypeID": 2,
+   "FamilyBodyID": 11,
+   "Year": 2007,
+   "PerformanceIndex": 0.634,
+   "CurbWeight": 13.49436,
+   "EnginePlacementID": 2,
+   "bucket": "modern supercars"
+  },
+  {
+   "media_name": "FER_F40Competizione_89",
+   "CarTypeID": 3,
+   "FamilyBodyID": 11,
+   "Year": 1989,
+   "PerformanceIndex": 0.834,
+   "CurbWeight": 10.5,
+   "EnginePlacementID": 2,
+   "bucket": "extreme track toys"
+  },
+  {
+   "media_name": "ALF_8C_08",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2007,
+   "PerformanceIndex": 0.542,
+   "CurbWeight": 15.85305,
+   "EnginePlacementID": 1,
+   "bucket": "gt cars"
+  },
+  {
+   "media_name": "CHE_CamaroIROCZ_90",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1990,
+   "PerformanceIndex": 0.34,
+   "CurbWeight": 16.45,
+   "EnginePlacementID": 1,
+   "bucket": "retro muscle"
+  },
+  {
+   "media_name": "TOY_CelicaST205_94",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1994,
+   "PerformanceIndex": 0.385,
+   "CurbWeight": 14.4,
+   "EnginePlacementID": 1,
+   "bucket": "retro rally"
+  },
+  {
+   "media_name": "BMW_M1_81",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1981,
+   "PerformanceIndex": 0.431,
+   "CurbWeight": 13.0,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "FOR_MustangSVTCobraR_93",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1993,
+   "PerformanceIndex": 0.351,
+   "CurbWeight": 14.17476,
+   "EnginePlacementID": 1,
+   "bucket": "retro muscle"
+  },
+  {
+   "media_name": "NIS_Skyline2000GTR_71",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1971,
+   "PerformanceIndex": 0.232,
+   "CurbWeight": 11.0,
+   "EnginePlacementID": 1,
+   "bucket": "classic sports cars"
+  },
+  {
+   "media_name": "NIS_SkylineGTRVSpec_95",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1997,
+   "PerformanceIndex": 0.461,
+   "CurbWeight": 15.39,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "PON_TransAmGTA_87",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1987,
+   "PerformanceIndex": 0.302,
+   "CurbWeight": 15.8,
+   "EnginePlacementID": 1,
+   "bucket": "retro muscle"
+  },
+  {
+   "media_name": "DOD_ViperSRT10ACR_08",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2008,
+   "PerformanceIndex": 0.661,
+   "CurbWeight": 15.459,
+   "EnginePlacementID": 1,
+   "bucket": "track toys"
+  },
+  {
+   "media_name": "BMW_Z4MCoupe_08",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2008,
+   "PerformanceIndex": 0.46,
+   "CurbWeight": 14.65103,
+   "EnginePlacementID": 1,
+   "bucket": "modern sports cars"
+  },
+  {
+   "media_name": "SUB_WRXSTi_08",
+   "CarTypeID": 1,
+   "FamilyBodyID": 5,
+   "Year": 2008,
+   "PerformanceIndex": 0.434,
+   "CurbWeight": 15.39946,
+   "EnginePlacementID": 1,
+   "bucket": "modern rally"
+  },
+  {
+   "media_name": "DOD_ChargerDaytona_69",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1969,
+   "PerformanceIndex": 0.4,
+   "CurbWeight": 17.57671,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "CHE_CamaroZ28_79",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1979,
+   "PerformanceIndex": 0.171,
+   "CurbWeight": 16.14789,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "CHE_CorvetteZR1_09",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2009,
+   "PerformanceIndex": 0.629,
+   "CurbWeight": 15.19535,
+   "EnginePlacementID": 1,
+   "bucket": "modern muscle"
+  },
+  {
+   "media_name": "LEX_ISF_09",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 2009,
+   "PerformanceIndex": 0.487,
+   "CurbWeight": 17.14579,
+   "EnginePlacementID": 1,
+   "bucket": "super saloons"
+  },
+  {
+   "media_name": "AST_DBS_09",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2008,
+   "PerformanceIndex": 0.53,
+   "CurbWeight": 16.95,
+   "EnginePlacementID": 1,
+   "bucket": "gt cars"
+  },
+  {
+   "media_name": "FOR_FocusRS_09",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 2009,
+   "PerformanceIndex": 0.41,
+   "CurbWeight": 14.68,
+   "EnginePlacementID": 1,
+   "bucket": "super hot hatch"
+  },
+  {
+   "media_name": "MER_SL65AMG_09",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2009,
+   "PerformanceIndex": 0.573,
+   "CurbWeight": 19.11892,
+   "EnginePlacementID": 1,
+   "bucket": "super gt"
+  },
+  {
+   "media_name": "CHE_Corvette_60",
+   "CarTypeID": 1,
+   "FamilyBodyID": 9,
+   "Year": 1960,
+   "PerformanceIndex": 0.313,
+   "CurbWeight": 13.97065,
+   "EnginePlacementID": 1,
+   "bucket": "classic sports cars"
+  },
+  {
+   "media_name": "VW_TouaregR50_08",
+   "CarTypeID": 1,
+   "FamilyBodyID": 6,
+   "Year": 2008,
+   "PerformanceIndex": 0.288,
+   "CurbWeight": 26.06,
+   "EnginePlacementID": 1,
+   "bucket": "sports utility heroes"
+  },
+  {
+   "media_name": "MIN_JohnCooperWorks_09",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 2009,
+   "PerformanceIndex": 0.318,
+   "CurbWeight": 12.25153,
+   "EnginePlacementID": 1,
+   "bucket": "hot hatch"
+  },
+  {
+   "media_name": "VAU_CorsaVXR_09",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 2009,
+   "PerformanceIndex": 0.312,
+   "CurbWeight": 12.03,
+   "EnginePlacementID": 1,
+   "bucket": "hot hatch"
+  },
+  {
+   "media_name": "NIS_370Z_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2010,
+   "PerformanceIndex": 0.473,
+   "CurbWeight": 14.81886,
+   "EnginePlacementID": 1,
+   "bucket": "modern sports cars"
+  },
+  {
+   "media_name": "NIS_510_70",
+   "CarTypeID": 1,
+   "FamilyBodyID": 3,
+   "Year": 1970,
+   "PerformanceIndex": 0.077,
+   "CurbWeight": 9.65,
+   "EnginePlacementID": 1,
+   "bucket": "cult cars"
+  },
+  {
+   "media_name": "AST_DB5Vantage_64",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1964,
+   "PerformanceIndex": 0.373,
+   "CurbWeight": 14.65,
+   "EnginePlacementID": 1,
+   "bucket": "rare classics"
+  },
+  {
+   "media_name": "FOR_RS200Evolution_87",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 1985,
+   "PerformanceIndex": 0.647,
+   "CurbWeight": 11.17652,
+   "EnginePlacementID": 2,
+   "bucket": "rally monsters"
+  },
+  {
+   "media_name": "MAZ_Miata_94",
+   "CarTypeID": 1,
+   "FamilyBodyID": 9,
+   "Year": 1994,
+   "PerformanceIndex": 0.232,
+   "CurbWeight": 10.5687,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "FIA_131AbarthStradale_80",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1980,
+   "PerformanceIndex": 0.226,
+   "CurbWeight": 9.8,
+   "EnginePlacementID": 1,
+   "bucket": "classic rally"
+  },
+  {
+   "media_name": "LAM_Reventon_08",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2008,
+   "PerformanceIndex": 0.63,
+   "CurbWeight": 18.45,
+   "EnginePlacementID": 2,
+   "bucket": "modern supercars"
+  },
+  {
+   "media_name": "BMW_M5_09",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 2009,
+   "PerformanceIndex": 0.521,
+   "CurbWeight": 18.19813,
+   "EnginePlacementID": 1,
+   "bucket": "super saloons"
+  },
+  {
+   "media_name": "MCL_MP412C_11",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2011,
+   "PerformanceIndex": 0.656,
+   "CurbWeight": 13.75,
+   "EnginePlacementID": 2,
+   "bucket": "modern supercars"
+  },
+  {
+   "media_name": "FER_F142_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2010,
+   "PerformanceIndex": 0.656,
+   "CurbWeight": 14.85,
+   "EnginePlacementID": 2,
+   "bucket": "modern supercars"
+  },
+  {
+   "media_name": "ALF_GTA_65",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1965,
+   "PerformanceIndex": 0.177,
+   "CurbWeight": 7.6,
+   "EnginePlacementID": 1,
+   "bucket": "rare classics"
+  },
+  {
+   "media_name": "FER_250TestaRossa_57",
+   "CarTypeID": 1,
+   "FamilyBodyID": 9,
+   "Year": 1957,
+   "PerformanceIndex": 0.398,
+   "CurbWeight": 9.2,
+   "EnginePlacementID": 1,
+   "bucket": "classic racers"
+  },
+  {
+   "media_name": "SHE_CobraDaytona_65",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1965,
+   "PerformanceIndex": 0.538,
+   "CurbWeight": 10.43263,
+   "EnginePlacementID": 1,
+   "bucket": "classic racers"
+  },
+  {
+   "media_name": "FER_599XX_10",
+   "CarTypeID": 3,
+   "FamilyBodyID": 11,
+   "Year": 2010,
+   "PerformanceIndex": 0.756,
+   "CurbWeight": 14.68882,
+   "EnginePlacementID": 1,
+   "bucket": "extreme track toys"
+  },
+  {
+   "media_name": "LAM_LP6704SV_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2010,
+   "PerformanceIndex": 0.651,
+   "CurbWeight": 17.46331,
+   "EnginePlacementID": 2,
+   "bucket": "modern supercars"
+  },
+  {
+   "media_name": "PAG_ZondaR_10",
+   "CarTypeID": 3,
+   "FamilyBodyID": 11,
+   "Year": 2010,
+   "PerformanceIndex": 0.769,
+   "CurbWeight": 11.50174,
+   "EnginePlacementID": 2,
+   "bucket": "extreme track toys"
+  },
+  {
+   "media_name": "AST_One77_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2010,
+   "PerformanceIndex": 0.677,
+   "CurbWeight": 15.0,
+   "EnginePlacementID": 1,
+   "bucket": "super gt"
+  },
+  {
+   "media_name": "AUD_RS6_09",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 2009,
+   "PerformanceIndex": 0.524,
+   "CurbWeight": 19.85,
+   "EnginePlacementID": 1,
+   "bucket": "super saloons"
+  },
+  {
+   "media_name": "LOT_2Eleven_09",
+   "CarTypeID": 1,
+   "FamilyBodyID": 8,
+   "Year": 2009,
+   "PerformanceIndex": 0.571,
+   "CurbWeight": 7.45,
+   "EnginePlacementID": 2,
+   "bucket": "track toys"
+  },
+  {
+   "media_name": "VAU_InsigniaVXR_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 2010,
+   "PerformanceIndex": 0.4,
+   "CurbWeight": 17.6,
+   "EnginePlacementID": 1,
+   "bucket": "super saloons"
+  },
+  {
+   "media_name": "SAL_S5SRaptor_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2010,
+   "PerformanceIndex": 0.628,
+   "CurbWeight": 15.26338,
+   "EnginePlacementID": 2,
+   "bucket": "modern supercars"
+  },
+  {
+   "media_name": "MER_SLSAMG_11",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2011,
+   "PerformanceIndex": 0.593,
+   "CurbWeight": 16.2,
+   "EnginePlacementID": 1,
+   "bucket": "super gt"
+  },
+  {
+   "media_name": "REN_MeganeRS250_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 2010,
+   "PerformanceIndex": 0.374,
+   "CurbWeight": 13.87,
+   "EnginePlacementID": 1,
+   "bucket": "super hot hatch"
+  },
+  {
+   "media_name": "BMW_Z4_11",
+   "CarTypeID": 1,
+   "FamilyBodyID": 9,
+   "Year": 2011,
+   "PerformanceIndex": 0.471,
+   "CurbWeight": 15.25,
+   "EnginePlacementID": 1,
+   "bucket": "modern sports cars"
+  },
+  {
+   "media_name": "BUG_EB110SS_92",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 1992,
+   "PerformanceIndex": 0.618,
+   "CurbWeight": 16.4,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "AUD_TTRS_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2010,
+   "PerformanceIndex": 0.475,
+   "CurbWeight": 14.94,
+   "EnginePlacementID": 1,
+   "bucket": "modern sports cars"
+  },
+  {
+   "media_name": "VW_GolfR_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 2010,
+   "PerformanceIndex": 0.392,
+   "CurbWeight": 14.46,
+   "EnginePlacementID": 1,
+   "bucket": "super hot hatch"
+  },
+  {
+   "media_name": "MOR_AeroSS_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2010,
+   "PerformanceIndex": 0.498,
+   "CurbWeight": 12.42843,
+   "EnginePlacementID": 1,
+   "bucket": "modern sports cars"
+  },
+  {
+   "media_name": "MOS_MT900S_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2010,
+   "PerformanceIndex": 0.735,
+   "CurbWeight": 11.25189,
+   "EnginePlacementID": 2,
+   "bucket": "extreme track toys"
+  },
+  {
+   "media_name": "ROS_Q1_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2010,
+   "PerformanceIndex": 0.644,
+   "CurbWeight": 12.1336,
+   "EnginePlacementID": 2,
+   "bucket": "modern supercars"
+  },
+  {
+   "media_name": "LEX_LFA_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2010,
+   "PerformanceIndex": 0.617,
+   "CurbWeight": 14.8,
+   "EnginePlacementID": 1,
+   "bucket": "modern supercars"
+  },
+  {
+   "media_name": "AMC_JavelinAMX_71",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1971,
+   "PerformanceIndex": 0.272,
+   "CurbWeight": 15.62626,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "BMW_MCoupe_02",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2002,
+   "PerformanceIndex": 0.452,
+   "CurbWeight": 13.56241,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "BMW_2002Turbo_73",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1973,
+   "PerformanceIndex": 0.284,
+   "CurbWeight": 10.80004,
+   "EnginePlacementID": 1,
+   "bucket": "classic sports cars"
+  },
+  {
+   "media_name": "FER_250GT_60",
+   "CarTypeID": 1,
+   "FamilyBodyID": 9,
+   "Year": 1957,
+   "PerformanceIndex": 0.356,
+   "CurbWeight": 10.5,
+   "EnginePlacementID": 1,
+   "bucket": "rare classics"
+  },
+  {
+   "media_name": "FOR_EscortRSCosworth_92",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1992,
+   "PerformanceIndex": 0.372,
+   "CurbWeight": 12.75,
+   "EnginePlacementID": 1,
+   "bucket": "retro rally"
+  },
+  {
+   "media_name": "HON_CivicTypeR_97",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 1997,
+   "PerformanceIndex": 0.323,
+   "CurbWeight": 10.9,
+   "EnginePlacementID": 1,
+   "bucket": "retro hot hatch"
+  },
+  {
+   "media_name": "KOE_CCX_06",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2006,
+   "PerformanceIndex": 0.698,
+   "CurbWeight": 14.28816,
+   "EnginePlacementID": 2,
+   "bucket": "hypercars"
+  },
+  {
+   "media_name": "PON_FirebirdTransAm_77",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1977,
+   "PerformanceIndex": 0.222,
+   "CurbWeight": 17.23651,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "CHR_Cuda426_71",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1971,
+   "PerformanceIndex": 0.385,
+   "CurbWeight": 17.59939,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "FOR_XBFalconGT_73",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1973,
+   "PerformanceIndex": 0.338,
+   "CurbWeight": 13.82,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "MRC_CougarEliminator_70",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1970,
+   "PerformanceIndex": 0.308,
+   "CurbWeight": 15.5809,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "NIS_240SX_94",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 1994,
+   "PerformanceIndex": 0.256,
+   "CurbWeight": 13.22222,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "CHE_ElCaminoSS_70",
+   "CarTypeID": 1,
+   "FamilyBodyID": 6,
+   "Year": 1970,
+   "PerformanceIndex": 0.348,
+   "CurbWeight": 17.32723,
+   "EnginePlacementID": 1,
+   "bucket": "vans and utility"
+  },
+  {
+   "media_name": "FOR_RS500_87",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1987,
+   "PerformanceIndex": 0.368,
+   "CurbWeight": 12.4,
+   "EnginePlacementID": 1,
+   "bucket": "retro saloons"
+  },
+  {
+   "media_name": "GMC_Syclone_92",
+   "CarTypeID": 1,
+   "FamilyBodyID": 6,
+   "Year": 1991,
+   "PerformanceIndex": 0.29,
+   "CurbWeight": 16.3884,
+   "EnginePlacementID": 1,
+   "bucket": "vans and utility"
+  },
+  {
+   "media_name": "LAN_037Stradale_82",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1982,
+   "PerformanceIndex": 0.381,
+   "CurbWeight": 11.52125,
+   "EnginePlacementID": 2,
+   "bucket": "retro rally"
+  },
+  {
+   "media_name": "MER_190E_90",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 1990,
+   "PerformanceIndex": 0.379,
+   "CurbWeight": 13.4,
+   "EnginePlacementID": 1,
+   "bucket": "retro saloons"
+  },
+  {
+   "media_name": "MIT_Starion_88",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1988,
+   "PerformanceIndex": 0.299,
+   "CurbWeight": 14.0024,
+   "EnginePlacementID": 1,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "VOL_242Turbo_83",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1983,
+   "PerformanceIndex": 0.279,
+   "CurbWeight": 14.40156,
+   "EnginePlacementID": 1,
+   "bucket": "classic rally"
+  },
+  {
+   "media_name": "CHE_ImpalaSS_64",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1964,
+   "PerformanceIndex": 0.362,
+   "CurbWeight": 17.58578,
+   "EnginePlacementID": 1,
+   "bucket": "rods and customs"
+  },
+  {
+   "media_name": "JAG_DType_56",
+   "CarTypeID": 1,
+   "FamilyBodyID": 9,
+   "Year": 1956,
+   "PerformanceIndex": 0.443,
+   "CurbWeight": 8.75433,
+   "EnginePlacementID": 1,
+   "bucket": "classic racers"
+  },
+  {
+   "media_name": "MAS_GranTurismoS_10",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 2010,
+   "PerformanceIndex": 0.472,
+   "CurbWeight": 18.80594,
+   "EnginePlacementID": 1,
+   "bucket": "gt cars"
+  },
+  {
+   "media_name": "PON_GTOJudge_69",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1969,
+   "PerformanceIndex": 0.331,
+   "CurbWeight": 16.43365,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "MCL_F1_93",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 1993,
+   "PerformanceIndex": 0.668,
+   "CurbWeight": 12.88202,
+   "EnginePlacementID": 2,
+   "bucket": "retro supercars"
+  },
+  {
+   "media_name": "FER_365GTB4_68",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1968,
+   "PerformanceIndex": 0.43,
+   "CurbWeight": 16.32933,
+   "EnginePlacementID": 1,
+   "bucket": "rare classics"
+  },
+  {
+   "media_name": "FER_599GTO_11",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2011,
+   "PerformanceIndex": 0.658,
+   "CurbWeight": 16.0481,
+   "EnginePlacementID": 1,
+   "bucket": "super gt"
+  },
+  {
+   "media_name": "FOR_MustangMach1_71",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1971,
+   "PerformanceIndex": 0.333,
+   "CurbWeight": 16.83281,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "CHE_CamaroZ28_70",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1970,
+   "PerformanceIndex": 0.339,
+   "CurbWeight": 16.10253,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "OLD_442_69",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1969,
+   "PerformanceIndex": 0.349,
+   "CurbWeight": 17.48599,
+   "EnginePlacementID": 1,
+   "bucket": "classic muscle"
+  },
+  {
+   "media_name": "HUM_H1Alpha_06",
+   "CarTypeID": 1,
+   "FamilyBodyID": 6,
+   "Year": 2006,
+   "PerformanceIndex": 0.036,
+   "CurbWeight": 36.80449,
+   "EnginePlacementID": 1,
+   "bucket": "offroad"
+  },
+  {
+   "media_name": "BMW_X5M_11",
+   "CarTypeID": 1,
+   "FamilyBodyID": 6,
+   "Year": 2011,
+   "PerformanceIndex": 0.436,
+   "CurbWeight": 24.34884,
+   "EnginePlacementID": 1,
+   "bucket": "sports utility heroes"
+  },
+  {
+   "media_name": "BMW_M5E39_03",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 2003,
+   "PerformanceIndex": 0.443,
+   "CurbWeight": 17.6901,
+   "EnginePlacementID": 1,
+   "bucket": "retro saloons"
+  },
+  {
+   "media_name": "BMW_M5E28_88",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 1988,
+   "PerformanceIndex": 0.37,
+   "CurbWeight": 14.65,
+   "EnginePlacementID": 1,
+   "bucket": "retro saloons"
+  },
+  {
+   "media_name": "PAG_ZondaCinque_09",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2009,
+   "PerformanceIndex": 0.742,
+   "CurbWeight": 12.96367,
+   "EnginePlacementID": 2,
+   "bucket": "hypercars"
+  },
+  {
+   "media_name": "AUD_RS2_95",
+   "CarTypeID": 1,
+   "FamilyBodyID": 5,
+   "Year": 1995,
+   "PerformanceIndex": 0.407,
+   "CurbWeight": 15.95284,
+   "EnginePlacementID": 1,
+   "bucket": "retro saloons"
+  },
+  {
+   "media_name": "BEN_8Litre_31",
+   "CarTypeID": 1,
+   "FamilyBodyID": 7,
+   "Year": 1931,
+   "PerformanceIndex": 0.0,
+   "CurbWeight": 25.40117,
+   "EnginePlacementID": 1,
+   "bucket": "rare classics"
+  },
+  {
+   "media_name": "LOT_Elise_99",
+   "CarTypeID": 1,
+   "FamilyBodyID": 8,
+   "Year": 1999,
+   "PerformanceIndex": 0.483,
+   "CurbWeight": 7.0,
+   "EnginePlacementID": 2,
+   "bucket": "retro sports cars"
+  },
+  {
+   "media_name": "VW_GTIVR6_98",
+   "CarTypeID": 1,
+   "FamilyBodyID": 4,
+   "Year": 1998,
+   "PerformanceIndex": 0.27,
+   "CurbWeight": 12.70059,
+   "EnginePlacementID": 1,
+   "bucket": "retro hot hatch"
+  },
+  {
+   "media_name": "AST_DBR1_58",
+   "CarTypeID": 1,
+   "FamilyBodyID": 9,
+   "Year": 1958,
+   "PerformanceIndex": 0.45,
+   "CurbWeight": 8.75433,
+   "EnginePlacementID": 1,
+   "bucket": "classic racers"
+  },
+  {
+   "media_name": "FER_F151_11",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2011,
+   "PerformanceIndex": 0.589,
+   "CurbWeight": 18.8,
+   "EnginePlacementID": 1,
+   "bucket": "modern supercars"
+  },
+  {
+   "media_name": "LAM_SestoElemento_11",
+   "CarTypeID": 1,
+   "FamilyBodyID": 11,
+   "Year": 2011,
+   "PerformanceIndex": 0.71,
+   "CurbWeight": 11.78518,
+   "EnginePlacementID": 2,
+   "bucket": "extreme track toys"
+  },
+  {
+   "media_name": "TOY_MR2SC_89",
+   "CarTypeID": 1,
+   "FamilyBodyID": 10,
+   "Year": 1989,
+   "PerformanceIndex": 0.266,
+   "CurbWeight": 11.88412,
+   "EnginePlacementID": 2,
+   "bucket": "retro sports cars"
+  }
+ ]
+}

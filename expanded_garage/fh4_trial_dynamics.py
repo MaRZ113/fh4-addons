@@ -5,7 +5,7 @@ import math
 from pathlib import PureWindowsPath
 from statistics import median
 
-from .fh4_dynamics import finite_between
+from .fh4_dynamics import finite_between, shift_accepted
 
 
 AXLES = ("Front", "Rear")
@@ -37,10 +37,15 @@ class TrialDynamics:
         self.car = source.record("Data_Car")
         self.layout = source.record("Data_Drivetrain")
         self.shift = shift
-        self.peers = self.road_peers() if self.car["CarTypeID"] == 1 and shift and not shift["inferred"] else []
+        self.peers = self.road_peers() if self.car["CarTypeID"] in (1, 3) and shift_accepted(shift) else []
+        if self.peers is not None and len(self.peers) < 5 and self.car["CarTypeID"] in (1, 3) and shift_accepted(shift):
+            # Rare layouts (front-engine RWD race car, FWD hybrid): same drive and engine position, any gearbox.
+            widened = self.road_peers(any_shift=True)
+            if len(widened) >= 5:
+                self.peers = widened
         self.suspension_types = {}
 
-    def road_peers(self, *, relaxed=False):
+    def road_peers(self, *, relaxed=False, any_shift=False):
         rows = self.db.execute(
             """SELECT c.*, d.DrivetypeID, d.ShiftSystemID, l.FlexSpringConstant, l.FlexDampingConstant,
                       l.FlexDampingConstantOffroad, l.OneOverSpringConstant, l.MultipleOfEngineTorqueForSpring,
@@ -51,9 +56,10 @@ class TrialDynamics:
                JOIN List_UpgradeSpringDamper s ON s.Ordinal=c.Id AND s.IsStock=1
                JOIN List_SpringDamperPhysics f ON f.SpringDamperPhysicsID=s.FrontSpringDamperPhysicsID
                JOIN List_SpringDamperPhysics r ON r.SpringDamperPhysicsID=s.RearSpringDamperPhysicsID
-               WHERE c.CarTypeID=1 AND c.IsDrivable=1 AND c.Id<12000 AND c.ContentId<>99
-                 AND d.DrivetypeID=? AND c.EnginePlacementID=? AND d.ShiftSystemID=? ORDER BY c.Id""",
-            (self.layout["DrivetypeID"], self.car["EnginePlacementID"], self.shift["id"])
+               WHERE c.CarTypeID IN (1, ?) AND c.IsDrivable=1 AND c.Id<12000 AND c.ContentId<>99
+                 AND d.DrivetypeID=? AND c.EnginePlacementID=? AND (d.ShiftSystemID=? OR ?) ORDER BY c.Id""",
+            (self.car["CarTypeID"], self.layout["DrivetypeID"], self.car["EnginePlacementID"], self.shift["id"],
+             int(any_shift))
         ).fetchall()
         features = ("Year", "CurbWeight", "SimPeakTorque", "FrontTireWidthMM", "RearTireWidthMM")
         scales = (16., .35, .55, 45., 45.)
@@ -71,8 +77,10 @@ class TrialDynamics:
 
     def car_fields(self):
         peers = self.peers
-        if len(peers)<5 and self.car["CarTypeID"]==1 and self.shift and not self.shift["inferred"]:
+        if len(peers)<5 and self.car["CarTypeID"] in (1, 3) and shift_accepted(self.shift):
             peers = self.road_peers(relaxed=True)
+            if len(peers)<5:
+                peers = self.road_peers(relaxed=True, any_shift=True)
         if len(peers)<5:
             return {}, {}
         values = {field: median(row[field] for row in peers) for field in SCALARS}
@@ -114,7 +122,9 @@ class TrialDynamics:
         if topology.get("native_twin") and legacy_mode == "INDEPENDANT":
             return self.twin_spring(axle, legacy_mode, topology)
         family = SUSPENSION_FAMILIES.get(topology.get(axle))
-        if not family or legacy_mode != "INDEPENDANT":
+        if not family:
+            return self.peer_spring(axle, legacy_mode)
+        if legacy_mode != "INDEPENDANT":
             return {}, {}
         paths = {kind:path for kind,path in self.db.execute("SELECT SuspensionPhysicsTypeID,Path "
                     "FROM List_SuspensionPhysicsType WHERE Name='ARTICULATED' AND length(Path)>0")
@@ -146,6 +156,46 @@ class TrialDynamics:
             "source_mode":legacy_mode,"source_topology":topology[axle],"topology_reference":topology["reference"],
             "resource":paths[kind],"same_drive_usage":same_layout[kind],"all_road_usage":stock_modes[kind],
             "paired_native_support":support,"paired_native_rows":len(stock)}
+
+    def peer_spring(self, axle, legacy_mode):
+        """No authored topology (cars beyond the first fleet): the stock suspension template the most similar
+        native cars use on this axle (the dynamics cohort), with its modal progression/bump-stop pair.
+        EXPANDED_GARAGE_PEER_SUSPENSION=off leaves the axle unresolved."""
+        import os
+        if os.environ.get("EXPANDED_GARAGE_PEER_SUSPENSION") == "off":
+            return {}, {}
+        peers = self.peers or (self.road_peers(relaxed=True, any_shift=True) if self.shift else [])
+        column = "front_type" if axle == "Front" else "rear_type"
+        paths = {kind: path for kind, path in self.db.execute(
+            "SELECT SuspensionPhysicsTypeID,Path FROM List_SuspensionPhysicsType WHERE Name='ARTICULATED' AND length(Path)>0")}
+        # Axle-specific templates only: a kind natives mount more often on the other axle (modernwishbone is a
+        # steered front template, BMW_6_M3GTR_01 cohort put it on the rear) fails the installer's XML readback.
+        usage = {a: Counter(r[0] for r in self.db.execute(
+            f"""SELECT p.SuspensionPhysicsTypeID FROM List_UpgradeSpringDamper s
+                JOIN List_SpringDamperPhysics p ON p.SpringDamperPhysicsID=s.{a}SpringDamperPhysicsID
+                WHERE s.IsStock=1 AND s.Ordinal<12000""")) for a in AXLES}
+        other = "Rear" if axle == "Front" else "Front"
+        kinds = Counter(row[column] for row in peers if row[column] in paths
+                        and usage[axle][row[column]] > usage[other][row[column]])
+        if not kinds:
+            return {}, {}
+        kind, support = kinds.most_common(1)[0]
+        if support < 2:
+            return {}, {}
+        rows = self.db.execute(
+            f"""SELECT p.UseProgressiveSpring,p.BumpStopHeight FROM List_SpringDamperPhysics p
+                JOIN List_UpgradeSpringDamper s ON s.{axle}SpringDamperPhysicsID=p.SpringDamperPhysicsID AND s.IsStock=1
+                WHERE p.SuspensionPhysicsTypeID=? AND s.Ordinal<12000""", (kind,)).fetchall()
+        if not rows:
+            return {}, {}
+        (progression, height), paired = Counter(tuple(r) for r in rows).most_common(1)[0]
+        if progression not in (0, 1) or not finite_between(height, -.1, .1):
+            return {}, {}
+        self.suspension_types[axle] = kind
+        return {"SuspensionPhysicsTypeID": kind, "UseProgressiveSpring": progression, "BumpStopHeight": height}, {
+            "rule": "Most common stock template on this axle among the dynamics cohort; modal paired bump stop",
+            "source_mode": legacy_mode, "resource": paths[kind], "cohort_support": support,
+            "cohort_samples": len(peers), "paired_native_support": paired, "paired_native_rows": len(rows)}
 
     def anti_sway(self, axle):
         kind = self.suspension_types.get(axle)
