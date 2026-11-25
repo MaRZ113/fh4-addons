@@ -16,8 +16,6 @@ import struct
 from .fh4_model import Chunk, bundle
 
 LIBRARY_PREFIX = "Game:\\Media\\cars\\_library\\materials\\"
-# Record header used by FOR_FiestaST_14 and most native archives.
-RECORD_HEADER = struct.pack("<BI", 1, 0x1D)
 
 
 @lru_cache(maxsize=1)
@@ -89,7 +87,7 @@ def unpack_rgb(value):
     return ((value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF)
 
 
-def manufacturer_colors(colors, available):
+def manufacturer_colors(colors, available, stripes=None):
     """colors: Combo_Colors rows (Sequence, RGB, Metallic). Returns (bytes, receipt)."""
     rows = sorted(colors, key=lambda r: r["Sequence"])
     if not 0 < len(rows) < 256:
@@ -99,16 +97,27 @@ def manufacturer_colors(colors, available):
     for row in rows:
         rgb = unpack_rgb(int(row["RGB"]))
         member = nearest_material(rgb, bool(row["Metallic"]), available)
-        path = (LIBRARY_PREFIX + member.replace("/", "\\")).encode("ascii")
-        if len(path) > 255:
-            raise ValueError(f"Paint material path too long: {member}")
-        payload += RECORD_HEADER + struct.pack("<3f", *(c / 255 for c in rgb)) + bytes([len(path)]) + path
-        receipt.append({"sequence": row["Sequence"], "rgb": list(rgb), "metallic": bool(row["Metallic"]),
-                        "material": member, "material_rgb": palette()[member]["rgb"]})
+        stripe = (stripes or {}).get(row["Sequence"])
+        slots = [(0x1d, rgb, member)]
+        entry = {"sequence": row["Sequence"], "rgb": list(rgb), "metallic": bool(row["Metallic"]),
+                 "material": member, "material_rgb": palette()[member]["rgb"]}
+        if stripe is not None:
+            stripe_member = nearest_material(stripe, False, available)
+            slots.append((2, stripe, stripe_member))
+            entry["stripe"] = {"rgb": stripe, "material": stripe_member, "source": row["BaseTexture"]}
+        payload.append(len(slots))
+        for flag, colour, art in slots:
+            path = (LIBRARY_PREFIX + art.replace("/", "\\")).encode("ascii")
+            if len(path) > 255:
+                raise ValueError(f"Paint material path too long: {art}")
+            payload += struct.pack("<I3fB", flag, *(c / 255 for c in colour), len(path)) + path
+        receipt.append(entry)
+    if stripes:
+        payload += b"\0\0"
     return bundle([Chunk("MNCL", (1, 1), bytes(payload))]), receipt
 
 
-def read_manufacturer_colors(data):
+def read_manufacturer_colors(data, *, include_stripes=False):
     """Parse a generated file back into [(rgb floats, library member)]."""
     if data[:4] != b"burG" or data[20:24] != b"LCNM":
         raise ValueError("Unexpected ManufacturerColors bundle")
@@ -116,15 +125,21 @@ def read_manufacturer_colors(data):
     payload = data[offset:offset + size]
     count, o, result = payload[0], 1, []
     for _ in range(count):
-        if payload[o:o + 5] != RECORD_HEADER:
-            raise ValueError("Unexpected ManufacturerColors record header")
-        rgb = struct.unpack_from("<3f", payload, o + 5)
-        length = payload[o + 17]
-        path = payload[o + 18:o + 18 + length].decode("ascii")
-        if not path.startswith(LIBRARY_PREFIX) or not all(0 <= v <= 1 for v in rgb):
-            raise ValueError("Invalid ManufacturerColors record")
-        result.append((rgb, path[len(LIBRARY_PREFIX):].replace("\\", "/").lower()))
-        o += 18 + length
-    if o != len(payload):
+        slots = payload[o]
+        o += 1
+        if slots not in (1, 2):
+            raise ValueError("Unexpected ManufacturerColors record slot count")
+        for slot in range(slots):
+            flag, *rgb, length = struct.unpack_from("<I3fB", payload, o)
+            o += 17
+            path = payload[o:o + length].decode("ascii")
+            o += length
+            if flag != (0x1d if slot == 0 else 2) or not path.casefold().startswith(LIBRARY_PREFIX.casefold()):
+                raise ValueError("Invalid ManufacturerColors paint slot")
+            if not all(0 <= v <= 1 for v in rgb):
+                raise ValueError("Invalid ManufacturerColors swatch RGB")
+            if slot == 0 or include_stripes:
+                result.append((tuple(rgb), path[len(LIBRARY_PREFIX):].replace("\\", "/").lower()))
+    if payload[o:] not in (b"", b"\0\0"):
         raise ValueError("Trailing ManufacturerColors bytes")
     return result

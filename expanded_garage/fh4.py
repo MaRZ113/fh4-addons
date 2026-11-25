@@ -57,6 +57,7 @@ KNOWN_LIMITS = {
     "acceptance": "A runtime acceptance run is required after the package passes all release gates.",
 }
 GAUGE_POSES = {f"{label}_{phase}" for label,*_ in GAUGES for phase in ("min","mid","max")}
+FH1_GAUGE_POSES = GAUGE_POSES | {"boost_min", "boost_mid", "boost_max"}
 
 
 @dataclass(frozen=True)
@@ -232,7 +233,8 @@ def inward(draw):
 
 
 GAUGE_BACKING_DEPTH = 0.002
-GAUGE_FACES = ("gauge_emissive", "digital_gauge")
+GAUGE_FACES = ("gauge_emissive", "digital_gauge", "digital_gauge_unlit")
+UNLIT_DASH = "digital_gauge_unlit"   # digital display of a car without a dash scene (fh4_material_contract)
 
 
 def gauge_backing(housing, kind, key):
@@ -391,7 +393,7 @@ def part_ao(alias, grouped, nonstock=frozenset(), exterior_sides=None, corners=N
     for key in sorted(grouped["cockpit"]):
         # Gauge needles, panes and the body seen from the cabin (hood, mirrors, pillars, drawn in both views)
         # get no cabin AO: a cabin-dark map on them showed outside (owner, visual-34).
-        if key in GAUGE_POSES or key.casefold().startswith(AO_SKIP_PARTS):
+        if key in FH1_GAUGE_POSES or key.casefold().startswith(AO_SKIP_PARTS):
             continue
         draws, side = fh4_part_ao.unwrap(grouped["cockpit"][key])
         if not side:
@@ -499,7 +501,7 @@ def mirror_uv(positions):
                     axis=1).astype(np.float32)
 
 
-def load_draws(root, src):
+def load_draws(root, src, *, source_game="fm4"):
     arrays = root / src["arrays"]
     if src["arrays"] != f'geometry/{src["raw"]}.npz' or sha256(arrays) != src["arrays_sha256"]:
         raise ValueError(f"Invalid array resource for {src['member']}")
@@ -513,7 +515,13 @@ def load_draws(root, src):
                 normals = vertices[p["normal"]][ids]
                 role = src["role"]
                 kind = "exterior" if role.startswith("exterior") else "brake" if role in ("caliper", "rotor") else role
-                binding = surface_binding(draw["material"],kind,section["name"])
+                label = draw["material"]
+                if source_game == "fh1" and kind == "cockpit":
+                    if section["name"] in FH1_GAUGE_POSES and label.casefold() == "gauge_emissive":
+                        label = "gauge_needle"
+                    elif label.casefold() == "z_gauge_emissive_alpha":
+                        label = "gauge_emissive"
+                binding = surface_binding(label,kind,section["name"])
                 uv0 = uv(vertices[p["uv0"]][ids], draw["uv_transform"][:4])
                 if binding.member.startswith("specificuse/mirror"):
                     uv0 = mirror_uv(positions)
@@ -531,13 +539,13 @@ def load_draws(root, src):
                 # Gauge needle poses (min/mid/max) are matched vertex by vertex: keep their vertex sets.
                 # Glass-family shaders keep the pre-visual-29 channels (FM4 UV1, TANGENT1 = TANGENT0): the
                 # projected detail unwrap turned every black-glass frit matte (owner, visual-36).
-                if (os.environ.get("EXPANDED_GARAGE_DETAIL_UV") != "source" and section["name"] not in GAUGE_POSES
+                if (os.environ.get("EXPANDED_GARAGE_DETAIL_UV") != "source" and section["name"] not in FH1_GAUGE_POSES
                         and not fh4_model.glass_family(binding.member)):
                     positions, normals, uv0, indices, uv1 = fh4_model.projected_detail(
                         positions, normals, uv0, indices, binding.member)
                 yield section["name"], fh4_model.Draw(
                     name=f'{section["name"]}_{draw["triangles"]}', lod=draw["lod"],
-                    source_material=draw["material"], target_material=binding.member, transparent=binding.transparent,
+                    source_material=label, target_material=binding.member, transparent=binding.transparent,
                     positions=positions, normals=normals,
                     uv0=uv0, uv1=uv1, indices=indices, origin=draw["provenance"],
                 )
@@ -725,6 +733,10 @@ def gauge_texture_parameters(root, ir, alias, library=None):
     from . import fh4_mtpr
     mtpr = fh4_mtpr.set_textures(bytes.fromhex(donor["mtpr"]), textures, tuple(donor["version"]))
     parameters = {("gauge_emissive", GAUGE_MATERIAL): (tuple(donor["version"]), mtpr)}
+    from . import fh4_digital_dash
+    dash_parameters, dash_members = fh4_digital_dash.parameters(root, ir, alias, donor, GAUGE_MATERIAL)
+    parameters.update(dash_parameters)
+    members.update(dash_members)
     if library is not None:
         parameters.update(cockpit_atlas_parameters(library, textures[donor["diffuse"]],
                                                    cockpit_texel_scales(raw_member(root, ir, "/shadersettings.xml"))))
@@ -937,11 +949,13 @@ def make_models(root, ir, identity, library):
     texture_payloads.update(lamp_payloads)
     grouped = {category: defaultdict(list) for category in ("exterior", "cockpit", "wheel", "brake")}
     filtered = set()
+    source_game = ir["vehicle"]["source_game"]
+    gauge_poses = FH1_GAUGE_POSES if source_game == "fh1" else GAUGE_POSES
     for source in geometry["models"]:
         role = source["role"]
         kind = "exterior" if role.startswith("exterior") else "brake" if role in ("caliper", "rotor") else role
-        for section, draw in load_draws(root, source):
-            if ((contract.use_component(role, section) or role=="cockpit" and section in GAUGE_POSES)
+        for section, draw in load_draws(root, source, source_game=source_game):
+            if ((contract.use_component(role, section) or role=="cockpit" and section in gauge_poses)
                     and (kind == "wheel" or not draw.source_material.casefold().startswith(("blur", "chrome_blur")))
                     and 0 <= draw.lod <= 5):
                 grouped[kind][section].append(draw)
@@ -949,6 +963,13 @@ def make_models(root, ir, identity, library):
                 filtered.add((role, section, draw.source_material))
     if not grouped["exterior"]:
         raise ValueError("No source exterior geometry available")
+    if ("digital_gauge", GAUGE_MATERIAL) not in car_parameters:
+        # No dash scene to draw (or EXPANDED_GARAGE_DIGITAL_DASH=off): a dark, unlit display.
+        for kind in ("cockpit", "exterior"):
+            for draws in grouped[kind].values():
+                draws[:] = [replace(d, source_material=UNLIT_DASH,
+                                    target_material=surface_binding(UNLIT_DASH, kind, "").member)
+                            if d.source_material.casefold() == "digital_gauge" else d for d in draws]
     # Lamp glass: FM4 Integra glassLTL carries a clear cover (`glass` -> gls_clear) 4-30 mm over its red lens
     # (detail_glass_red -> gls_colored). Both translucent in the same bucket (60): drawn cover-first, the red lens
     # vanished with the camera angle (owner, visual-57). Clear triangles lying over a tinted lens of the same
@@ -1124,7 +1145,7 @@ def make_models(root, ir, identity, library):
 
         for kind in ("exterior", "cockpit"):
             for key, draws in sorted(grouped[kind].items()):
-                if key in GAUGE_POSES:
+                if key in gauge_poses:
                     if not key.endswith("_min"):
                         continue
                     needles = [d for d in draws if d.source_material.casefold()=="gauge_needle"]
@@ -1135,7 +1156,10 @@ def make_models(root, ir, identity, library):
                         emit(kind,key,needles,attachment=attachments.get(key),mesh_bone=True)
                 else:
                     if kind == "cockpit" and window_part(key):
-                        draws = [inward(d) for d in draws]
+                        # Only the panes face the cabin; opaque bands on the pane (BMW_6_M3GTR_01 windscreen strip,
+                        # FM4 `black`) stay outward-facing and are culled from inside, as in FM4 (owner, visual-62).
+                        draws = [inward(d) if d.transparent or fh4_model.glass_family(d.target_material) else d
+                                 for d in draws]
                     if kind == "cockpit":
                         # Dial faces also live in the cabin body (FM4 `interior`: gauge_emissive, digital_gauge).
                         faces = [d for d in draws if d.source_material.casefold() in GAUGE_FACES]
@@ -1144,7 +1168,11 @@ def make_models(root, ir, identity, library):
         paint = None
         colors = rows_for(rows, "Combo_Colors") if "Combo_Colors" in rows else []
         if colors:
-            payloads["ManufacturerColors.bin"], paint = fh4_paint.manufacturer_colors(colors, set(available))
+            stripes = None
+            if source_game == "fh1":
+                from .fh1_effects import factory_stripes
+                stripes = factory_stripes(root, ir, aliases, grouped["exterior"], colors)
+            payloads["ManufacturerColors.bin"], paint = fh4_paint.manufacturer_colors(colors, set(available), stripes)
         wheel = [d for draws in grouped["wheel"].values() for d in draws]
         wheel_model = None
         if wheel and os.environ.get("EXPANDED_GARAGE_WHEELS", "native") == "carbin":
@@ -1257,6 +1285,9 @@ def make_models(root, ir, identity, library):
     payloads.update(fh4_dirt.members(
         dirt_draws, windscreen,
         [(c["origin_m"], c["radius_m"], c["width_m"]) for c in corners.values()], driver_side))
+    if source_game == "fh1":
+        from .fh1_effects import impact_mask
+        payloads.update(impact_mask(root, ir, aliases))
     if points:
         authored = {"carLocator_" + point.name for point in points.values()}
         extra, driver_rig["locators"] = fh4_driver_rig.transferred_locators(

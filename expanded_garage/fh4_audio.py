@@ -341,7 +341,7 @@ def compile_fleet(build, vehicles, baseline_db, compiled_db, mapping_path, vgmst
     original = Path(mapping_path).read_bytes()
     mapping_text = original.decode("utf-8-sig")
     entries, files, cars = [], [], []
-    excluded = open_cars()
+    excluded = open_cars(Path(os.environ.get("EXPANDED_GARAGE_AUDIO_GLOBALS") or AUDIO_GLOBALS))
     with sqlite3.connect(f"file:{baseline_db}?mode=ro", uri=True) as base, \
             sqlite3.connect(f"file:{compiled_db}?mode=ro", uri=True) as compiled:
         for vehicle in vehicles:

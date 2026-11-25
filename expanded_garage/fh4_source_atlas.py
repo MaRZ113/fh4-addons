@@ -15,7 +15,7 @@ from . import fh4_mtpr
 from .fh4_material_contract import (ATLAS_PLASTIC_GLOSS, BRAKE_ATLAS_GLOSS, EXTERIOR_ATLAS_GLOSS,
                                     EXTERIOR_ATLAS_MATERIAL, EXTERIOR_ATLAS_PLASTIC, EXTERIOR_STICKER, GRILLE_MESH,
                                     COCKPIT_ATLAS_MATERIAL,
-                                    TINTED_LENSES, WHEEL_ATLAS_GLOSS, WHEEL_ATLAS_SURFACES, atlas_source)
+                                    STRIPE_PAINT, TINTED_LENSES, WHEEL_ATLAS_GLOSS, WHEEL_ATLAS_SURFACES, atlas_source)
 
 FAR = "_lod15"
 FOLDER = "textures/exterior/swatches/"
@@ -144,6 +144,26 @@ def _block(library, member, values, textures):
     return tuple(version), fh4_mtpr.set_textures(patched, textures, version)
 
 
+def stripe_block(library, opacity):
+    """Take the native 2005 Ford GT stripe's render parameters and bind the GTX1 mask."""
+    from zipfile import ZipFile
+    from .fh4 import modelbin_materials, previous_readers
+
+    donor = library.parent.parent / "for_gt_05.zip"
+    with ZipFile(donor) as archive:
+        path = next(n for n in archive.namelist() if n.casefold() == "scene/exterior/hood/hoodlivery_a.modelbin")
+        data = archive.read(path)
+    _, geometry = previous_readers()
+    if ("carpaint_livery_stripe", STRIPE_PAINT + ".materialbin") not in modelbin_materials(data):
+        raise ValueError("The native Ford GT stripe no longer matches the checked library binding")
+    matt = next(b for b in geometry.blobs(data) if b["tag"] == "MatI" and b["name"] == "carpaint_livery_stripe")
+    inner = data[matt["offset"]:matt["offset"] + matt["size"]]
+    parameter = next(b for b in geometry.blobs(inner) if b["tag"] == "MTPR")
+    block = inner[parameter["offset"]:parameter["offset"] + parameter["size"]]
+    # The donor's existing texture record is the hood stripe opacity swatch.
+    return tuple(parameter["version"]), fh4_mtpr.set_textures(block, {0xDDB62493: opacity}, parameter["version"])
+
+
 def lens_tints(grouped, textures):
     """{(kind, component, label): linear tint} from the lamp atlas texels under the lens triangles."""
     tints = {}
@@ -223,10 +243,15 @@ def parameters(root, ir, alias, library, grouped):
         else:
             suffix = GRILLE_SOURCES[source]
         scale = wheel_scales.get(name, 1.0) if source == "wheel" else 1.0
+        key = (far_name(label) if far else label, member)
+        if library_member == STRIPE_PAINT:
+            opacity = textures.swatch(suffix, "opac")
+            if opacity:
+                out[key] = stripe_block(library, opacity)
+            continue
         diffuse = textures.swatch(suffix, "outline" if source == "cabin_badge" else "diff", scale)
         if diffuse is None:
             continue
-        key = (far_name(label) if far else label, member)
         if library_member == EXTERIOR_ATLAS_PLASTIC:
             gloss = ATLAS_PLASTIC_GLOSS.get(name) or BRAKE_ATLAS_GLOSS.get(name, 0.5)
             out[key] = _block(library, library_member, {

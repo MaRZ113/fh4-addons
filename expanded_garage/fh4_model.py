@@ -174,7 +174,10 @@ LAMP_MATERIAL = "exterior_lights/lights_smooth_ch1.materialbin"
 WARM_WHITE, RED, WHITE, AMBER = (0.94, 0.83, 0.66, 1.0), (1.0, 0.0086, 0.0012, 1.0), (1.0, 1.0, 1.0, 1.0), (1.0, 0.45, 0.0, 1.0)
 LAMP_FUNCTIONS = {"head_light": (71, WARM_WHITE), "head_light_lod0": (71, WARM_WHITE),
                   "tail_light": (69, RED), "tail_light_lod0": (69, RED), "brake_light": (69, RED),
-                  "reverse_light": (1, WHITE), "reverse_light_lod0": (1, WHITE), "turn_light": (70, AMBER)}
+                  "reverse_light": (1, WHITE), "reverse_light_lod0": (1, WHITE), "turn_light": (70, AMBER),
+                  "hidhead": (71, (1.0, 0.8, 0.8, 1.0)), "fogwhite": (71, WHITE),
+                  "slinlorange": (70, AMBER), "slinrorange": (70, AMBER),
+                  "taillight2s": (69, RED), "numplate": (71, WHITE)}
 
 
 @lru_cache(maxsize=1)

@@ -23,7 +23,8 @@ class SurfaceBinding:
 
 
 LAMP_SURFACES = {"head_light", "head_light_lod0", "tail_light", "tail_light_lod0", "brake_light",
-                 "reverse_light", "reverse_light_lod0", "turn_light"}
+                 "reverse_light", "reverse_light_lod0", "turn_light", "hidhead", "fogwhite",
+                 "slinlorange", "slinrorange", "taillight2s", "numplate"}
 
 
 # FM4 cockpit surfaces take their colour (and printed labels, patterns, baked shading) from the car's
@@ -61,10 +62,12 @@ ATLAS_PLASTIC_GLOSS = {"plastic": 0.4, "plastic2": 0.4, "frame": 0.45, "matte": 
                        "misc": 0.5, "engine": 0.4, "dullplastic": 0.2, "cage": 0.4}
 # Brake models: caliper/rotor/hub (FM4 `brake` on RUF, `misc` on Integra) draw the disc and caliper pictures
 # of the same atlas (SX4 hub UVs centre on the disc drawn at 0.12, 0.68 of nodamage_LOD0).
-BRAKE_ATLAS_GLOSS = {"caliper": 0.55, "rotor": 0.7, "hub": 0.45, "brake": 0.7, "misc": 0.6, "metal": 0.7}
+BRAKE_ATLAS_GLOSS = {"caliper": 0.55, "rotor": 0.7, "hub": 0.45, "brake": 0.7, "misc": 0.6, "metal": 0.7,
+                    "front": 0.55}
 # FM4 `emblem` blends the atlas art over the paint by the atlas alpha (Integra "Type R": letters on alpha 255,
 # white background on alpha 0 shows the yellow body). Native alpha-tested sticker: diffuse + opacity mask.
 EXTERIOR_STICKER = "exterior_misc/sticker_mfr_cutsom"
+STRIPE_PAINT = "exterior_misc/carpaint_livery"
 # FM4 grille1/grille2 (+_alpha) sample Shared.zip grille1_alpha.xds / grille2_alpha.xds (64x64 tiles, alpha the
 # wire): the SX4 diamond mesh. Native alpha-tested metal with the tile as its opacity mask.
 GRILLE_MESH = "exterior_metal/metal_ch1_custom"
@@ -76,7 +79,7 @@ WHEEL_ATLAS_GLOSS = 0.8
 WHEEL_ATLAS_SURFACES = {"rim", "outer_rim", "wheel_emblem"}
 # FM4 lens techniques (detail_glass_*, lights_glass) colour the lens from the lamp atlas (LightsSampler):
 # amber indicators, red tail lenses (RUF rear bar, Integra side repeater were clear).
-TINTED_LENSES = {"detail_glass_red", "detail_glass_amber", "lights_glass"}
+TINTED_LENSES = {"detail_glass_red", "detail_glass_amber", "lights_glass", "lights_gls_taillightst"}
 COCKPIT_BODY_PARTS = ("hood", "mirror", "a_pillar", "cage")
 MIRROR_SURFACES = {"mirrorleft": "specificuse/mirrorleft", "mirrorright": "specificuse/mirrorright",
                    "mirrormiddle": "specificuse/mirrorcenter", "mirrorcenter": "specificuse/mirrorcenter"}
@@ -111,7 +114,7 @@ def atlas_source(label, component_kind="", component=""):
         return "wheel"
     if not exterior_like(component_kind, component):
         return None
-    if name in ATLAS_PLASTIC_GLOSS or name in ("emblem", "badge", "liverybadge"):
+    if name in ATLAS_PLASTIC_GLOSS or name in ("emblem", "badge", "liverybadge", "stripe_badge"):
         return "body"
     if name.startswith(("grille1", "grille2")):
         return name[:7]
@@ -145,6 +148,8 @@ def surface_binding(label, component_kind="", component=""):
     if cockpit_atlas_surface(label, component_kind, component):
         return bind(COCKPIT_ATLAS_MATERIAL, fidelity="source_cockpit_atlas")
     source = atlas_source(label, component_kind, component)
+    if source == "body" and name == "stripe_badge":
+        return bind(STRIPE_PAINT, MaterialUse.FIDELITY, True, fidelity="source_factory_stripe_mask")
     if source == "body" and name in ("emblem", "badge", "liverybadge"):
         # Integra "Type R" side and rear stickers are `badge` draws: the atlas alpha is the lettering (owner,
         # visual-51: white surround with the opaque badge shader).
@@ -194,7 +199,7 @@ def surface_binding(label, component_kind="", component=""):
         # Red lens: native gls_colored with the donor's red tint parameters.
         return bind("exterior_glass/gls_colored",MaterialUse.EFFECT,True,"native_red_lens_tint")
     if name in {"head_light","reverse_light","turn_light","head_light_lod0",
-                "reverse_light_lod0","lights_glass"} or name.startswith("detail_glass_"):
+                "reverse_light_lod0","lights_glass","lights_gls_oldhead"} or name.startswith("detail_glass_"):
         return bind("exterior_glass/gls_clear",MaterialUse.EFFECT,True,"missing_optical_channels")
     if name == "black_glass":
         # FM4 paints window surrounds and pillar appliques with black_glass; native blackglass keeps its gloss
@@ -257,13 +262,16 @@ def surface_binding(label, component_kind="", component=""):
     if name == "gauge_emissive":
         # Dial faces: native int_gauges with the car's own dial texture (fh4.gauge_texture_parameters).
         return bind("interior_misc/int_gauges",MaterialUse.EFFECT,fidelity="source_dial_texture")
+    if name == "digital_gauge_unlit":
+        return bind("interior_plastic/plastic",fidelity="digital_dash_without_scene")
     if name == "digital_gauge":
         # int_symbols_emissive without a texture showed the game's Forza-logo placeholder (owner, visual-61: Prius,
         # Leaf, PTG BMW). FM4 digital dashes are not in the cabin atlas: digitalgauge/dash_<car>.bgf/.bsg/.fbf is a
-        # vector scene composed at runtime from sprite .xds pieces into the screen's own 0..1 UV space. Until that is
-        # converted the screen is an unlit dark display. EXPANDED_GARAGE_DIGITAL_GAUGE=symbols: the old binding.
+        # vector scene composed at runtime from sprite .xds pieces into the screen's own 0..1 UV space. A static frame
+        # of it goes on the dial shader (fh4_digital_dash); cars without a dash scene get a dark display
+        # (fh4.make_models). EXPANDED_GARAGE_DIGITAL_GAUGE=symbols: the old binding.
         if os.environ.get("EXPANDED_GARAGE_DIGITAL_GAUGE") != "symbols":
-            return bind("interior_plastic/plastic",fidelity="digital_dash_unlit_pending_bgf")
+            return bind("interior_misc/int_gauges",MaterialUse.EFFECT,fidelity="source_digital_dash_frame")
         return bind("interior_misc/int_symbols_emissive",MaterialUse.EFFECT,fidelity="missing_instrument_emissive_texture")
     if name in MIRROR_SURFACES and os.environ.get("EXPANDED_GARAGE_MIRRORS") != "chrome":
         # FM4 mirrorLeft/Right/Middle are the mirror glass. Bound to chrome they showed the blurred environment

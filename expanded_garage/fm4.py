@@ -517,7 +517,7 @@ def add_catalogue_rows(ir_path, table="Combo_Colors", column="Ordinal"):
     return len(found)
 
 
-def build(base, packs, name, output, checkout, stfs_tool=None):
+def build(base, packs, name, output, checkout, stfs_tool=None, *, source_game="fm4"):
     base = media_root(base)
     name = media_name(name)
     reader, parser, fsb_parser = source_tools(checkout)
@@ -567,6 +567,9 @@ def build(base, packs, name, output, checkout, stfs_tool=None):
         for key, entry in sorted(collected.items()):
             digest, raw = capture(assets, entry, "vehicle-member")
             raw_members.append({"name": key, "provenance": provenance(digest, entry.name, "source-native")})
+            if source_game == "fh1" and Path(key).name.startswith("stripped_"):
+                # FH1 includes lightweight engine metadata siblings without the drawable meshes.
+                continue
             if key.endswith(".carbin"):
                 try:
                     geometry.append(decode_carbin(output, parser, key, raw, digest))
@@ -596,7 +599,7 @@ def build(base, packs, name, output, checkout, stfs_tool=None):
             "audio": limits("partial", audio, "Wave bank, loop and source tuning capture precede FH4 sound synthesis."),
         }
         ir = {"schema_version": VERSION,
-              "vehicle": {"source_game": "fm4", "source_id": car_id, "media_name": name},
+              "vehicle": {"source_game": source_game, "source_id": car_id, "media_name": name},
               "coordinate_system": COORDINATE_SYSTEM,
               "assets": assets.records, "raw_members": raw_members, "presentation": presentation,
               "source_tools": {name: sha256(checkout / f"src/dsfforza/formats/{name}.py")

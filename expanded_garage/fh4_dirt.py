@@ -26,6 +26,7 @@ import numpy as np
 from . import fh4_model
 
 SPLATTER = "Textures/Damage/splatterMask.swatchbin"
+IMPACT = "Textures/Damage/impactMask.swatchbin"
 WIPER = "Textures/Wiper/wiper_motion_gradient.swatchbin"
 SPLATTER_SIZE, WIPER_SIZE = 512, 1024
 BC1_FORMAT, BC5_FORMAT = 0, 5
@@ -282,7 +283,7 @@ def read(data):
 def verify(read_member, names):
     """Check the generated dirt/wiper masks in an archive ({lower-case member: name}); return those used."""
     used = set()
-    for member, fmt in ((SPLATTER, BC1_FORMAT), (WIPER, BC5_FORMAT)):
+    for member, fmt in ((SPLATTER, BC1_FORMAT), (IMPACT, BC1_FORMAT), (WIPER, BC5_FORMAT)):
         key = member.casefold()
         if key not in names:
             continue

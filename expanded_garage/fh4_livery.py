@@ -10,6 +10,7 @@ silhouette, one mip, texture format 3. The XML is in mask-pixel space, so it car
 import io
 import os
 import struct
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -95,14 +96,22 @@ def masks_from_source(files):
     from PIL import Image
 
     xml = files.get("masks.xml")
-    if xml is None or not all(f"{side}.tga" in files for side in SIDES):
+    if xml is None:
         return {}
     text = xml.decode("utf-8-sig")
     if "<LiveryMasks" not in text or any(f"<{side.capitalize()} " not in text for side in SIDES):
         raise ValueError("FM4 masks.xml does not describe the six livery sides")
     out = {XML: xml}
+    root = ET.fromstring(xml)
     for side in SIDES:
-        image = Image.open(io.BytesIO(files[f"{side}.tga"]))
+        data = files.get(f"{side}.tga")
+        if data is None:
+            definition = root.find(side.capitalize())
+            if definition is None or definition.get("valid") != "false":
+                return {}
+            out[f"{FOLDER}{side}.swatchbin"] = mask_swatch(np.zeros((SIZE, SIZE), dtype=np.uint8))
+            continue
+        image = Image.open(io.BytesIO(data))
         if image.size != (SIZE, SIZE):
             image = image.resize((SIZE, SIZE), Image.Resampling.BILINEAR)
         alpha = np.asarray(image.convert("RGBA"))[..., 3]
@@ -139,13 +148,13 @@ def verify(read, names):
     expected = {XML.casefold()} | {f"{FOLDER}{side}.swatchbin".casefold() for side in SIDES}
     if members != expected:
         raise ValueError(f"Incomplete LiveryMasks set: {sorted(expected ^ members)}")
-    text = read(names[XML.casefold()]).decode("utf-8-sig")
-    if any(f"<{side.capitalize()} " not in text for side in SIDES):
+    root = ET.fromstring(read(names[XML.casefold()]))
+    if root.tag != "LiveryMasks" or any(root.find(side.capitalize()) is None for side in SIDES):
         raise ValueError("Masks.xml lacks a livery side")
     for side in SIDES:
         width, height, fmt, payload = read_mask(read(names[f"{FOLDER}{side}.swatchbin".casefold()]))
         if (width, height, fmt) != (SIZE, SIZE, BC4_FORMAT):
             raise ValueError(f"Unexpected livery mask format for {side}")
-        if not bc4_decode(payload, width, height).any():
+        if root.find(side.capitalize()).get("valid") != "false" and not bc4_decode(payload, width, height).any():
             raise ValueError(f"Empty livery mask {side}")
     return members
